@@ -11,6 +11,6 @@ import java.io.Serializable;
 public interface UserRepository extends
         Serializable,
         JpaRepository<User, Integer>,
-        JpaSpecificationExecutor<User>
-        {
+        JpaSpecificationExecutor<User> {
+    User findByUsername(String username);
 }

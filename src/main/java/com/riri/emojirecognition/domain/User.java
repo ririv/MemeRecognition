@@ -8,11 +8,10 @@ public class User {
 
     @Id
     @GeneratedValue
-    @Column(name = "id")
     private Integer id;
 
-    @Column(name = "user_name")
-    private String userName;
+    @Column(name = "username")
+    private String username;
 
     @Column(name = "passwd")
     private String passwd;
@@ -23,6 +22,15 @@ public class User {
     @Column(name = "authority")
     private Integer authority;
 
+    public User(){}
+
+    public User(String username, String passwd, int authority)
+    {
+        this.username = username;
+        this.passwd = passwd ;
+        this.authority = authority;
+    }
+
 
     public Integer getId() {
         return id;
@@ -32,12 +40,12 @@ public class User {
         this.id = id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName == null ? null : userName.trim();
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPasswd() {
@@ -45,7 +53,7 @@ public class User {
     }
 
     public void setPasswd(String passwd) {
-        this.passwd = passwd == null ? null : passwd.trim();
+        this.passwd = passwd;
     }
 
     public String getEmail() {
@@ -53,7 +61,7 @@ public class User {
     }
 
     public void setEmail(String email) {
-        this.email = email == null ? null : email.trim();
+        this.email = email;
     }
 
     public Integer getAuthority() {
