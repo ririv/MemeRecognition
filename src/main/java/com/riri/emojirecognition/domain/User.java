@@ -64,4 +64,4 @@ public class User {
         this.authority = authority;
     }
 
-    }
+}
