@@ -22,12 +22,12 @@ public class User {
     @Column(name = "authority")
     private Integer authority;
 
-    public User(){}
+    public User() {
+    }
 
-    public User(String username, String passwd, int authority)
-    {
+    public User(String username, String passwd, int authority) {
         this.username = username;
-        this.passwd = passwd ;
+        this.passwd = passwd;
         this.authority = authority;
     }
 
