@@ -4636,8 +4636,8 @@
         vnode = render.call(vm._renderProxy, vm.$createElement);
       } catch (e) {
         handleError(e, vm, "render");
-        // return error render result,
-        // or previous vnode to prevent render error causing blank component
+        // return exception render result,
+        // or previous vnode to prevent render exception causing blank component
         /* istanbul ignore else */
         if (vm.$options.renderError) {
           try {
@@ -5956,7 +5956,7 @@
         if (isDef(key)) {
           if (seenKeys[key]) {
             warn(
-              ("Duplicate keys detected: '" + key + "'. This may cause an update error."),
+              ("Duplicate keys detected: '" + key + "'. This may cause an update exception."),
               vnode.context
             );
           } else {
@@ -6968,7 +6968,7 @@
 
     {
       // inputs with type="file" are read only and setting the input's
-      // value will throw an error.
+      // value will throw an exception.
       if (tag === 'input' && type === 'file') {
         warn$1(
           "<" + (el.tag) + " v-model=\"" + value + "\" type=\"file\">:\n" +

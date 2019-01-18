@@ -3,14 +3,16 @@ package com.riri.emojirecognition.repository;
 import com.riri.emojirecognition.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.stereotype.Repository;
 
-import java.io.Serializable;
+import java.util.List;
 
-@Repository
+//数据持久层操作接口
+
 public interface UserRepository extends
-        Serializable,
-        JpaRepository<User, Integer>,
+        JpaRepository<User, Long>,
         JpaSpecificationExecutor<User> {
+
     User findByUsername(String username);
+
+    User findByEmail(String email);
 }

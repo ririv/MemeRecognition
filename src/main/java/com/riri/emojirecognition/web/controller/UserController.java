@@ -1,0 +1,78 @@
+package com.riri.emojirecognition.web.controller;
+
+
+import com.riri.emojirecognition.domain.User;
+import com.riri.emojirecognition.repository.RoleRepository;
+import com.riri.emojirecognition.repository.UserRepository;
+import com.riri.emojirecognition.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+
+@RestController
+@RequestMapping("/")
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping("/admin")
+    public String printAdminRole() {
+        return "如果你看见这句话，说明你访问/admin路径具有ADMIN权限";
+    }
+
+    @GetMapping("/login")
+    public ModelAndView index() {
+        //ModelAndView mv = new ModelAndView("signin");
+        //return mv;
+        //return new ModelAndView("signin");
+        return new ModelAndView("signin.html");
+    }
+
+    @RequestMapping("/user")
+    public Object user(Authentication authentication) {
+        return authentication.getPrincipal();
+    }
+
+
+//    @PostMapping("/registry")
+//    public void registry(User user) {
+//        if (userService.usernameExist(user.getUsername())){
+//            System.out.println("用户名已存在");
+//            throw new UserAlreadyExistException("There is an account with that email address: " + user.getEmail());
+//        }
+//
+//        User newUser = new User();
+//        newUser.setUsername(user.getUsername());
+//        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
+//        newUser.setEmail(user.getEmail());
+//        newUser.setRoles(Arrays.asList(roleRepository.findByName("ROLE_USER")));
+//        userRepository.save(newUser);
+//    }
+
+    @PostMapping("/register")
+    public void registry(User user) {
+        userService.register(user);
+    }
+
+    @RequestMapping("/register")
+    public ModelAndView registry() {
+        return new ModelAndView("signup.html");
+
+    }
+
+}

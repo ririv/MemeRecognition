@@ -1,0 +1,95 @@
+package com.riri.emojirecognition.service.impl;
+
+import com.riri.emojirecognition.domain.Role;
+import com.riri.emojirecognition.domain.User;
+import com.riri.emojirecognition.repository.RoleRepository;
+import com.riri.emojirecognition.repository.UserRepository;
+import com.riri.emojirecognition.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+
+
+@Service
+public class UserDetailsServiceImpl implements UserDetailsService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Override
+    // 登录验证
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        //取得用户的权限
+        User user = userRepository.findByUsername(username);
+
+        if (user == null) {
+            throw new UsernameNotFoundException("user not found");
+        }
+        System.out.println("s:" + username);
+        System.out.println("username:" + user.getUsername() + ";password:" + user.getPassword());
+
+        //返回Spring Security框架提供的User或者自定义的MyUser（implements UserDetails）
+        //        return new MyUser(username, userInfo.getPassword(), simpleGrantedAuthorities);
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),
+                true, true, true, true,
+                authorities(user.getRoles()));
+                //getAuthorities(user.getRoles()
+
+        //另一种写法
+//        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+//        for (Role role : user.getRoles()) {
+//            authorities.add(new SimpleGrantedAuthority(role.getName()));
+//        }
+//        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
+    }
+
+
+    // 取得用户的权限
+
+    private Collection<? extends GrantedAuthority> authorities(Collection<Role> roles) {
+        //将用户角色作为权限
+        List<GrantedAuthority> auths = new ArrayList<>();
+        //Collection<Role> roles = new User().getRoles();
+        for(Role role : roles){
+            auths.add(new SimpleGrantedAuthority(role.getName()));
+        }
+        return auths;
+    }
+
+//    private Collection<? extends GrantedAuthority> authorities(
+//            Collection<Role> roles) {
+//
+//        return getGrantedAuthorities(getAuthorities(roles));
+//    }
+//
+//    private List<String> getAuthorities(Collection<Role> roles) {
+//
+//        List<String> authorities = new ArrayList<>();
+//        List<Authority> collection = new ArrayList<>();
+//        for (Role role : roles) {
+//            collection.addAll(role.getAuthorities());
+//        }
+//        for (Authority item : collection) {
+//            authorities.add(item.getName());
+//        }
+//        return authorities;
+//    }
+//
+//    private List<GrantedAuthority> getGrantedAuthorities(List<String> authorities) {
+//        List<GrantedAuthority> collection= new ArrayList<>();
+//        for (String privilege : authorities) {
+//            collection.add(new SimpleGrantedAuthority(privilege));
+//        }
+//        return collection;
+//    }
+
+}

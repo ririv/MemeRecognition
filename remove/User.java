@@ -1,12 +1,14 @@
 package com.riri.emojirecognition.domain;
 
 
+
+import org.springframework.security.core.GrantedAuthority;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 
 
 //用户实体类
@@ -25,24 +27,20 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
 
-    //@Email(message="邮箱格式错误")
+    @Email(message="邮箱格式错误")
     @Column(name = "email")
     private String email;
 
-    @ManyToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
-    private List<Role> roles;
 
 
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        //将用户角色作为权限
-//        List<GrantedAuthority> auths = new ArrayList<GrantedAuthority>();
-//        Collection<Role> roles = this.getRoles();
-//        for(Role role : roles){
-//            auths.add(new SimpleGrantedAuthority(role.getName()));
-//        }
-//        return auths;
-//    }
-
+    @ManyToMany
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(
+                    name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "role_id", referencedColumnName = "id"))
+    private Collection<Role> roles;
 
 //    @NotNull
 //    @Column(name = "enabled")
@@ -86,13 +84,9 @@ public class User implements Serializable {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(Collection<Role> roles) {
         this.roles = roles;
     }
 
-//    @Override
-//    public String toString() {
-//        return "User [id=" + id + ", username=" + username + ", email=" + email + ", role=" + role + "]";
-//    }
 
 }
