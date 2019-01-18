@@ -2,7 +2,6 @@ package com.riri.emojirecognition.domain;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collection;
 
 @Entity
 @Table(name = "role")

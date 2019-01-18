@@ -2,9 +2,7 @@ package com.riri.emojirecognition.service.impl;
 
 import com.riri.emojirecognition.domain.Role;
 import com.riri.emojirecognition.domain.User;
-import com.riri.emojirecognition.repository.RoleRepository;
 import com.riri.emojirecognition.repository.UserRepository;
-import com.riri.emojirecognition.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

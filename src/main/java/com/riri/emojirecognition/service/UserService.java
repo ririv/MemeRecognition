@@ -27,6 +27,6 @@ public interface UserService {
 
     boolean usernameExist(String username);
 
-    User register(User user);
+    void register(User user);
 
 }

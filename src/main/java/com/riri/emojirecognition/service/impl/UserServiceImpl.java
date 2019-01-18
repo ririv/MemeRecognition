@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 //业务层实现
@@ -56,7 +57,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User register(User user){
+    public void register(User user){
 
         if (usernameExist(user.getUsername())){
             System.out.println("用户名已存在");
@@ -67,8 +68,8 @@ public class UserServiceImpl implements UserService {
         newUser.setUsername(user.getUsername());
         newUser.setPassword(passwordEncoder.encode(user.getPassword()));
         newUser.setEmail(user.getEmail());
-        newUser.setRoles(Arrays.asList(roleRepository.findByName("ROLE_USER")));
-        return userRepository.save(newUser);
+        newUser.setRoles(Collections.singletonList(roleRepository.findByName("ROLE_USER")));
+        userRepository.save(newUser);
     }
 }
 
