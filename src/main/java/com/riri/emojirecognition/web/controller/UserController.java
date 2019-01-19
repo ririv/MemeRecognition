@@ -2,13 +2,10 @@ package com.riri.emojirecognition.web.controller;
 
 
 import com.riri.emojirecognition.domain.User;
-import com.riri.emojirecognition.repository.RoleRepository;
-import com.riri.emojirecognition.repository.UserRepository;
 import com.riri.emojirecognition.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -35,6 +32,7 @@ public class UserController {
     }
 
     @RequestMapping("/user")
+//    当前用户信息
     public Object user(Authentication authentication) {
         return authentication.getPrincipal();
     }
