@@ -1,5 +1,6 @@
 package com.riri.emojirecognition.service.impl;
 
+import com.riri.emojirecognition.Utils.PasswordEncoderUtil;
 import com.riri.emojirecognition.domain.User;
 import com.riri.emojirecognition.repository.RoleRepository;
 import com.riri.emojirecognition.repository.UserRepository;
@@ -67,8 +68,10 @@ public class UserServiceImpl implements UserService {
         User newUser = new User();
         newUser.setUsername(user.getUsername());
         newUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        //newUser.setPassword(PasswordEncoderUtil.passwordEncoder(user.getPassword()));
         newUser.setEmail(user.getEmail());
         newUser.setRoles(Collections.singletonList(roleRepository.findByName("ROLE_USER")));
+        //newUser.setRoles(Arrays.asList(roleRepository.findByName("ROLE_USER")));
         userRepository.save(newUser);
     }
 }
