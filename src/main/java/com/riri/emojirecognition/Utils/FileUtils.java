@@ -1,5 +1,6 @@
 package com.riri.emojirecognition.Utils;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -17,6 +18,10 @@ public class FileUtils {
      * @param fileName 源文件名
      * @return
      */
+
+    @Value("${server.port}")
+    private String path;
+
     public static boolean upload(MultipartFile file, String path, String fileName){
 
         // 生成新的文件名
@@ -36,15 +41,10 @@ public class FileUtils {
             //保存文件
             file.transferTo(dest);
             return true;
-        } catch (IllegalStateException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return false;
-        } catch (IOException e) {
+        } catch (IllegalStateException | IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
             return false;
         }
-
     }
 }

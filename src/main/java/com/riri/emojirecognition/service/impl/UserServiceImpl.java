@@ -1,6 +1,5 @@
 package com.riri.emojirecognition.service.impl;
 
-import com.riri.emojirecognition.Utils.PasswordEncoderUtil;
 import com.riri.emojirecognition.domain.User;
 import com.riri.emojirecognition.repository.RoleRepository;
 import com.riri.emojirecognition.repository.UserRepository;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -65,14 +63,12 @@ public class UserServiceImpl implements UserService {
             throw new UserAlreadyExistException("There is an account with the username: " + user.getUsername());
         }
 
-        User newUser = new User();
-        newUser.setUsername(user.getUsername());
-        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
-        //newUser.setPassword(PasswordEncoderUtil.passwordEncoder(user.getPassword()));
-        newUser.setEmail(user.getEmail());
-        newUser.setRoles(Collections.singletonList(roleRepository.findByName("ROLE_USER")));
-        //newUser.setRoles(Arrays.asList(roleRepository.findByName("ROLE_USER")));
-        userRepository.save(newUser);
+        userRepository.save(new User(
+                user.getUsername(),
+                passwordEncoder.encode(user.getPassword()),
+                user.getEmail(),
+                Collections.singletonList(roleRepository.findByName("ROLE_USER"))
+                ));
     }
 }
 

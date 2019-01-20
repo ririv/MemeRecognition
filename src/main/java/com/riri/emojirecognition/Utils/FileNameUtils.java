@@ -7,8 +7,12 @@ public class FileNameUtils {
      * @param fileName
      * @return
      */
-    public static String getSuffix(String fileName){
-        return fileName.substring(fileName.lastIndexOf("."));
+    public static String getSuffix(String fileName) {
+        int lastIndex = fileName.lastIndexOf(".");
+//        if (lastIndex != -1) {
+            return fileName.substring(fileName.lastIndexOf("."));
+//        }
+//        return "";
     }
 
     /**

@@ -33,7 +33,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //页面访问权限需求
                 .authorizeRequests()
                     //允许所有用户访问"/"和"/home"
-                    .antMatchers("/register","/", "/main").permitAll()
+                    .antMatchers("/register","/", "/main","/**").permitAll()
                     //仅允许拥有“admin”访问此页面
                     //.antMatchers("/admin/**").hasRole("ADMIN")
                     .antMatchers("/user/**").hasRole("USER")

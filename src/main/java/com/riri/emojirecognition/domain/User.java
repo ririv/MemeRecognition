@@ -51,12 +51,12 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(String username, String password, String email) {
+    public User(@NotNull(message = "用户名不能为空") String username, String password, String email, List<Role> roles) {
         this.username = username;
         this.password = password;
-        this.email= email;
+        this.email = email;
+        this.roles = roles;
     }
-
 
     public String getUsername() {
         return username;

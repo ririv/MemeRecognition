@@ -2,6 +2,9 @@ package com.riri.emojirecognition.web.controller;
 
 import com.riri.emojirecognition.Utils.FileNameUtils;
 import com.riri.emojirecognition.Utils.FileUtils;
+import com.riri.emojirecognition.Utils.LocalAddressUtils;
+import com.riri.emojirecognition.domain.Img;
+import com.riri.emojirecognition.service.ImgService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
@@ -29,6 +32,9 @@ public class IndexController {
     public IndexController(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
+
+    @Autowired
+    private ImgService imgService;
 
     @RequestMapping("/admin/show")
     public String getIndex() {
@@ -67,20 +73,28 @@ public class IndexController {
     private String path;
 
     @RequestMapping("fileUpload")
-    public ModelAndView upload(@RequestParam("fileName") MultipartFile file, Map<String, Object> map, HttpServletRequest request,HttpServletResponse response) throws ServletException,IOException {
+    public ModelAndView upload(@RequestParam("fileName") MultipartFile file, Map<String, Object> map, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         // 要上传的目标文件存放路径
         String localPath = path;
         // 上传成功或者失败的提示
         String msg;
 
+        if (file.isEmpty()) {
+            return new ModelAndView("main");
+        }
         //调用上传工具类
 //        if (FileUtils.upload(file, localPath, file.getOriginalFilename())) {//图片原始名
         //图片新名
         String newFileName = FileNameUtils.getUUIDFileName(file.getOriginalFilename());
-        if (FileUtils.upload(file, localPath,newFileName)) {
+        if (FileUtils.upload(file, localPath, newFileName)) {
             // 上传成功，给出页面提示
             msg = "上传成功！";
+
+            //保存数据库
+            Img img = new Img();
+            img.setName(newFileName);
+            imgService.save(img);
         } else {
             msg = "上传失败！";
 
@@ -97,23 +111,31 @@ public class IndexController {
 //            //调用forward()方法，转发请求     
 //            requestDispatcher.forward(request,response);
         return new ModelAndView("main");
+
     }
 
 
+    /**
+     * 显示单张图片
+     *
+     * @return
+     */
+    @RequestMapping("show")
+    public ResponseEntity showImg(String fileName) {
 
-        /**
-         * 显示单张图片
-         * @return
-         */
-        @RequestMapping("show")
-        public ResponseEntity showPhotos (String fileName){
-
-            try {
-                // 由于是读取本机的文件，file是一定要加上的， path是在application配置文件中的路径
-                return ResponseEntity.ok(resourceLoader.getResource("file:" + path + fileName));
-            } catch (Exception e) {
-                return ResponseEntity.notFound().build();
-            }
+        try {
+            // 由于是读取本机的文件，file是一定要加上的， path是在application配置文件中的路径
+            return ResponseEntity.ok(resourceLoader.getResource("file:" + path + fileName));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
         }
+    }
+
+    @RequestMapping("abc")
+    public String abc() {
+
+        return "本机地址:" + LocalAddressUtils.getLocalAddress();
+    }
+
 
 }

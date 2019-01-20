@@ -1,5 +1,6 @@
 package com.riri.emojirecognition;
 
+import com.riri.emojirecognition.Utils.LocalAddressUtils;
 import com.riri.emojirecognition.domain.Role;
 import com.riri.emojirecognition.domain.User;
 import com.riri.emojirecognition.repository.RoleRepository;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.jws.soap.SOAPBinding;
+import java.util.Collections;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -65,5 +67,13 @@ public class test {
     @Test
     public void delete() {
         userRepository.deleteById((long) 17);
+    }
+
+
+    @Test
+    public void test01(){
+//        userRepository.save(new User("1", "20", "123@qq.com", Collections.singletonList(roleRepository.findByName("ROLE_USER"))));
+        System.out.println("本机地址:"+LocalAddressUtils.getLocalAddress());
+
     }
 }
