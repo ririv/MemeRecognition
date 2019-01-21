@@ -24,7 +24,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     // 登录验证
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        //取得用户的权限
+        //取得用户
         User user = userRepository.findByUsername(username);
 
         if (user == null) {
@@ -40,7 +40,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 user.getPassword(),
                 true, true, true, true,
                 authorities(user.getRoles()));
-                //getAuthorities(user.getRoles()
 
         //另一种写法
 //        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
@@ -54,9 +53,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     // 取得用户的权限
 
     private Collection<? extends GrantedAuthority> authorities(Collection<Role> roles) {
-        //将用户角色作为权限
+        //通过角色名获得权限
         List<GrantedAuthority> auths = new ArrayList<>();
-        //Collection<Role> roles = new User().getRoles();
         for(Role role : roles){
             auths.add(new SimpleGrantedAuthority(role.getName()));
         }

@@ -1,22 +1,15 @@
 package com.riri.emojirecognition;
 
-import com.riri.emojirecognition.Utils.LocalAddressUtils;
+import com.riri.emojirecognition.utils.LocalAddressUtils;
 import com.riri.emojirecognition.domain.Role;
-import com.riri.emojirecognition.domain.User;
 import com.riri.emojirecognition.repository.RoleRepository;
 import com.riri.emojirecognition.repository.UserRepository;
 import com.riri.emojirecognition.service.UserService;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import javax.jws.soap.SOAPBinding;
-import java.util.Collections;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -66,7 +59,7 @@ public class test {
 
     @Test
     public void delete() {
-        userRepository.deleteById((long) 17);
+        userRepository.deleteById(15L);
     }
 
 
@@ -75,5 +68,11 @@ public class test {
 //        userRepository.save(new User("1", "20", "123@qq.com", Collections.singletonList(roleRepository.findByName("ROLE_USER"))));
         System.out.println("本机地址:"+LocalAddressUtils.getLocalAddress());
 
+    }
+
+    @Test
+    public void test02(){
+        roleRepository.save(new Role(1L,"ROLE_ADMIN"));
+        roleRepository.save(new Role(2L,"ROLE_USER"));
     }
 }

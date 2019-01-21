@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -68,6 +69,7 @@ public class UserServiceImpl implements UserService {
                 passwordEncoder.encode(user.getPassword()),
                 user.getEmail(),
                 Collections.singletonList(roleRepository.findByName("ROLE_USER"))
+//                Arrays.asList(roleRepository.findByName("ROLE_USER"),roleRepository.findByName("ROLE_ADMIN"))
                 ));
     }
 }

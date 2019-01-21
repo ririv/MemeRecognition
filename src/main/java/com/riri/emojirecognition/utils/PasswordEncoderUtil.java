@@ -1,4 +1,4 @@
-package com.riri.emojirecognition.Utils;
+package com.riri.emojirecognition.utils;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;

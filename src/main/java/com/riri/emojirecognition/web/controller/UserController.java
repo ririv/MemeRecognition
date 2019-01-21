@@ -23,6 +23,12 @@ public class UserController {
         return "如果你看见这句话，说明你访问/admin路径具有ADMIN权限";
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @RequestMapping("/user")
+    public String printUserRole() {
+        return "如果你看见这句话，说明你访问/user路径具有USER权限";
+    }
+
     @GetMapping("/login")
     public ModelAndView index() {
         //ModelAndView mv = new ModelAndView("signin");
@@ -31,11 +37,11 @@ public class UserController {
         return new ModelAndView("signin.html");
     }
 
-    @RequestMapping("/user")
-//    当前用户信息
-    public Object user(Authentication authentication) {
-        return authentication.getPrincipal();
-    }
+//    @RequestMapping("/user")
+////    当前用户信息
+//    public Object user(Authentication authentication) {
+//        return authentication.getPrincipal();
+//    }
 
 
 //    @PostMapping("/registry")

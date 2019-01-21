@@ -20,6 +20,8 @@ public class Img implements Serializable {
 
     private String username;
 
+    private String sourcename;
+
     public Long getId() {
         return id;
     }
@@ -60,4 +62,11 @@ public class Img implements Serializable {
         this.username = username;
     }
 
+    public String getSourcename() {
+        return sourcename;
+    }
+
+    public void setSourcename(String sourcename) {
+        this.sourcename = sourcename;
+    }
 }

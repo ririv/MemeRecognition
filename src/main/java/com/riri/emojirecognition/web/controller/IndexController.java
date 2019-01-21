@@ -1,8 +1,7 @@
 package com.riri.emojirecognition.web.controller;
 
-import com.riri.emojirecognition.Utils.FileNameUtils;
-import com.riri.emojirecognition.Utils.FileUtils;
-import com.riri.emojirecognition.Utils.LocalAddressUtils;
+import com.riri.emojirecognition.utils.FileUtils;
+import com.riri.emojirecognition.utils.LocalAddressUtils;
 import com.riri.emojirecognition.domain.Img;
 import com.riri.emojirecognition.service.ImgService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/")
@@ -86,7 +86,7 @@ public class IndexController {
         //调用上传工具类
 //        if (FileUtils.upload(file, localPath, file.getOriginalFilename())) {//图片原始名
         //图片新名
-        String newFileName = FileNameUtils.getUUIDFileName(file.getOriginalFilename());
+        String newFileName = FileUtils.getUUIDFileName(file.getOriginalFilename());
         if (FileUtils.upload(file, localPath, newFileName)) {
             // 上传成功，给出页面提示
             msg = "上传成功！";
@@ -94,6 +94,11 @@ public class IndexController {
             //保存数据库
             Img img = new Img();
             img.setName(newFileName);
+//            img.setSourcename(file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+            String originalFileName = file.getOriginalFilename();
+            if (originalFileName != null) {
+                img.setSourcename(FileUtils.getSourceName(file.getOriginalFilename()));
+            }
             imgService.save(img);
         } else {
             msg = "上传失败！";
@@ -129,12 +134,6 @@ public class IndexController {
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
-    }
-
-    @RequestMapping("abc")
-    public String abc() {
-
-        return "本机地址:" + LocalAddressUtils.getLocalAddress();
     }
 
 
