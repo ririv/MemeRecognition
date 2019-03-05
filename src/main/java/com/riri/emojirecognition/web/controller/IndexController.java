@@ -1,7 +1,6 @@
 package com.riri.emojirecognition.web.controller;
 
-import com.riri.emojirecognition.utils.FileUtils;
-import com.riri.emojirecognition.utils.LocalAddressUtils;
+import com.riri.emojirecognition.utils.FileUtil;
 import com.riri.emojirecognition.domain.Img;
 import com.riri.emojirecognition.service.ImgService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/")
@@ -69,14 +67,14 @@ public class IndexController {
 //        return "file";
 //    }
 
-    @Value("${web.upload-path}")
-    private String path;
+    @Value("${web.default-path}")
+    private String defaultPath;
 
     @RequestMapping("fileUpload")
     public ModelAndView upload(@RequestParam("fileName") MultipartFile file, Map<String, Object> map, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         // 要上传的目标文件存放路径
-        String localPath = path;
+        String defaultPath = this.defaultPath;
         // 上传成功或者失败的提示
         String msg;
 
@@ -84,20 +82,22 @@ public class IndexController {
             return new ModelAndView("main");
         }
         //调用上传工具类
-//        if (FileUtils.upload(file, localPath, file.getOriginalFilename())) {//图片原始名
+//        if (FileUtil.upload(file, defaultPath, file.getOriginalFilename())) {//图片原始名
         //图片新名
-        String newFileName = FileUtils.getUUIDFileName(file.getOriginalFilename());
-        if (FileUtils.upload(file, localPath, newFileName)) {
+        String newFileName = FileUtil.getUUIDFileName(file.getOriginalFilename());
+        if (FileUtil.upload(file, defaultPath, newFileName)) {
             // 上传成功，给出页面提示
             msg = "上传成功！";
 
-            //保存数据库
+            //保存到repo
             Img img = new Img();
+            //保存新的UUID名
             img.setName(newFileName);
+            img.setSubdir(defaultPath);
 //            img.setSourcename(file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
             String originalFileName = file.getOriginalFilename();
             if (originalFileName != null) {
-                img.setSourcename(FileUtils.getSourceName(file.getOriginalFilename()));
+                img.setSourcename(FileUtil.getSourceName(originalFileName));
             }
             imgService.save(img);
         } else {
@@ -130,7 +130,7 @@ public class IndexController {
 
         try {
             // 由于是读取本机的文件，file是一定要加上的， path是在application配置文件中的路径
-            return ResponseEntity.ok(resourceLoader.getResource("file:" + path + fileName));
+            return ResponseEntity.ok(resourceLoader.getResource("file:" + defaultPath + fileName));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }

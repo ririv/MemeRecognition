@@ -1,6 +1,7 @@
 package com.riri.emojirecognition;
 
-import com.riri.emojirecognition.utils.LocalAddressUtils;
+import com.riri.emojirecognition.service.ImgService;
+import com.riri.emojirecognition.utils.LocalAddressUtil;
 import com.riri.emojirecognition.domain.Role;
 import com.riri.emojirecognition.repository.RoleRepository;
 import com.riri.emojirecognition.repository.UserRepository;
@@ -15,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class test {
 
+
     @Autowired
     private UserRepository userRepository;
 
@@ -23,6 +25,10 @@ public class test {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private ImgService imgService;
+
 
     //    @Test
 //    public void contextLoads() throws Exception {}
@@ -66,7 +72,7 @@ public class test {
     @Test
     public void test01(){
 //        userRepository.save(new User("1", "20", "123@qq.com", Collections.singletonList(roleRepository.findByName("ROLE_USER"))));
-        System.out.println("本机地址:"+LocalAddressUtils.getLocalAddress());
+        System.out.println("本机地址:"+ LocalAddressUtil.getLocalAddress());
 
     }
 
@@ -74,5 +80,12 @@ public class test {
     public void test02(){
         roleRepository.save(new Role(1L,"ROLE_ADMIN"));
         roleRepository.save(new Role(2L,"ROLE_USER"));
+//        roleRepository.save(new Role(3L,"ROLE_GUEST"));
+    }
+
+    @Test
+    public void test03(){
+        String path = "D:\\tests\\123";
+        imgService.batchInsertToDbByFolder(path,null);
     }
 }

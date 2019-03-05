@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class LocalAddressUtils {
+public class LocalAddressUtil {
 
     //获取主机端口
     @Value("${server.port}")
@@ -16,7 +16,7 @@ public class LocalAddressUtils {
     //获取本机ip
     private static String host;
 
-    private static final Logger logger = LoggerFactory.getLogger(LocalAddressUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocalAddressUtil.class);
 
     //获取本机IP
     public static String getLocalAddress() {
@@ -25,7 +25,7 @@ public class LocalAddressUtils {
         } catch (UnknownHostException e) {
             logger.error("get server host Exception e:", e);
         }
-        //        System.out.println("本机地址:"+LocalAddressUtils.getLocalAddress());
+        //        System.out.println("本机地址:"+LocalAddressUtil.getLocalAddress());
         return host + ":" + post;
     }
 

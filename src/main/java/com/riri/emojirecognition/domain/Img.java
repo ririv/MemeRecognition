@@ -18,9 +18,11 @@ public class Img implements Serializable {
 
     private String description;
 
-    private String username;
+    private String owner;
 
     private String sourcename;
+
+    private String subdir;
 
     public Long getId() {
         return id;
@@ -54,12 +56,12 @@ public class Img implements Serializable {
         this.description = description;
     }
 
-    public String getUsername() {
-        return username;
+    public String getOwner() {
+        return owner;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public String getSourcename() {
@@ -68,5 +70,13 @@ public class Img implements Serializable {
 
     public void setSourcename(String sourcename) {
         this.sourcename = sourcename;
+    }
+
+    public String getSubdir() {
+        return subdir;
+    }
+
+    public void setSubdir(String subdir) {
+        this.subdir = subdir;
     }
 }
