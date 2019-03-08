@@ -70,4 +70,12 @@ public class UserController {
 
     }
 
+    @RequestMapping(value = "api/json/user/{name}", method = RequestMethod.GET)
+    public User getUser(@PathVariable String name) {
+        User user = new User();
+        user.setUsername(name);
+        user.setEmail("123");
+        return user;
+    }
+
 }

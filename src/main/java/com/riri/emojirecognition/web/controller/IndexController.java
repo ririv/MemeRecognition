@@ -21,8 +21,6 @@ import java.util.Map;
 @RequestMapping("/")
 public class IndexController {
 
-    private static final String INDEX = "index";
-
     private final ResourceLoader resourceLoader;
 
     @Autowired
@@ -34,14 +32,10 @@ public class IndexController {
     @Autowired
     private ImgService imgService;
 
-    @RequestMapping("/admin/show")
-    public String getIndex() {
-        return INDEX;
-    }
 
     @GetMapping("/main")
     public ModelAndView main() {
-        return new ModelAndView("main");
+        return new ModelAndView("main.html");
     }
 
 //    @PostMapping("/emoji-upload")
@@ -49,11 +43,11 @@ public class IndexController {
 //        if (file.isEmpty()) {
 //            System.out.println("文件为空");
 //        }
-//        String fileName = file.getOriginalFilename();  // 文件名
-//        String suffixName = fileName.substring(fileName.lastIndexOf("."));  // 后缀名
+//        String filename = file.getOriginalFilename();  // 文件名
+//        String suffixName = filename.substring(filename.lastIndexOf("."));  // 后缀名
 //        String filePath = "D://temp-rainy//"; // 上传后的路径
-//        fileName = UUID.randomUUID() + suffixName; // 新文件名
-//        File dest = new File(filePath + fileName);
+//        filename = UUID.randomUUID() + suffixName; // 新文件名
+//        File dest = new File(filePath + filename);
 //        if (!dest.getParentFile().exists()) { //判断文件父目录是否存在
 //            dest.getParentFile().mkdirs(); //不存在则建立目录
 //        }
@@ -62,7 +56,7 @@ public class IndexController {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-//        String filename = "/temp-rainy/" + fileName;
+//        String filename = "/temp-rainy/" + filename;
 //        model.addAttribute("filename", filename);
 //        return "file";
 //    }
@@ -70,8 +64,13 @@ public class IndexController {
     @Value("${web.default-path}")
     private String defaultPath;
 
+    @GetMapping("/img-upload")
+    public ModelAndView imgupload() {
+        return new ModelAndView("img-upload");
+    }
+
     @RequestMapping("fileUpload")
-    public ModelAndView upload(@RequestParam("fileName") MultipartFile file, Map<String, Object> map, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public ModelAndView upload(@RequestParam("filename") MultipartFile file, Map<String, Object> map, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         // 要上传的目标文件存放路径
         String defaultPath = this.defaultPath;
@@ -79,25 +78,25 @@ public class IndexController {
         String msg;
 
         if (file.isEmpty()) {
-            return new ModelAndView("main");
+            return new ModelAndView("img-upload");
         }
         //调用上传工具类
 //        if (FileUtil.upload(file, defaultPath, file.getOriginalFilename())) {//图片原始名
         //图片新名
-        String newFileName = FileUtil.getUUIDFileName(file.getOriginalFilename());
-        if (FileUtil.upload(file, defaultPath, newFileName)) {
+        String newFilename = FileUtil.getUUIDFilename(file.getOriginalFilename());
+        if (FileUtil.upload(file, defaultPath, newFilename)) {
             // 上传成功，给出页面提示
             msg = "上传成功！";
 
             //保存到repo
             Img img = new Img();
             //保存新的UUID名
-            img.setName(newFileName);
-            img.setSubdir(defaultPath);
+            img.setName(newFilename);
+            img.setSubdirectory(defaultPath);
 //            img.setSourcename(file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-            String originalFileName = file.getOriginalFilename();
-            if (originalFileName != null) {
-                img.setSourcename(FileUtil.getSourceName(originalFileName));
+            String originalFilename = file.getOriginalFilename();
+            if (originalFilename != null) {
+                img.setSourcename(FileUtil.getSourceName(originalFilename));
             }
             imgService.save(img);
         } else {
@@ -108,29 +107,25 @@ public class IndexController {
         // 显示图片
         map.put("msg", msg);
         //图片原始名
-        //map.put("fileName", file.getOriginalFilename());
+        //map.put("filename", file.getOriginalFilename());
         //图片新名，使用新名必须修改，否则无法映射文件路径
-        map.put("fileName", newFileName);
+        map.put("filename", newFilename);
 
 //            RequestDispatcher requestDispatcher =request.getRequestDispatcher("index");
 //            //调用forward()方法，转发请求     
 //            requestDispatcher.forward(request,response);
-        return new ModelAndView("main");
+        return new ModelAndView("img-upload");
 
     }
 
 
-    /**
-     * 显示单张图片
-     *
-     * @return
-     */
+     //显示单张图片
     @RequestMapping("show")
-    public ResponseEntity showImg(String fileName) {
+    public ResponseEntity showImg(String filename) {
 
         try {
             // 由于是读取本机的文件，file是一定要加上的， path是在application配置文件中的路径
-            return ResponseEntity.ok(resourceLoader.getResource("file:" + defaultPath + fileName));
+            return ResponseEntity.ok(resourceLoader.getResource("file:" + defaultPath + filename));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }

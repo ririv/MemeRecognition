@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -51,7 +52,7 @@ public class FileUtil {
     public static boolean upload(MultipartFile file, String path, String fileName) {
 
         // 生成新的文件名
-//        String newPath = path + "/" + getUUIDFileName(fileName);
+//        String newPath = path + "/" + getUUIDFilename(fileName);
 
         //使用原文件名
         String realPath = path + "/" + fileName;
@@ -97,7 +98,7 @@ public class FileUtil {
      * @param originalFileName 源文件名
      * @return
      */
-    public static String getUUIDFileName(String originalFileName) {
+    public static String getUUIDFilename(String originalFileName) {
         return UUIDUtil.getUUID() + getSuffix(originalFileName);
     }
 
@@ -114,38 +115,109 @@ public class FileUtil {
     @Value("${web.default-path}")
     private static String defaultPath;
 
-    //遍历文件夹
-    public static List<FileInfo> traverseFolder(String dirpath){
-
-        File file = new File(dirpath);
+    //遍历文件夹，迭代
+    public static List<FileInfo> traverseFolder(String path) {
+        int fileNum = 0, folderNum = 0;
+        File file = new File(path);
         List<FileInfo> fileList = new ArrayList<>();
 
         if (file.exists()) {
+            //创建文件夹列表,这里涉及到删除第一个元素，所以使用LinkedList
+            LinkedList<File> folderList = new LinkedList<>();
+            //获取该文件夹下的所有文件
             File[] files = file.listFiles();
             if (null == files || files.length == 0) {
                 System.out.println("文件夹是空的!");
-            }
-            else {
+            } else {
+                //先得到所有文件夹包括子文件夹的列表
                 for (File f : files) {
                     if (f.isDirectory()) {
-                        System.out.println("文件夹: " + f.getAbsolutePath());
-                        traverseFolder(f.getAbsolutePath());
-                    }
-                    else {
-                        System.out.println("文件: " + f.getAbsolutePath());
-                            //获得文件信息并保存至数组
+                        System.out.println("文件夹:" + f.getAbsolutePath());
+                        folderList.add(f);
+                        folderNum++;
 
-                        FileInfo fileInfo = new FileInfo(f.getName(), (f.getParent()+"\\"));
-                        System.out.println("文件名: "+f.getName()+"\n"+"父路径: "+ f.getParent()+"\\");
+                    } else {
+                        System.out.println("文件:" + f.getAbsolutePath());
+                        fileNum++;
+
+                        //获得文件信息并保存至数组
+                        FileInfo fileInfo = new FileInfo(f.getName(), f.getParent()+"\\");
+                        System.out.println("文件名: "+f.getName());
+                        System.out.println("父路径: "+ f.getParent()+"\\");
                         fileList.add(fileInfo);
+                    }
+                }
+                //再遍历得到的文件夹列表下的所有文件夹
+                File folder;
+                while (!folderList.isEmpty()) {
+                    //移除已遍历的文件夹，用while循环直至未遍历的文件夹列表为空
+                    //folder为当前所移除的文件夹
+                    folder = folderList.removeFirst();
+                    //获取该文件夹下的所有文件
+                    files = folder.listFiles();
+                    if (null == files || files.length == 0) {
+                        System.out.println("该子文件夹是空的: "+file.getName());
+                    } else {
+                        for (File f : files) {
+                            if (f.isDirectory()) {
+                                System.out.println("文件夹:" + f.getAbsolutePath());
+                                //检测到为文件夹，添加到文件夹列表
+                                folderList.add(f);
+                                folderNum++;
+                            } else {
+                                System.out.println("文件:" + f.getAbsolutePath());
+                                fileNum++;
+
+                                //获得文件信息并保存至数组
+                                FileInfo fileInfo = new FileInfo(f.getName(), f.getParent() + "\\");
+                                System.out.println("文件名: " + f.getName());
+                                System.out.println("父路径: " + f.getParent() + "\\");
+                                fileList.add(fileInfo);
+                            }
                         }
                     }
                 }
             }
-        else {
-            System.out.println("文件不存在!");
-
+        } else{ System.out.println("文件不存在!");
         }
+        System.out.println("文件夹共有:" + folderNum + ",文件共有:" + fileNum);
         return fileList;
     }
+
+//    //遍历文件夹，递归，效率较低
+//    public static List<FileInfo> traverseFolder2(String dirpath){
+//
+//        File file = new File(dirpath);
+//        List<FileInfo> fileList = new ArrayList<>();
+//
+//        if (file.exists()) {
+//            File[] files = file.listFiles();
+//            if (null == files || files.length == 0) {
+//                System.out.println("文件夹是空的!");
+//            }
+//            else {
+//                for (File f : files) {
+//                    if (f.isDirectory()) {
+//                        System.out.println("文件夹: " + f.getAbsolutePath());
+//                        traverseFolder2(f.getAbsolutePath());
+//                    }
+//                    else {
+//                        System.out.println("文件: " + f.getAbsolutePath());
+//
+//                        //获得文件信息并保存至数组
+//                        FileInfo fileInfo = new FileInfo(f.getName(), f.getParent()+"\\");
+//                        System.out.println("文件名: "+f.getName());
+//                        System.out.println("父路径: "+ f.getParent()+"\\");
+//                        fileList.add(fileInfo);
+//                        }
+//                    }
+//                }
+//            }
+//        else {
+//            System.out.println("文件不存在!");
+//
+//        }
+//        return fileList;
+//    }
+
 }

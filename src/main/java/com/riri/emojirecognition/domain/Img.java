@@ -22,7 +22,7 @@ public class Img implements Serializable {
 
     private String sourcename;
 
-    private String subdir;
+    private String subdirectory;
 
     public Long getId() {
         return id;
@@ -72,11 +72,11 @@ public class Img implements Serializable {
         this.sourcename = sourcename;
     }
 
-    public String getSubdir() {
-        return subdir;
+    public String getSubdirectory() {
+        return subdirectory;
     }
 
-    public void setSubdir(String subdir) {
-        this.subdir = subdir;
+    public void setSubdirectory(String subdirectory) {
+        this.subdirectory = subdirectory;
     }
 }

@@ -13,4 +13,5 @@ public interface UserRepository extends
     User findByUsername(String username);
 
     User findByEmail(String email);
+
 }

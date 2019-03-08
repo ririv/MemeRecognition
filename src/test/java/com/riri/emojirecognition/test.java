@@ -1,6 +1,10 @@
 package com.riri.emojirecognition;
 
+import com.riri.emojirecognition.domain.Img;
+import com.riri.emojirecognition.domain.User;
+import com.riri.emojirecognition.repository.ImgRepository;
 import com.riri.emojirecognition.service.ImgService;
+import com.riri.emojirecognition.service.RoleService;
 import com.riri.emojirecognition.utils.LocalAddressUtil;
 import com.riri.emojirecognition.domain.Role;
 import com.riri.emojirecognition.repository.RoleRepository;
@@ -11,6 +15,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -24,10 +30,16 @@ public class test {
     private UserService userService;
 
     @Autowired
+    private RoleService roleService;
+
+    @Autowired
     private RoleRepository roleRepository;
 
     @Autowired
     private ImgService imgService;
+
+    @Autowired
+    private ImgRepository imgRepository;
 
 
     //    @Test
@@ -87,5 +99,48 @@ public class test {
     public void test03(){
         String path = "D:\\tests\\123";
         imgService.batchInsertToDbByFolder(path,null);
+    }
+
+    @Test
+    public void test04(){
+        User user = new User();
+        user.setUsername("09811");
+        user.setPassword("098");
+        userService.register(user);
+    }
+
+    @Test
+    public void test05(){
+        Set<String> roles = new HashSet<>();
+        roles.add("ROLE_ADMIN");
+        roles.add("ROLE_GUEST");
+        roles.add("ROLE_USER");
+        User user = userService.addRole(userService.findById(70L), roles);
+        System.out.println(user.getId());
+    }
+
+    @Test
+    public void test06() {
+        String b;
+        LinkedList<String> folderList = new LinkedList<>();
+        folderList.add("1");
+        folderList.add("2");
+        folderList.add("3");
+        b = folderList.removeFirst();
+        for (String a: folderList){
+            System.out.println(a);
+        }
+        System.out.println(b);
+    }
+
+    @Test
+    public void test07(){
+        String tab = "111";
+        List<Img> list;
+        list = imgRepository.findRandomImgsByTabLimitNum(tab ,2);
+//        list = imgRepository.findRandomImgByTab(2);
+        for(Img img: list){
+            System.out.println(img.getName());
+        }
     }
 }

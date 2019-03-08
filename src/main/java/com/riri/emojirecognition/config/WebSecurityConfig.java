@@ -30,6 +30,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                //允许跨域
+                .cors()
+                .and()
                 //页面访问权限需求
                 .authorizeRequests()
                     //允许所有用户访问"/"和"/home"
@@ -140,7 +143,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         //解决静态资源css,js等被拦截的问题
         web
                 .ignoring()
