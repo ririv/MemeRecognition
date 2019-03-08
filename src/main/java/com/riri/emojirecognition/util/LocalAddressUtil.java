@@ -1,4 +1,4 @@
-package com.riri.emojirecognition.utils;
+package com.riri.emojirecognition.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

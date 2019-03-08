@@ -1,4 +1,4 @@
-package com.riri.emojirecognition.utils;
+package com.riri.emojirecognition.util;
 
 import java.util.UUID;
 

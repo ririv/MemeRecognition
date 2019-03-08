@@ -2,7 +2,7 @@ package com.riri.emojirecognition.service;
 
 import com.riri.emojirecognition.domain.Img;
 import com.riri.emojirecognition.repository.ImgRepository;
-import com.riri.emojirecognition.utils.FileUtil;
+import com.riri.emojirecognition.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -63,7 +63,7 @@ public class ImgService {
 //                if(owner!=null){
                     img.setOwner(owner);
 //                }
-                img.setTab(tab);
+                img.setTag(tab);
                 imgRepository.save(img);
                 System.out.println("图片名："+img.getName()+"\n"+"子文件夹："+img.getSubdirectory()); //测试用
             }

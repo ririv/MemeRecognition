@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ImgRepository extends JpaRepository<Img, Long> {
-    @Query(value = "SELECT * FROM img WHERE id >= (ROUND(RAND()*(SELECT MAX(id) FROM img)-(SELECT MIN(id) FROM img)) + (SELECT MIN(id) FROM img)) AND tab = :tab LIMIT :N",nativeQuery=true)
+    @Query(value = "SELECT * FROM img WHERE id >= (ROUND(RAND()*(SELECT MAX(id) FROM img)-(SELECT MIN(id) FROM img)) + (SELECT MIN(id) FROM img)) AND tag = :tag LIMIT :N",nativeQuery=true)
 //    @Query(value = "SELECT * FROM Img WHERE tab = :tab ORDER BY RAND() LIMIT :N",nativeQuery=true)
-    List<Img>findRandomImgsByTabLimitNum(@Param("tab")String tab,@Param("N")Integer num);
+    List<Img>findRandomImgsByTagLimitNum(@Param("tag")String tag,@Param("N")Integer num);
 }

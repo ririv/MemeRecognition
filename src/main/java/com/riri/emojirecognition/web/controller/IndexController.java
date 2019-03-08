@@ -1,6 +1,6 @@
 package com.riri.emojirecognition.web.controller;
 
-import com.riri.emojirecognition.utils.FileUtil;
+import com.riri.emojirecognition.util.FileUtil;
 import com.riri.emojirecognition.domain.Img;
 import com.riri.emojirecognition.service.ImgService;
 import org.springframework.beans.factory.annotation.Autowired;

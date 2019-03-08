@@ -14,7 +14,7 @@ public class Img implements Serializable {
 
     private String name;
 
-    private String tab;
+    private String tag;
 
     private String description;
 
@@ -40,12 +40,12 @@ public class Img implements Serializable {
         this.name = name;
     }
 
-    public String getTab() {
-        return tab;
+    public String getTag() {
+        return tag;
     }
 
-    public void setTab(String tab) {
-        this.tab = tab;
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public String getDescription() {

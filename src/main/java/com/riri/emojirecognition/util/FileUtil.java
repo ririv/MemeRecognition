@@ -1,4 +1,4 @@
-package com.riri.emojirecognition.utils;
+package com.riri.emojirecognition.util;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;

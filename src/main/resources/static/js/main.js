@@ -8,7 +8,7 @@ var app = new Vue({
 
     mounted () {
         axios
-            .get(baseUrl+'api/json/img/34')
+            .get(baseUrl+'api/json/img/93')
             .then(response => (this.info = response.data))
         }
     }
