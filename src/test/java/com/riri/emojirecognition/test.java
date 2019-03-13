@@ -109,15 +109,6 @@ public class test {
         userService.register(user);
     }
 
-    @Test
-    public void test05(){
-        Set<String> roles = new HashSet<>();
-        roles.add("ROLE_ADMIN");
-        roles.add("ROLE_GUEST");
-        roles.add("ROLE_USER");
-        User user = userService.addRole(userService.findById(70L), roles);
-        System.out.println(user.getId());
-    }
 
     @Test
     public void test06() {
@@ -133,6 +124,7 @@ public class test {
         System.out.println(b);
     }
 
+    //测试通过标签查询随机图片
     @Test
     public void test07(){
         String tag = "123";
@@ -142,5 +134,52 @@ public class test {
         for(Img img: list){
             System.out.println(img.getName());
         }
+    }
+
+    //测试批量添加角色
+    @Test
+    public void test05(){
+        Set<String> roleNames = new HashSet<>();
+        roleNames.add("ROLE_ADMIN");
+        roleNames.add("ROLE_GUEST");
+        roleNames.add("ROLE_USER");
+        User user = userService.addRoles(userService.findById(70L), roleNames);
+        System.out.println(user.getId());
+    }
+
+
+    @Test
+    public void test08(){
+        List<Role> allRoles = roleService.findAll();
+        List<String> namesOfAllRoles = new ArrayList<>();
+        int i = 0;
+        for (Role role: allRoles){
+            namesOfAllRoles.add(role.getName());
+            System.out.println(i + "\t" + role.getName());
+            i++;
+        }
+        Role role = allRoles.get(1);
+        User user = userService.findById(70L);
+        userService.addRole(user,role);
+
+    }
+
+    @Test
+    public void test09(){
+        List<Role> allRoles = roleService.findAll();
+        List<String> namesOfAllRoles = new ArrayList<>();
+        int i = 0;
+        for (Role role: allRoles){
+            namesOfAllRoles.add(role.getName());
+            System.out.println(i + "\t" + role.getName());
+            i++;
+        }
+        Set<Role> roles = new HashSet<>(allRoles);
+        System.out.println(roles);
+        for (Role role: roles){
+            System.out.println(i + "\t" + role.getName());
+        }
+        User user = userService.findById(70L);
+        userService.addRoles2(user,roles);
     }
 }

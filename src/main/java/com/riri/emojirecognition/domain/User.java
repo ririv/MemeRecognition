@@ -4,7 +4,6 @@ package com.riri.emojirecognition.domain;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 
 
