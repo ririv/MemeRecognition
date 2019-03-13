@@ -143,7 +143,7 @@ public class test {
         roleNames.add("ROLE_ADMIN");
         roleNames.add("ROLE_GUEST");
         roleNames.add("ROLE_USER");
-        User user = userService.addRoles(userService.findById(70L), roleNames);
+        User user = userService.addRole2(userService.findById(70L), roleNames);
         System.out.println(user.getId());
     }
 
@@ -179,7 +179,8 @@ public class test {
         for (Role role: roles){
             System.out.println(i + "\t" + role.getName());
         }
+
         User user = userService.findById(70L);
-        userService.addRoles2(user,roles);
+        userService.updateRole(user,roles);
     }
 }

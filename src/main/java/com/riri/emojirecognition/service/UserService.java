@@ -26,21 +26,23 @@ public interface UserService {
 
     User register(User user);
 
-    User addRole(User user, String roleName);
-
     User addRole(User user, Role role);
 
-    User addRoles(User user, Set<String> roleNames);
+    User addRole2(User user, String roleName);
 
-    User addRoles2(User user, Set<Role> roles);
+    User addRole(User user, Set<Role> roles);
 
-    User updateRole(User user, String roleName);
+    User addRole2(User user, Set<String> roleNames);
 
     User updateRole(User user, Role role);
 
-    User updateRoles(User user, Set<String> roleNames);
+    User updateRole2(User user, String roleName);
 
-    User updateRoles(User user, List<Role> roles);
+    User updateRole(User user, Set<Role> roles);
+
+    User updateRole2(User user, Set<String> roleNames);
+
+
 
 
 

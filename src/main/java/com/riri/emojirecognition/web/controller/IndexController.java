@@ -130,6 +130,4 @@ public class IndexController {
             return ResponseEntity.notFound().build();
         }
     }
-
-
 }

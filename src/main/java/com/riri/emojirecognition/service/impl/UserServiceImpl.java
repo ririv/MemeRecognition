@@ -67,11 +67,11 @@ public class UserServiceImpl implements UserService {
             System.out.println("用户名已存在");
             throw new UserAlreadyExistException("There is an account with the username: " + user.getUsername());
         }
-        //测试使用Set无效，不能删除同id的role，因为使用的add，函数的hashCode不一样
-//        Set<Role> roles = new HashSet<>();
-//        roles.add(roleRepository.findByName("ROLE_USER"));
-//        roles.add(roleRepository.findByName("ROLE_ADMIN"));
-//        roles.add(roleRepository.findByName("ROLE_ADMIN"));
+        //测试，这里不能删除同id的role，因为使用的add，函数的hashCode不一样
+        Set<Role> roles = new HashSet<>();
+        roles.add(roleService.findByName("ROLE_USER"));
+//        roles.add(roleService.findByName("ROLE_ADMIN"));
+//        roles.add(roleService.findByName("ROLE_ADMIN"));
 //        for (Role role: roles){
 //        System.out.println(role.hashCode());}
         return userRepository.save(
@@ -79,19 +79,31 @@ public class UserServiceImpl implements UserService {
                         user.getUsername(),
                         passwordEncoder.encode(user.getPassword()),
                         user.getEmail(),
-                        Collections.singletonList(roleService.findByName("ROLE_USER"))
+                        roles
+//                        Collections.singletonList(roleService.findByName("ROLE_USER"))
 //                        Arrays.asList(roleRepository.findByName("ROLE_USER"),roleRepository.findByName("ROLE_ADMIN")) //此方法可添加多个权限
                 )
         );
     }
 
+    //经测试，使用list时，在增加或修改单个用户权限时，即使权限一样，数据库也会重新删除权限，再插入相同的权限
+    //但使用set时，数据库会查询权限，对比权限是否相同，如果相同则不继续往下操作
+    @Override
+    public User addRole(User user, Role role) {
+        Set<Role> roles = user.getRoles();
+        roles.add(role);
+        user.setRoles(roles);
+        user = userRepository.save(user);
+        return user;
+    }
+
     //增加单个角色
     @Override
-    public User addRole(User user, String roleName) {
+    public User addRole2(User user, String roleName) {
 //        查询有无此角色，因为修改角色改为选择式，这里不再验证角色是否为null
         Role role = roleService.findByName(roleName);
 //        if (role != null) {
-        List<Role> roles = user.getRoles();
+        Set<Role> roles = user.getRoles();
         roles.add(role);
         user.setRoles(roles);
         user = userRepository.save(user);
@@ -99,22 +111,24 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    //TODO 会插入重复权限，待改善
     @Override
-    public User addRole(User user, Role role) {
-        List<Role> roles = user.getRoles();
-        roles.add(role);
-        user.setRoles(roles);
-        user = userRepository.save(user);
-        return user;
+    public User addRole(User user, Set<Role> roles) {
+        //获得原始权限
+        Set<Role> oldRoles = user.getRoles();
+
+        //组合旧权限与要新增的权限，使用set避免重复数据
+        roles.addAll(oldRoles);
+        Set<Role> newRoles = new HashSet<>(roles);
+        user.setRoles(newRoles);
+        return userRepository.save(user);
     }
 
     //增加多个角色
     @Override
-    public User addRoles(User user, Set<String> roleNames) {
+    public User addRole2(User user, Set<String> roleNames) {
         //获得原始权限
-        List<Role> oldRoles = user.getRoles();
-        List<Role> newRoles = new ArrayList<>();
+        Set<Role> oldRoles = user.getRoles();
+        Set<Role> newRoles = new HashSet<>();
 
         //组合旧权限与要新增的权限，使用set避免重复数据
         for (Role role : oldRoles) {
@@ -133,26 +147,12 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    //TODO 会插入重复权限，待改善
-    @Override
-    public User addRoles2(User user, Set<Role> roles) {
-        //获得原始权限
-        List<Role> oldRoles = user.getRoles();
-
-        //组合旧权限与要新增的权限，使用set避免重复数据
-        roles.addAll(oldRoles);
-        List<Role> newRoles = new ArrayList<>(roles);
-        user.setRoles(newRoles);
-        return userRepository.save(user);
-    }
 
     //更新单个角色
     @Override
-    public User updateRole(User user, String roleName) {
-//        查询有无此角色，因为修改角色改为选择式，这里不再验证角色是否为null
-        Role role = roleService.findByName(roleName);
-//        if (role != null) {
-        List<Role> roles = Collections.singletonList(role);
+    public User updateRole(User user, Role role) {
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
         user.setRoles(roles);
         user = userRepository.save(user);
 //        }else {System.out.println("无此角色:"+roleName);}
@@ -161,8 +161,11 @@ public class UserServiceImpl implements UserService {
 
     //更新单个角色
     @Override
-    public User updateRole(User user, Role role) {
-        List<Role> roles = new ArrayList<>();
+    public User updateRole2(User user, String roleName) {
+//        查询有无此角色，因为修改角色改为选择式，这里不再验证角色是否为null
+        Role role = roleService.findByName(roleName);
+//        if (role != null) {
+        Set<Role> roles = new HashSet<>();
         roles.add(role);
         user.setRoles(roles);
         user = userRepository.save(user);
@@ -172,8 +175,15 @@ public class UserServiceImpl implements UserService {
 
     //更新多个角色
     @Override
-    public User updateRoles(User user, Set<String> roleNames) {
-        List<Role> newRoles = new ArrayList<>();
+    public User updateRole(User user,Set<Role> roles) {
+        user.setRoles(roles);
+        return userRepository.save(user);
+    }
+
+    //更新多个角色
+    @Override
+    public User updateRole2(User user, Set<String> roleNames) {
+        Set<Role> newRoles = new HashSet<>();
         for (String roleName : roleNames) {
 //        查询有无此角色，因为修改角色改为选择式，这里不再验证角色是否为null
             Role role = roleService.findByName(roleName);
@@ -185,11 +195,5 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    //更新多个角色
-    @Override
-    public User updateRoles(User user, List<Role> roles) {
-        user.setRoles(roles);
-        return userRepository.save(user);
-    }
 }
 

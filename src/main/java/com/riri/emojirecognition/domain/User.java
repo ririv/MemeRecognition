@@ -5,6 +5,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 
 //用户实体类
@@ -27,8 +28,10 @@ public class User implements Serializable {
     @Column(name = "email")
     private String email;
 
+    //经测试，使用list时，在增加或修改单个用户权限时，即使权限一样，数据库也会重新删除权限，再插入相同的权限
+    //但使用set时，数据库会查询权限，对比权限是否相同，如果相同则不继续往下操作
     @ManyToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
-    private List<Role> roles;
+    private Set<Role> roles;
 
 
 //    public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -49,7 +52,7 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(@NotNull(message = "用户名不能为空") String username, String password, String email, List<Role> roles) {
+    public User(@NotNull(message = "用户名不能为空") String username, String password, String email, Set<Role> roles) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -88,11 +91,11 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 
