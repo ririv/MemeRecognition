@@ -3,21 +3,27 @@ package com.riri.emojirecognition.web.controller;
 import com.riri.emojirecognition.domain.Img;
 import com.riri.emojirecognition.service.ImgService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/img")
 public class ImgController {
 
     @Autowired
     private ImgService imgService;
 
-    @RequestMapping(value = "json/img/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "detail/{id}", method = RequestMethod.GET)
     public Img findImg(@PathVariable Long id) {
         return imgService.findById(id);
+    }
+
+    @RequestMapping(value = "search", method = RequestMethod.GET)
+    public List<Img> findImg(@RequestParam("tag") String tag) {
+        return imgService.findRandomImgsByTagLimitNum(tag,5);
     }
 }

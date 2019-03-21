@@ -92,7 +92,7 @@ public class IndexController {
             Img img = new Img();
             //保存新的UUID名
             img.setName(newFilename);
-            img.setSubdirectory(defaultPath);
+            img.setSubDir(defaultPath);
 //            img.setSourcename(file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
             String originalFilename = file.getOriginalFilename();
             if (originalFilename != null) {

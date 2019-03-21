@@ -22,7 +22,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     //将网址映射本地目录
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/image/**").addResourceLocations("file:"+ defaultPath);
+        registry.addResourceHandler("/file/img/**").addResourceLocations("file:"+ defaultPath);
     }
 
     //Cors跨域请求

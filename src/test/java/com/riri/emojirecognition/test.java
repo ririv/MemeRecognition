@@ -15,13 +15,14 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+//import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class test {
-
 
     @Autowired
     private UserRepository userRepository;
@@ -95,16 +96,18 @@ public class test {
 //        roleRepository.save(new Role(3L,"ROLE_GUEST"));
     }
 
+    //测试批量插入图片
     @Test
     public void test03(){
-        String path = "D:\\tests\\123";
+        String path = "D:\\tests\\12345";
         imgService.batchInsertToDbByFolder(path,null);
     }
 
     @Test
+//    @Transactional
     public void test04(){
         User user = new User();
-        user.setUsername("09811");
+        user.setUsername("09813");
         user.setPassword("098");
         userService.register(user);
     }
@@ -129,7 +132,10 @@ public class test {
     public void test07(){
         String tag = "123";
         List<Img> list;
-        list = imgRepository.findRandomImgsByTagLimitNum(tag ,2);
+        list = imgService.findRandomImgsByTagLimitNum(tag ,2);
+
+//        System.out.println(list);
+
 //        list = imgRepository.findRandomImgByTab(2);
         for(Img img: list){
             System.out.println(img.getName());
@@ -138,17 +144,19 @@ public class test {
 
     //测试批量添加角色
     @Test
+//    @Transactional
     public void test05(){
         Set<String> roleNames = new HashSet<>();
         roleNames.add("ROLE_ADMIN");
         roleNames.add("ROLE_GUEST");
         roleNames.add("ROLE_USER");
-        User user = userService.addRole2(userService.findById(70L), roleNames);
+        User user = userService.addRoles2(userService.findById(70L), roleNames);
         System.out.println(user.getId());
     }
 
-
+    //测试增加角色 role类型
     @Test
+//    @Transactional
     public void test08(){
         List<Role> allRoles = roleService.findAll();
         List<String> namesOfAllRoles = new ArrayList<>();
@@ -164,7 +172,9 @@ public class test {
 
     }
 
+    //测试修改角色 role类型
     @Test
+//    @Transactional
     public void test09(){
         List<Role> allRoles = roleService.findAll();
         List<String> namesOfAllRoles = new ArrayList<>();
@@ -181,6 +191,75 @@ public class test {
         }
 
         User user = userService.findById(70L);
-        userService.updateRole(user,roles);
+        userService.updateRoles(user,roles);
     }
+
+    //测试批量修改角色 string类型
+    @Test
+//    @Transactional
+    public void test10(){
+        Set<String> roleNames = new HashSet<>();
+        roleNames.add("ROLE_ADMIN");
+        roleNames.add("ROLE_GUEST");
+//        roleNames.add("ROLE_USER");
+        User user = userService.updateRoles2(userService.findById(70L), roleNames);
+        System.out.println(user.getId());
+    }
+
+    @Test
+    public void test11(){
+        Arrays.asList( "a", "b", "d" ).forEach( e ->
+                System.out.print( e )
+
+        );
+    }
+
+
+//    @Test
+//    public void test11(){
+//        Long minId = imgRepository.findMinId();
+//        Long maxId = imgRepository.findMaxId();
+//        Long range = maxId - minId;
+//
+//        Long randomId = 1L;
+//        List<Img> randomImgs = new ArrayList<>();
+//        for (int i = 0; i<10; i++){
+//            Optional<Img> img = imgRepository.findById(randomId);
+//            if (img.isPresent()){
+//            Img img2 = img.get();
+//            }
+//        }
+//    }
+
+    @Test
+    public void test12(){
+        Long max = imgRepository.findMaxId();
+        Long min = imgRepository.findMinId();
+        Long randomNum = ThreadLocalRandom.current().nextLong(min, max + 1);
+        System.out.println(randomNum);
+
+    }
+
+    @Test
+    public void test13(){
+        Set<Long> randomNumSet = new HashSet<>();
+        long randomNum;
+        while (randomNumSet.size() < 10){
+            randomNum = ThreadLocalRandom.current().nextLong(0, 10);
+            randomNumSet.add(randomNum);
+            System.out.println(randomNumSet);
+        }
+
+        System.out.println(randomNumSet);
+
+    }
+
+    @Test
+    public void test14(){
+        long count;
+        count = imgRepository.countByTag("狗");
+        System.out.println(count);
+
+    }
+
 }

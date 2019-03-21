@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User addRole(User user, Set<Role> roles) {
+    public User addRoles(User user, Set<Role> roles) {
         //获得原始权限
         Set<Role> oldRoles = user.getRoles();
 
@@ -125,7 +125,7 @@ public class UserServiceImpl implements UserService {
 
     //增加多个角色
     @Override
-    public User addRole2(User user, Set<String> roleNames) {
+    public User addRoles2(User user, Set<String> roleNames) {
         //获得原始权限
         Set<Role> oldRoles = user.getRoles();
         Set<Role> newRoles = new HashSet<>();
@@ -175,14 +175,14 @@ public class UserServiceImpl implements UserService {
 
     //更新多个角色
     @Override
-    public User updateRole(User user,Set<Role> roles) {
+    public User updateRoles(User user,Set<Role> roles) {
         user.setRoles(roles);
         return userRepository.save(user);
     }
 
     //更新多个角色
     @Override
-    public User updateRole2(User user, Set<String> roleNames) {
+    public User updateRoles2(User user, Set<String> roleNames) {
         Set<Role> newRoles = new HashSet<>();
         for (String roleName : roleNames) {
 //        查询有无此角色，因为修改角色改为选择式，这里不再验证角色是否为null

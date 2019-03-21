@@ -20,13 +20,13 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping("/admin")
     public String printAdminRole() {
-        return "如果你看见这句话，说明你访问/admin路径具有ADMIN权限";
+        return "如果你看见这句话，说明你具有ADMIN权限";
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping("/user")
     public String printUserRole() {
-        return "如果你看见这句话，说明你访问/user路径具有USER权限";
+        return "如果你看见这句话，说明你具有USER权限";
     }
 
     @GetMapping("/login")
@@ -37,30 +37,15 @@ public class UserController {
         return new ModelAndView("signin.html");
     }
 
-//    @RequestMapping("/user")
-////    当前用户信息
-//    public Object user(Authentication authentication) {
-//        return authentication.getPrincipal();
-//    }
+    @RequestMapping("/api/user/current")
+//    当前用户信息
+    public Object user(Authentication authentication) {
+        return authentication.getPrincipal();
+    }
 
-
-//    @PostMapping("/registry")
-//    public void registry(User user) {
-//        if (userService.usernameExist(user.getUsername())){
-//            System.out.println("用户名已存在");
-//            throw new UserAlreadyExistException("There is an account with that email address: " + user.getEmail());
-//        }
-//
-//        User newUser = new User();
-//        newUser.setUsername(user.getUsername());
-//        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
-//        newUser.setEmail(user.getEmail());
-//        newUser.setRoles(Arrays.asList(roleRepository.findByName("ROLE_USER")));
-//        userRepository.save(newUser);
-//    }
 
     @PostMapping("/register")
-    public void registry(User user) {
+    public void register(User user) {
         userService.register(user);
     }
 
@@ -70,11 +55,10 @@ public class UserController {
 
     }
 
-    @RequestMapping(value = "api/json/user/{name}", method = RequestMethod.GET)
-    public User getUser(@PathVariable String name) {
+    @RequestMapping(value = "api/user/{username}", method = RequestMethod.GET)
+    public User getUser(@PathVariable String username) {
         User user = new User();
-        user.setUsername(name);
-        user.setEmail("123");
+        user.setUsername(username);
         return user;
     }
 

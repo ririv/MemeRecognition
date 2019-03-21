@@ -1,12 +1,13 @@
 package com.riri.emojirecognition.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
+@Table(indexes = {
+        @Index(columnList = "subId"),
+        @Index(columnList = "tag")
+        })
 public class Img implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,13 +17,19 @@ public class Img implements Serializable {
 
     private String tag;
 
+//    @ManyToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
+//    @JoinColumn(name = "img_id",foreignKey = @ForeignKey(name = "none",value = ConstraintMode.NO_CONSTRAINT))
+//    private Set<Tag> tags;
+
     private String description;
 
     private String owner;
 
     private String sourcename;
 
-    private String subdirectory;
+    private String subDir;
+
+    private Long subId;
 
     public Long getId() {
         return id;
@@ -72,11 +79,19 @@ public class Img implements Serializable {
         this.sourcename = sourcename;
     }
 
-    public String getSubdirectory() {
-        return subdirectory;
+    public String getSubDir() {
+        return subDir;
     }
 
-    public void setSubdirectory(String subdirectory) {
-        this.subdirectory = subdirectory;
+    public void setSubDir(String subDir) {
+        this.subDir = subDir;
+    }
+
+    public Long getSubId() {
+        return subId;
+    }
+
+    public void setSubId(Long subId) {
+        this.subId = subId;
     }
 }
