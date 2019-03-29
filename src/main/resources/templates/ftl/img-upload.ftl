@@ -23,13 +23,11 @@
     <#if msg??>
         <span>${msg}</span><br>
     <#else >
-        <span>${msg!("文件未上传")}</span><br>
+        <span>${msg!("请上传图片")}</span><br>
     </#if>
     <#--显示图片，一定要在img中的src发请求给controller，否则直接跳转是乱码-->
     <#if filename??>
         <img alt="上传的图片" src="/show?filename=${filename}" style="width: 200px"/>
-    <#else>
-        <img alt="上传的图片" src="/show" style="width: 100px"/>
     </#if>
 </div>
 

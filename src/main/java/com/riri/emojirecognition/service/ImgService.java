@@ -1,23 +1,36 @@
 package com.riri.emojirecognition.service;
 
+import com.riri.emojirecognition.component.deeplearning.ClassifierWithDeepLearning4j;
 import com.riri.emojirecognition.domain.Img;
 import com.riri.emojirecognition.repository.ImgRepository;
 import com.riri.emojirecognition.util.FileUtil;
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Logger;
 
 @Service
 public class ImgService {
 
     @Value("${web.default-path}")
-    public String defaultPath;
+    private String defaultPath;
+
+    @Value("${classify.proba}")
+    private float classifyProba;
+
+    private final ImgRepository imgRepository;
+    private ClassifierWithDeepLearning4j classifier;
 
     @Autowired
-    private ImgRepository imgRepository;
+    public ImgService(ImgRepository imgRepository, ClassifierWithDeepLearning4j classifier ) {
+        this.imgRepository = imgRepository;
+        this.classifier = classifier;
+    }
 
     public Img save(Img img) {
         return imgRepository.save(img);
@@ -133,5 +146,23 @@ public class ImgService {
         }
 
         return new ArrayList<>(idImgMap.values());
+    }
+
+    public String classify(File image){
+
+        Pair<String,Float> labelwithProba ;
+        String label = null;
+        Float proba;
+        try {
+           labelwithProba =  classifier.classify(image);
+           proba = labelwithProba.getValue();
+           if (proba > classifyProba) {
+           label = labelwithProba.getKey();
+           }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return label;
     }
 }

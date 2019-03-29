@@ -29,6 +29,7 @@ public class Img implements Serializable {
 
     private String subDir;
 
+    //subId为此标签中图片的序号，用于通过标签推荐
     private Long subId;
 
     public Long getId() {

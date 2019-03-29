@@ -24,23 +24,23 @@ public interface UserService {
 
     boolean usernameExist(String username);
 
-    User register(User user);
+    User addUser(User user);
 
-    User addRole(User user, Role role);
+    User addUserRole(User user, Role role);
 
-    User addRole2(User user, String roleName);
+    User addUserRoleByRoleName(User user, String roleName);
 
-    User addRoles(User user, Set<Role> roles);
+    User addUserRoles(User user, Set<Role> roles);
 
-    User addRoles2(User user, Set<String> roleNames);
+    User addUserRolesByRoleNames(User user, Set<String> roleNames);
 
-    User updateRole(User user, Role role);
+    User updateUserRole(User user, Role role);
 
-    User updateRole2(User user, String roleName);
+    User updateUserRole(User user, String roleName);
 
-    User updateRoles(User user, Set<Role> roles);
+    User updateUserRoles(User user, Set<Role> roles);
 
-    User updateRoles2(User user, Set<String> roleNames);
+    User updateUserRolesByRoleNames(User user, Set<String> roleNames);
 
 
 

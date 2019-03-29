@@ -24,8 +24,13 @@ import javax.sql.DataSource;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
+    final
     DataSource dataSource;
+
+    @Autowired
+    public WebSecurityConfig(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -147,6 +152,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //解决静态资源css,js等被拦截的问题
         web
                 .ignoring()
-                    .antMatchers("/css/**","/js/**","/image/**","/lib/**");
+                    .antMatchers("/css/**","/js/**","/image/**","/lib/**","/model/**");
     }
 }

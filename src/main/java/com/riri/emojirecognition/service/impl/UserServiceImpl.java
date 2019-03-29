@@ -16,14 +16,18 @@ import java.util.*;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    private final RoleService roleService;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    private RoleService roleService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public UserServiceImpl(PasswordEncoder passwordEncoder,RoleService roleService,UserRepository userRepository) {
+        this.passwordEncoder = passwordEncoder;
+        this.roleService = roleService;
+        this.userRepository = userRepository;
+    }
 
     @Override
     public List<User> findAll() {
@@ -61,10 +65,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User register(User user) {
+    public User addUser(User user) {
 
         if (usernameExist(user.getUsername())) {
-            System.out.println("用户名已存在");
+//            System.out.println("用户名已存在");
             throw new UserAlreadyExistException("There is an account with the username: " + user.getUsername());
         }
         //测试，这里不能删除同id的role，因为使用的add，函数的hashCode不一样
@@ -89,7 +93,7 @@ public class UserServiceImpl implements UserService {
     //经测试，使用list时，在增加或修改单个用户权限时，即使权限一样，数据库也会重新删除权限，再插入相同的权限
     //但使用set时，数据库会查询权限，对比权限是否相同，如果相同则不继续往下操作
     @Override
-    public User addRole(User user, Role role) {
+    public User addUserRole(User user, Role role) {
         Set<Role> roles = user.getRoles();
         roles.add(role);
         user.setRoles(roles);
@@ -99,7 +103,7 @@ public class UserServiceImpl implements UserService {
 
     //增加单个角色
     @Override
-    public User addRole2(User user, String roleName) {
+    public User addUserRoleByRoleName(User user, String roleName) {
 //        查询有无此角色，因为修改角色改为选择式，这里不再验证角色是否为null
         Role role = roleService.findByName(roleName);
 //        if (role != null) {
@@ -112,7 +116,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User addRoles(User user, Set<Role> roles) {
+    public User addUserRoles(User user, Set<Role> roles) {
         //获得原始权限
         Set<Role> oldRoles = user.getRoles();
 
@@ -125,7 +129,7 @@ public class UserServiceImpl implements UserService {
 
     //增加多个角色
     @Override
-    public User addRoles2(User user, Set<String> roleNames) {
+    public User addUserRolesByRoleNames(User user, Set<String> roleNames) {
         //获得原始权限
         Set<Role> oldRoles = user.getRoles();
         Set<Role> newRoles = new HashSet<>();
@@ -150,7 +154,7 @@ public class UserServiceImpl implements UserService {
 
     //更新单个角色
     @Override
-    public User updateRole(User user, Role role) {
+    public User updateUserRole(User user, Role role) {
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         user.setRoles(roles);
@@ -161,7 +165,7 @@ public class UserServiceImpl implements UserService {
 
     //更新单个角色
     @Override
-    public User updateRole2(User user, String roleName) {
+    public User updateUserRole(User user, String roleName) {
 //        查询有无此角色，因为修改角色改为选择式，这里不再验证角色是否为null
         Role role = roleService.findByName(roleName);
 //        if (role != null) {
@@ -175,14 +179,14 @@ public class UserServiceImpl implements UserService {
 
     //更新多个角色
     @Override
-    public User updateRoles(User user,Set<Role> roles) {
+    public User updateUserRoles(User user, Set<Role> roles) {
         user.setRoles(roles);
         return userRepository.save(user);
     }
 
     //更新多个角色
     @Override
-    public User updateRoles2(User user, Set<String> roleNames) {
+    public User updateUserRolesByRoleNames(User user, Set<String> roleNames) {
         Set<Role> newRoles = new HashSet<>();
         for (String roleName : roleNames) {
 //        查询有无此角色，因为修改角色改为选择式，这里不再验证角色是否为null

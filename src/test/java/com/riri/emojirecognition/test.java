@@ -109,7 +109,7 @@ public class test {
         User user = new User();
         user.setUsername("09813");
         user.setPassword("098");
-        userService.register(user);
+        userService.addUser(user);
     }
 
 
@@ -150,7 +150,7 @@ public class test {
         roleNames.add("ROLE_ADMIN");
         roleNames.add("ROLE_GUEST");
         roleNames.add("ROLE_USER");
-        User user = userService.addRoles2(userService.findById(70L), roleNames);
+        User user = userService.addUserRolesByRoleNames(userService.findById(70L), roleNames);
         System.out.println(user.getId());
     }
 
@@ -168,7 +168,7 @@ public class test {
         }
         Role role = allRoles.get(1);
         User user = userService.findById(70L);
-        userService.addRole(user,role);
+        userService.addUserRole(user,role);
 
     }
 
@@ -191,7 +191,7 @@ public class test {
         }
 
         User user = userService.findById(70L);
-        userService.updateRoles(user,roles);
+        userService.updateUserRoles(user,roles);
     }
 
     //测试批量修改角色 string类型
@@ -202,7 +202,7 @@ public class test {
         roleNames.add("ROLE_ADMIN");
         roleNames.add("ROLE_GUEST");
 //        roleNames.add("ROLE_USER");
-        User user = userService.updateRoles2(userService.findById(70L), roleNames);
+        User user = userService.updateUserRolesByRoleNames(userService.findById(70L), roleNames);
         System.out.println(user.getId());
     }
 
