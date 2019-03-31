@@ -100,7 +100,7 @@ public class test {
     @Test
     public void test03(){
         String path = "D:\\tests\\12345";
-        imgService.batchInsertToDbByFolder(path,null);
+        imgService.batchInsertToDbByDir(path,null,0);
     }
 
     @Test

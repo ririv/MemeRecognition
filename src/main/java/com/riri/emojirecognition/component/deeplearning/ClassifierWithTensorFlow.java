@@ -2,6 +2,9 @@ package com.riri.emojirecognition.component.deeplearning;
 
 import org.tensorflow.*;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
 public class ClassifierWithTensorFlow {
@@ -20,6 +23,26 @@ public class ClassifierWithTensorFlow {
             s.copyTo(t);
             for (float i : t[0])
                 System.out.println(i);
+        }
+    }
+
+    public void predict() throws Exception {
+        try (Graph graph = new Graph()) {
+            graph.importGraphDef(Files.readAllBytes(Paths.get(
+                    "C:\\Users\\Jean\\Desktop\\design\\EmojiRecognition\\src\\main\\resources\\model\\tf_model\\saved_model.pb"
+            )));
+            try (Session sess = new Session(graph)) {
+                // 自己构造一个输入
+                float[][] input = {{56, 632, 675, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+                try (Tensor x = Tensor.create(input);
+                     // input是输入的name，output是输出的name
+                     Tensor y = sess.runner().feed("input", x).fetch("output").run().get(0)) {
+                    float[][] result = new float[1][(int)y.shape()[1]];
+                    y.copyTo(result);
+                    System.out.println(Arrays.toString(y.shape()));
+                    System.out.println(Arrays.toString(result[0]));
+                }
+            }
         }
     }
 }

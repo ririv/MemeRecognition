@@ -1,5 +1,6 @@
 package com.riri.emojirecognition.util;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +17,9 @@ public class FileUtil {
 
     @Value("${server.port}")
     private String port;
+
+    @Value("${web.upload-path}")
+    private static String uploadPath;
 
     public static class FileInfo{
         private String name;
@@ -43,13 +47,14 @@ public class FileUtil {
         }
     }
 
+
     /**
-     * @param file 文件
+     * @param mfile 文件
      * @param path 文件存放路径
      * @param fileName 源文件名
      * @return
      */
-    public static boolean upload(MultipartFile file, String path, String fileName) {
+    public static File upload(MultipartFile mfile, String path, String fileName) {
 
         // 生成新的文件名
 //        String newPath = path + "/" + getUUIDFilename(fileName);
@@ -68,13 +73,14 @@ public class FileUtil {
 
         try {
             //保存文件
-            file.transferTo(dest);
-            return true;
+//            FileUtils.copyInputStreamToFile(mfile.getInputStream(), dest);
+
+            mfile.transferTo(dest);
         } catch (IllegalStateException | IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            return false;
         }
+        return dest;
     }
 
 
@@ -112,10 +118,7 @@ public class FileUtil {
 //        }
     }
 
-    @Value("${web.default-path}")
-    private static String defaultPath;
-
-    //遍历文件夹，迭代
+    //遍历文件夹，迭代方式
     public static List<FileInfo> traverseFolder(String path) {
         int fileNum = 0, folderNum = 0;
         File file = new File(path);
@@ -184,40 +187,40 @@ public class FileUtil {
         return fileList;
     }
 
-//    //遍历文件夹，递归，效率较低
-//    public static List<FileInfo> traverseFolder2(String dirpath){
-//
-//        File file = new File(dirpath);
-//        List<FileInfo> fileList = new ArrayList<>();
-//
-//        if (file.exists()) {
-//            File[] files = file.listFiles();
-//            if (null == files || files.length == 0) {
-//                System.out.println("文件夹是空的!");
-//            }
-//            else {
-//                for (File f : files) {
-//                    if (f.isDirectory()) {
-//                        System.out.println("文件夹: " + f.getAbsolutePath());
-//                        traverseFolder2(f.getAbsolutePath());
-//                    }
-//                    else {
-//                        System.out.println("文件: " + f.getAbsolutePath());
-//
-//                        //获得文件信息并保存至数组
-//                        FileInfo fileInfo = new FileInfo(f.getName(), f.getParent()+"\\");
-//                        System.out.println("文件名: "+f.getName());
-//                        System.out.println("父路径: "+ f.getParent()+"\\");
-//                        fileList.add(fileInfo);
-//                        }
-//                    }
-//                }
-//            }
-//        else {
-//            System.out.println("文件不存在!");
-//
-//        }
-//        return fileList;
-//    }
+//    //遍历文件夹，递归方式
+    public static List<FileInfo> traverseFolder2(String dirpath){
+
+        File file = new File(dirpath);
+        List<FileInfo> fileList = new ArrayList<>();
+
+        if (file.exists()) {
+            File[] files = file.listFiles();
+            if (null == files || files.length == 0) {
+                System.out.println("文件夹是空的!");
+            }
+            else {
+                for (File f : files) {
+                    if (f.isDirectory()) {
+                        System.out.println("文件夹: " + f.getAbsolutePath());
+                        traverseFolder2(f.getAbsolutePath());
+                    }
+                    else {
+                        System.out.println("文件: " + f.getAbsolutePath());
+
+                        //获得文件信息并保存至数组
+                        FileInfo fileInfo = new FileInfo(f.getName(), f.getParent()+"\\");
+                        System.out.println("文件名: "+f.getName());
+                        System.out.println("父路径: "+ f.getParent()+"\\");
+                        fileList.add(fileInfo);
+                        }
+                    }
+                }
+            }
+        else {
+            System.out.println("文件不存在!");
+
+        }
+        return fileList;
+    }
 
 }

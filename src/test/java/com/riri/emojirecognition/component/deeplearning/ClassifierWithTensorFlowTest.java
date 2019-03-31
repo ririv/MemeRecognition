@@ -4,8 +4,8 @@ import org.junit.Test;
 
 public class ClassifierWithTensorFlowTest {
     @Test
-        public void test01(){
+        public void test01() throws Exception{
         ClassifierWithTensorFlow classifierWithTensorFlow = new ClassifierWithTensorFlow();
-        classifierWithTensorFlow.classify();
+        classifierWithTensorFlow.predict();
     }
 }
