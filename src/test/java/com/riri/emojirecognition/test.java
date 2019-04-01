@@ -130,15 +130,16 @@ public class test {
     //测试通过标签查询随机图片
     @Test
     public void test07(){
-        String tag = "123";
+        String tag = "狗";
         List<Img> list;
-        list = imgService.findRandomImgsByTagLimitNum(tag ,2);
+        list = imgService.findRandomImgsByTagLimitNum(tag ,10);
 
-//        System.out.println(list);
+        System.out.println(list.size());
 
-//        list = imgRepository.findRandomImgByTab(2);
-        for(Img img: list){
-            System.out.println(img.getName());
+        for(Img img: list) {
+            if (img != null) {
+                System.out.println(img.getName());
+            }
         }
     }
 

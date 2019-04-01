@@ -117,11 +117,17 @@ public class ImgService {
         }
     }
 
+    /**
+     * 第一种方法，生成随机数，通过subId依次查询
+     * 优点，满足要求，且避免了查询为null的空数据
+     * 缺点：在subId不连续的情况下会进行多次查询，直到满足数量。单个查询，增加了数据库的压力
+     * 适合一定要满足数量要求时使用
+     */
     public List<Img> findRandomImgsByTagLimitNum(String tag, int num) {
-//        return imgRepository.findRandomImgsByTagLimitNum(tag, num);
         Img img;
-        //经测试，使用hashmap可以有效使图片数达到指定数量，并且不重复，key为id，value为img
-        Map<Long, Img> idImgMap = new HashMap<>();
+
+        List<Long> randomNumList = new ArrayList<>(); //避免随机数的重复，与重复查询
+        List<Img> imgs = new ArrayList<>(); //用来存储Img
 
         Long max = imgRepository.findMaxSubIdByTag(tag);
         Long min = imgRepository.findMinSubIdByTag(tag);
@@ -129,42 +135,86 @@ public class ImgService {
 
         long randomNum;
 
-        //如果查找的数据库的
+        //如果num小于数据库中该tag的总数目count，则将count赋值给num
         if (count < num) {
             num = (int) count;
         }
 
-        while (idImgMap.size() < num) {
-            randomNum = ThreadLocalRandom.current().nextLong(min, max + 1);
-
-//            //在数据量较少时，随机数可能发生重合，但在数据量大时，此几率可以忽略不计
-//            //主要时考虑到数据库中可能发生跨id存储数据的现象,所以必须得检测该id的数据是否存在
-//            //而如果先将一组随机数全部生成好，再进行数据库的查询，虽能可以避免随机数的重叠
-//            //但不能避免是否会有不存在此id的数据
-//            img = imgRepository.findBySubIdAndTag(randomNum,tag);
-//            if (img != null){
-//                idImgMap.put(randomNum,img);
-//            }
-
-            //第二种，此方法虽然可以避免重复查询，但是操作繁琐
-            idImgMap.put(randomNum, null);
-
-        }
-
-        //第二种续
-        for (long rn : idImgMap.keySet()) {
-            img = imgRepository.findBySubIdAndTag(rn, tag);
-            if (img != null) {
-                idImgMap.put(rn, img);
+        while (imgs.size() < num) {        //当所要的img数量不满足要求时，则循环
+            randomNum = ThreadLocalRandom.current().nextLong(min, max + 1); //创建Long类型随机数，范围为min~max
+            if (!randomNumList.contains(randomNum)) { //当randomNumList中不包含此随机数
+                img = imgRepository.findByTagAndSubId(tag, randomNum); //查询此img
+                if (img!=null) {
+                    imgs.add(img);
+                }
+                randomNumList.add(randomNum); //将此随机数添加至列表，避免重复查询
             }
-
-            System.out.println(rn);//TODO 测试
         }
-
-        return new ArrayList<>(idImgMap.values());
+        return imgs;
     }
 
-    public String classify(File image) {
+    /**
+     *  第二种方法，生成随机数，通过subId查询
+     *  优点：一次性查询完毕，数据库压力小
+     *  缺点：在subId不连续的情况下，可能会查询到空数据，虽然最终结果里空数据被省去，不会有null值，但是数据的数量要求不满足
+     *  适合subId连续时使用
+     */
+    public List<Img> findRandomImgsByTagLimitNum2(String tag, int num) {
+        Long max = imgRepository.findMaxSubIdByTag(tag);
+        Long min = imgRepository.findMinSubIdByTag(tag);
+        long count = imgRepository.countByTag(tag);
+        long randomNum;
+        Set<Long> randomNumSet = new HashSet<>(); //定义Set，避免随机数的重复
+
+        if (count < num) {
+            num = (int) count;
+        }
+
+        while (randomNumSet.size() < num) {
+            randomNum = ThreadLocalRandom.current().nextLong(min, max + 1);
+            randomNumSet.add(randomNum);
+        }
+        System.out.println((randomNumSet));
+        return imgRepository.findByTagAndSubIdIn(tag,randomNumSet);
+    }
+
+    /**
+     * 第三种方法，从数据库，取出全部符合tag标签的数据，从中随机抽取数据
+     * 优点：一次性查询完毕，数据库压力小
+     * 缺点，数据量太大时，list在内存中存储的数据太大
+     * 适合数据量不是异常大时使用
+     */
+    public List<Img> findRandomImgsByTagLimitNum3(String tag, int num) {
+        List<Img> imgs = imgRepository.findByTag(tag);
+
+        List<Long> subIds = new ArrayList<>();
+        List<Img> results = new ArrayList<>();
+        Set<Integer> randomNumSet = new HashSet<>(); //定义Set，避免随机数的重复
+        long count = imgRepository.countByTag(tag);
+        int randomNum;
+
+        for (Img img: imgs) {
+            subIds.add(img.getSubId());
+        }
+
+        if (count < num) {
+            num = (int) count;
+        }
+
+        while (randomNumSet.size() < num) {
+            //生成随机数，范围subId的索引范围
+            //因为生成的随机数是左闭右开，需要+1，而subId.size需要-1，正好抵消
+            randomNum = ThreadLocalRandom.current().nextInt(0, subIds.size());
+            randomNumSet.add(randomNum);
+        }
+        for (int id:randomNumSet) {
+            results.add(imgs.get(id));
+        }
+
+        return results;
+    }
+
+    public Optional<String> classify(File image) {
 
         Pair<String, Float> labelWithProba;
         String label = null;
@@ -181,6 +231,6 @@ public class ImgService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return label;
+        return Optional.ofNullable(label);
     }
 }

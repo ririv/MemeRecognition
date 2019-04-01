@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import sun.util.resources.cldr.gv.LocaleNames_gv;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface ImgRepository extends JpaRepository<Img, Long> {
@@ -18,18 +19,22 @@ public interface ImgRepository extends JpaRepository<Img, Long> {
     Img findFirstByTagOrderByIdDesc(String tag);
 
 
-    @Query(value = "SELECT MIN(id) FROM Img")
+    @Query(value = "select min(id) from Img")
     Long findMinId();
 
-    @Query(value = "SELECT MAX(id) FROM Img")
+    @Query(value = "select max(id) from Img")
     Long findMaxId();
 
-    @Query(value = "SELECT MIN(subId) FROM Img WHERE tag =:tag")
+    @Query(value = "select min(subId) from Img where tag =:tag")
     Long findMinSubIdByTag(@Param("tag")String tag);
-    @Query(value = "SELECT MAX(subId) FROM Img WHERE tag =:tag")
+    @Query(value = "select max(subId) from Img where tag =:tag")
     Long findMaxSubIdByTag(@Param("tag")String tag);
 
-    Img findBySubIdAndTag(Long id, String tag);
+    Img findByTagAndSubId(String tag,Long subId);
 
     Long countByTag(String tag);
+
+    List<Img> findByTagAndSubIdIn(String tag,Collection<?> c);
+
+    List<Img> findByTag(String tag);
 }
