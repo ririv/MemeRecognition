@@ -54,14 +54,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                    //允许所有人访问该页面
                     .permitAll()
                     //登录成功返回首页
-                    .defaultSuccessUrl("/index.html")
+                    .defaultSuccessUrl("/index")
                     //登录失败返回页面
                     //.failureUrl("/login?error")
 
                 .and()
                 .logout()
                     .permitAll()
-                    .logoutSuccessUrl("/index.html")
+                    .logoutSuccessUrl("/index")
                 .and().rememberMe()
                 .and().csrf().disable();
 

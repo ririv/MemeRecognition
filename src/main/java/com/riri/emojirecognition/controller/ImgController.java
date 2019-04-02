@@ -1,10 +1,15 @@
 package com.riri.emojirecognition.controller;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
 import com.riri.emojirecognition.domain.Img;
 import com.riri.emojirecognition.service.ImgService;
 import com.riri.emojirecognition.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.jackson.JsonObjectDeserializer;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +19,9 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.Writer;
 import java.util.*;
 
 
@@ -56,35 +64,32 @@ public class ImgController {
         }
     }
 
-    @GetMapping("/img-upload")
-    public ModelAndView imgupload() {
-        return new ModelAndView("img-upload");
-    }
-
-    @RequestMapping("fileUpload")
-    public Map<String,Object> upload(@RequestParam("filename") MultipartFile mfile, Map<String, Object> map, HttpServletRequest request, HttpServletResponse response){
+    @PostMapping("upload")
+    public Map<String,Object> upload(@RequestParam("file") MultipartFile mfile){
 
         // 上传成功或者失败的提示
         String msg;
+        Optional<String> classifyResult;
+        String tag = null;
+        List<Img> relatedImgs = null;
+        Map<String,Object> resultMap = new HashMap<>();
 
-//        if (mfile.isEmpty()) {
-//            return new ModelAndView("img-upload");
-//        }
 
-        //调用上传工具类
-        //图片新名
-        String uuidFilename = FileUtil.getUUIDFilename(mfile.getOriginalFilename());
-        File file = FileUtil.upload(mfile, uploadPath, uuidFilename);
+        if (!mfile.isEmpty()) {
+            //调用上传工具类
+            //图片新名
+            String uuidFilename = FileUtil.getUUIDFilename(mfile.getOriginalFilename());
+            File file = FileUtil.upload(mfile, uploadPath, uuidFilename);
 
-        if (file.length() != 0) {
-            Optional<String> result = imgService.classify(file);
-//            System.out.println(result);
+            classifyResult= imgService.classify(file);
 
-            // 上传成功，给出页面提示
-            msg = "无法识别";
-            if (result.isPresent()) {
-                msg = result.get();
+            // 识别成功，给出页面提示
+            if (classifyResult.isPresent()) {
+                msg = "识别成功";
+                tag = classifyResult.get();
+                relatedImgs = imgService.findRandomImgsByTagLimitNum3(tag,10);
             }
+            else {msg = "无法识别";}
 
             //保存到repo
             Img img = new Img();
@@ -99,19 +104,14 @@ public class ImgController {
             imgService.save(img);
         } else {
             msg = "图片上传失败！";
-
         }
 
-        // 显示图片
-        map.put("msg", msg);
-        //图片原始名
-        //map.put("filename", mfile.getOriginalFilename());
-        //图片新名，使用新名必须修改，否则无法映射文件路径
-        map.put("filename", uuidFilename);
+        //构建json
+        Map<String,Object> a =  new HashMap<>();
+        resultMap.put("msg",msg);
+        resultMap.put("tag",tag);
+        resultMap.put("relatedImgs",relatedImgs);
 
-//            RequestDispatcher requestDispatcher =request.getRequestDispatcher("index");
-//            //调用forward()方法，转发请求     
-//            requestDispatcher.forward(request,response);
-        return map;
+        return resultMap;
     }
 }
