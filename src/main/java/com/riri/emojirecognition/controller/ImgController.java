@@ -1,27 +1,17 @@
 package com.riri.emojirecognition.controller;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonObject;
 import com.riri.emojirecognition.domain.Img;
 import com.riri.emojirecognition.service.ImgService;
 import com.riri.emojirecognition.util.FileUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.jackson.JsonObjectDeserializer;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.Writer;
 import java.util.*;
 
 
@@ -66,7 +56,6 @@ public class ImgController {
 
     @PostMapping("upload")
     public Map<String,Object> upload(@RequestParam("file") MultipartFile mfile){
-
         // 上传成功或者失败的提示
         String msg;
         Optional<String> classifyResult;
@@ -107,7 +96,6 @@ public class ImgController {
         }
 
         //构建json
-        Map<String,Object> a =  new HashMap<>();
         resultMap.put("msg",msg);
         resultMap.put("tag",tag);
         resultMap.put("relatedImgs",relatedImgs);

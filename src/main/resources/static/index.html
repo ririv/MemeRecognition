@@ -11,26 +11,27 @@
 </head>
 <body style="padding: 10px">
 <div id="app1">
-    <form>
+    <div>
+        <form>
         <span class="btn btn-success fileinput-button">
             <span>选择图片</span>
-            <input type="file" accept="image/*" name="file"  @change="getFile($event)">
+            <input type="file" accept="image/*" name="file" @change="getFile($event)">
         </span>
-        <input type="submit" value="上传" @click="submit($event)">
-    </form>
+            <input type="submit" value="上传" @click="submit($event)">
+        </form>
+    </div>
+
+    <div>
+        <span>{{ result.msg }}</span>
+        <span>{{ result.tag }}</span>
+    </div>
+
+    <div>
+        <div v-for="value in relatedImgs">
+            <a :href="value"><img alt="图片" :src="value" style="width: 200px;height: 180px"/> </a>
+        </div>
+    </div>
 </div>
-<!--<div>-->
-<!--    <#&#45;&#45;判断是否上传文件&ndash;&gt;-->
-<!--    <#if msg??>-->
-<!--        <span>${msg}</span><br>-->
-<!--    <#else >-->
-<!--        <span>${msg!("请上传图片")}</span><br>-->
-<!--    </#if>-->
-<!--    <#&#45;&#45;显示图片，一定要在img中的src发请求给controller，否则直接跳转是乱码&ndash;&gt;-->
-<!--    <#if filename??>-->
-<!--        <img alt="上传的图片" src="/show?filename=${filename}" style="width: 200px"/>-->
-<!--    </#if>-->
-<!--</div>-->
 <script src="js/index.js"></script>
 </body>
 </html>

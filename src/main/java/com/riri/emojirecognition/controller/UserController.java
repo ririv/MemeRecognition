@@ -56,7 +56,6 @@ public class UserController {
     @RequestMapping("/register")
     public ModelAndView registry() {
         return new ModelAndView("signup.html");
-
     }
 
     @RequestMapping(value = "api/user/{username}", method = RequestMethod.GET)
