@@ -2,6 +2,8 @@ package com.riri.emojirecognition.service;
 
 import com.riri.emojirecognition.domain.Role;
 import com.riri.emojirecognition.domain.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Set;
@@ -14,36 +16,25 @@ public interface UserService {
 
     User findById(Long id);
 
+    User findByUsername(String username);
+
+    Page<User> findAll(Pageable pageable);
+
     User save(User user);
 
     List<User> saveAll(List<User> users);
 
+    void delete(User user);
+
     void deleteById(Long id);
 
-    boolean emailExist(String email);
+    boolean existsByEmail(String email);
 
-    boolean usernameExist(String username);
+    boolean existsByUsername(String username);
 
-    User addUser(User user);
+    User updateUserById(Long id,User user);
 
-    User addUserRole(User user, Role role);
-
-    User addUserRoleByRoleName(User user, String roleName);
-
-    User addUserRoles(User user, Set<Role> roles);
-
-    User addUserRolesByRoleNames(User user, Set<String> roleNames);
-
-    User updateUserRole(User user, Role role);
-
-    User updateUserRole(User user, String roleName);
-
-    User updateUserRoles(User user, Set<Role> roles);
-
-    User updateUserRolesByRoleNames(User user, Set<String> roleNames);
-
-
-
+    User createUser(User user);
 
 
 }

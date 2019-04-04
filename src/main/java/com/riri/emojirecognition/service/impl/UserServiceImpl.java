@@ -2,11 +2,14 @@ package com.riri.emojirecognition.service.impl;
 
 import com.riri.emojirecognition.domain.Role;
 import com.riri.emojirecognition.domain.User;
+import com.riri.emojirecognition.exception.UserNotFoundException;
 import com.riri.emojirecognition.repository.UserRepository;
 import com.riri.emojirecognition.service.RoleService;
 import com.riri.emojirecognition.service.UserService;
 import com.riri.emojirecognition.exception.UserAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +39,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(Long id) {
-        return userRepository.findById(id).orElse(null);
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (!optionalUser.isPresent()){
+            throw new UserNotFoundException();
+        }
+        return optionalUser.get();
+    }
+
+    @Override
+    public User findByUsername(String username){
+        return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public Page<User> findAll(Pageable pageable){
+        return userRepository.findAll(pageable);
     }
 
     @Override
@@ -50,152 +67,75 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void delete(User user){
+        userRepository.delete(user);
+    }
+
+    @Override
     public void deleteById(Long id) {
         userRepository.deleteById(id);
     }
 
     @Override
-    public boolean emailExist(String email) {
-        return userRepository.findByEmail(email) != null;
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 
     @Override
-    public boolean usernameExist(String username) {
-        return userRepository.findByUsername(username) != null;
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
     }
 
+    /**
+     * 通过id来修改用户信息
+     * 因为这里是通过id来修改用户信息
+     * 所以由所指定的id来确定user，而不是直接通过user实例来确定
+     * 防止发生id的错乱
+     * @param id 指定的id
+     * @param user 用户信息
+     * @return user
+     */
     @Override
-    public User addUser(User user) {
+    public User updateUserById(Long id,User user){
 
-        if (usernameExist(user.getUsername())) {
-//            System.out.println("用户名已存在");
-            throw new UserAlreadyExistException("There is an account with the username: " + user.getUsername());
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (!optionalUser.isPresent()){
+            throw new UserNotFoundException("The User not found:"+id);
         }
-        //测试，这里不能删除同id的role，因为使用的add，函数的hashCode不一样
+        else {
+            //设置id为所指定的id，防止user中有id信息，而发生更新错位的现象
+            user.setId(id);
+            user.setPassword(user.getPassword());
+            userRepository.save(user);
+            return user;
+        }
+    }
+
+    @Override
+    public User createUser(User user) {
+
+        if (existsByUsername(user.getUsername())) {
+            throw new UserAlreadyExistException("The username already exists: " + user.getUsername());
+        }
+        if (user.getEmail()!=null) { //不加此判定，邮箱为空时也会抛出异常
+            if (existsByEmail(user.getEmail())) {
+                throw new UserAlreadyExistException("The email already exists: " + user.getEmail());
+            }
+        }
+
+        //测试，这里Set集合不能删除同id的role，因为使用的add，函数的hashCode不一样
         Set<Role> roles = new HashSet<>();
         roles.add(roleService.findByName("ROLE_USER"));
 //        roles.add(roleService.findByName("ROLE_ADMIN"));
 //        roles.add(roleService.findByName("ROLE_ADMIN"));
 //        for (Role role: roles){
 //        System.out.println(role.hashCode());}
-        return userRepository.save(
-                new User(
-                        user.getUsername(),
-                        passwordEncoder.encode(user.getPassword()),
-                        user.getEmail(),
-                        roles
-//                        Collections.singletonList(roleService.findByName("ROLE_USER"))
-//                        Arrays.asList(roleRepository.findByName("ROLE_USER"),roleRepository.findByName("ROLE_ADMIN")) //此方法可添加多个权限
-                )
-        );
-    }
 
-    //经测试，使用list时，在增加或修改单个用户权限时，即使权限一样，数据库也会重新删除权限，再插入相同的权限
-    //但使用set时，数据库会查询权限，对比权限是否相同，如果相同则不继续往下操作
-    @Override
-    public User addUserRole(User user, Role role) {
-        Set<Role> roles = user.getRoles();
-        roles.add(role);
         user.setRoles(roles);
-        user = userRepository.save(user);
-        return user;
-    }
-
-    //增加单个角色
-    @Override
-    public User addUserRoleByRoleName(User user, String roleName) {
-//        查询有无此角色，因为修改角色改为选择式，这里不再验证角色是否为null
-        Role role = roleService.findByName(roleName);
-//        if (role != null) {
-        Set<Role> roles = user.getRoles();
-        roles.add(role);
-        user.setRoles(roles);
-        user = userRepository.save(user);
-//        }else {System.out.println("无此角色:"+roleName);}
-        return user;
-    }
-
-    @Override
-    public User addUserRoles(User user, Set<Role> roles) {
-        //获得原始权限
-        Set<Role> oldRoles = user.getRoles();
-
-        //组合旧权限与要新增的权限，使用set避免重复数据
-        roles.addAll(oldRoles);
-        Set<Role> newRoles = new HashSet<>(roles);
-        user.setRoles(newRoles);
-        return userRepository.save(user);
-    }
-
-    //增加多个角色
-    @Override
-    public User addUserRolesByRoleNames(User user, Set<String> roleNames) {
-        //获得原始权限
-        Set<Role> oldRoles = user.getRoles();
-        Set<Role> newRoles = new HashSet<>();
-
-        //组合旧权限与要新增的权限，使用set避免重复数据
-        for (Role role : oldRoles) {
-            roleNames.add(role.getName());
-        }
-
-        //遍历组合后的Set权限集，添加至空权限集newRoles
-        for (String roleName : roleNames) {
-//        查询有无此角色，因为修改角色改为选择式，这里不再验证角色是否为null
-            Role role = roleService.findByName(roleName);
-//            if (role != null){
-            newRoles.add(role);
-//            }else {System.out.println("无此角色:"+roleName);}
-        }
-        user.setRoles(newRoles);
-        return userRepository.save(user);
-    }
-
-
-    //更新单个角色
-    @Override
-    public User updateUserRole(User user, Role role) {
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        user.setRoles(roles);
-        user = userRepository.save(user);
-//        }else {System.out.println("无此角色:"+roleName);}
-        return user;
-    }
-
-    //更新单个角色
-    @Override
-    public User updateUserRole(User user, String roleName) {
-//        查询有无此角色，因为修改角色改为选择式，这里不再验证角色是否为null
-        Role role = roleService.findByName(roleName);
-//        if (role != null) {
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        user.setRoles(roles);
-        user = userRepository.save(user);
-//        }else {System.out.println("无此角色:"+roleName);}
-        return user;
-    }
-
-    //更新多个角色
-    @Override
-    public User updateUserRoles(User user, Set<Role> roles) {
-        user.setRoles(roles);
-        return userRepository.save(user);
-    }
-
-    //更新多个角色
-    @Override
-    public User updateUserRolesByRoleNames(User user, Set<String> roleNames) {
-        Set<Role> newRoles = new HashSet<>();
-        for (String roleName : roleNames) {
-//        查询有无此角色，因为修改角色改为选择式，这里不再验证角色是否为null
-            Role role = roleService.findByName(roleName);
-//            if (role != null) {
-            newRoles.add(role);
-//            }else {System.out.println("无此角色:"+roleName);}
-        }
-        user.setRoles(newRoles);
+//                    Collections.singletonList(roleService.findByName("ROLE_USER"))
+//                    Arrays.asList(roleRepository.findByName("ROLE_USER"),roleRepository.findByName("ROLE_ADMIN")) //此方法可添加多个权限
+        user.setPassword(passwordEncoder.encode(user.getPassword())); //加密密码
+        user.setId(null); //将id设置为空，id将自增，防止通过id修改信息
         return userRepository.save(user);
     }
 

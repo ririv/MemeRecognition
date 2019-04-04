@@ -9,9 +9,11 @@ public interface RoleService {
 
     Role save(Role role);
 
-    Role createUser(String roleName);
+    Role createRole(String roleName);
 
     Role findByName(String roleName);
+
+    Role findById(Long roleId);
 
     List<Role> findAll();
 

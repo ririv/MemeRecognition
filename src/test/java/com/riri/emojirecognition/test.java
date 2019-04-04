@@ -31,9 +31,6 @@ public class test {
     private UserService userService;
 
     @Autowired
-    private RoleService roleService;
-
-    @Autowired
     private RoleRepository roleRepository;
 
     @Autowired
@@ -109,7 +106,7 @@ public class test {
         User user = new User();
         user.setUsername("09813");
         user.setPassword("098");
-        userService.addUser(user);
+        userService.createUser(user);
     }
 
 
@@ -142,79 +139,6 @@ public class test {
             }
         }
     }
-
-    //测试批量添加角色
-    @Test
-//    @Transactional
-    public void test05(){
-        Set<String> roleNames = new HashSet<>();
-        roleNames.add("ROLE_ADMIN");
-        roleNames.add("ROLE_GUEST");
-        roleNames.add("ROLE_USER");
-        User user = userService.addUserRolesByRoleNames(userService.findById(70L), roleNames);
-        System.out.println(user.getId());
-    }
-
-    //测试增加角色 role类型
-    @Test
-//    @Transactional
-    public void test08(){
-        List<Role> allRoles = roleService.findAll();
-        List<String> namesOfAllRoles = new ArrayList<>();
-        int i = 0;
-        for (Role role: allRoles){
-            namesOfAllRoles.add(role.getName());
-            System.out.println(i + "\t" + role.getName());
-            i++;
-        }
-        Role role = allRoles.get(1);
-        User user = userService.findById(70L);
-        userService.addUserRole(user,role);
-
-    }
-
-    //测试修改角色 role类型
-    @Test
-//    @Transactional
-    public void test09(){
-        List<Role> allRoles = roleService.findAll();
-        List<String> namesOfAllRoles = new ArrayList<>();
-        int i = 0;
-        for (Role role: allRoles){
-            namesOfAllRoles.add(role.getName());
-            System.out.println(i + "\t" + role.getName());
-            i++;
-        }
-        Set<Role> roles = new HashSet<>(allRoles);
-        System.out.println(roles);
-        for (Role role: roles){
-            System.out.println(i + "\t" + role.getName());
-        }
-
-        User user = userService.findById(70L);
-        userService.updateUserRoles(user,roles);
-    }
-
-    //测试批量修改角色 string类型
-    @Test
-//    @Transactional
-    public void test10(){
-        Set<String> roleNames = new HashSet<>();
-        roleNames.add("ROLE_ADMIN");
-        roleNames.add("ROLE_GUEST");
-//        roleNames.add("ROLE_USER");
-        User user = userService.updateUserRolesByRoleNames(userService.findById(70L), roleNames);
-        System.out.println(user.getId());
-    }
-
-    @Test
-    public void test11(){
-        Arrays.asList( "a", "b", "d" ).forEach( e ->
-                System.out.print( e )
-
-        );
-    }
-
 
 //    @Test
 //    public void test11(){
@@ -261,6 +185,14 @@ public class test {
         count = imgRepository.countByTag("狗");
         System.out.println(count);
 
+    }
+
+    @Test
+    public void test15(){
+        User user = new User();
+        if(user.getId()==null){
+            System.out.println(true);
+        }
     }
 
 }

@@ -11,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/api/v1/user")
 public class UserController {
 
     private final UserService userService;
@@ -21,51 +21,15 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping("/admin")
-    public String printAdminRole() {
-        return "如果你看见这句话，说明你具有ADMIN权限";
-    }
-
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @RequestMapping("/user")
-    public String printUserRole() {
-        return "如果你看见这句话，说明你具有USER权限";
-    }
-
-    @GetMapping("/login")
-    public ModelAndView index() {
-        //ModelAndView mv = new ModelAndView("signin");
-        //return mv;
-        //return new ModelAndView("signin");
-        return new ModelAndView("signin.html");
-    }
-
-    @RequestMapping("/api/user/current")
+    @RequestMapping("/current")
 //    当前用户信息
     public Object user(Authentication authentication) {
         return authentication.getPrincipal();
     }
 
-
-    @PostMapping("/register")
-    public void register(User user) {
-        userService.addUser(user);
+    @PostMapping("/create")
+    public User register(User user) {
+         return userService.createUser(user);
     }
-
-    @RequestMapping("/register")
-    public ModelAndView registry() {
-        return new ModelAndView("signup.html");
-    }
-
-    @RequestMapping(value = "api/user/{username}", method = RequestMethod.GET)
-    public User getUser(@PathVariable String username) {
-        User user = new User();
-        user.setUsername(username);
-        return user;
-    }
-
-//    @GetMapping(value = "api/json/manage/user/role")
-//    public
 
 }

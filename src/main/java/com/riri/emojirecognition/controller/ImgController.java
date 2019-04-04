@@ -16,7 +16,7 @@ import java.util.*;
 
 
 @RestController
-@RequestMapping("/api/img")
+@RequestMapping("/api/v1/img")
 public class ImgController {
 
     private final ImgService imgService;

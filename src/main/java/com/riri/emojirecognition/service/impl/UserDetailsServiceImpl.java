@@ -20,17 +20,22 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * 登陆验证
+     * @param username 用户名
+     * @return Spring UserDetails
+     * @throws UsernameNotFoundException Spring 用户名未找到异常
+     */
     @Override
-    // 登录验证
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         //取得用户
         User user = userRepository.findByUsername(username);
 
         if (user == null) {
-            throw new UsernameNotFoundException("user not found");
+            throw new UsernameNotFoundException("The username not found");
         }
-        System.out.println("s:" + username);
+
         System.out.println("username:" + user.getUsername() + ";password:" + user.getPassword());
 
         //返回Spring Security框架提供的User或者自定义的MyUser（implements UserDetails）
@@ -38,7 +43,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                true, true, true, true,
+//                true, true, true, true, //默认为true，可以不写
                 authorities(user.getRoles()));
 
         //另一种写法

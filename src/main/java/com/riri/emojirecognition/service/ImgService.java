@@ -9,6 +9,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -52,6 +55,21 @@ public class ImgService {
         return imgRepository.findById(id).orElse(null);
     }
 
+    public Page<Img> findAll(int page,int size){
+        Pageable pageable = PageRequest.of(page-1, size);
+        return imgRepository.findAll(pageable);
+    }
+
+    public Page<Img> findAll(Pageable pageable){
+        return imgRepository.findAll(pageable);
+    }
+
+    /**
+     * 通过文件夹批量插入到数据库
+     * @param targetDirPath 目标文件夹路径
+     * @param owner 所有者
+     * @param flag 设置为0，则为管理员上传，非0为用户上传，路径会发生相应的改变
+     */
     public void batchInsertToDbByDir(String targetDirPath, String owner, int flag) {
         String path; //保存的路径
         //flag 为0 则为管理员上传，不为0则为用户上传

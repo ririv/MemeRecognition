@@ -1,6 +1,8 @@
 package com.riri.emojirecognition.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -20,6 +22,7 @@ public class User implements Serializable {
     @Column(name = "username")
     private String username;
 
+    @JsonIgnore
     @Column(name = "password")
     private String password;
 
@@ -27,8 +30,10 @@ public class User implements Serializable {
     @Column(name = "email")
     private String email;
 
-    //经测试，使用list时，在增加或修改单个用户权限时，即使权限一样，数据库也会重新删除权限，再插入相同的权限
-    //但使用set时，数据库会查询权限，对比权限是否相同，如果相同则不继续往下操作
+    /**
+     * 经测试，使用list时，在增加或修改单个用户权限时，即使有数据一样，数据库也会重新删除，再插入
+     * 但使用set时，数据库会查询权限，对比权限是否相同，如果相同则不继续往下操作，少的插入，多的删除
+     */
     @ManyToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private Set<Role> roles;
 
