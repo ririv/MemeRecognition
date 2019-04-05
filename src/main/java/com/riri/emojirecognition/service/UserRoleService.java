@@ -4,7 +4,6 @@ import com.riri.emojirecognition.domain.Role;
 import com.riri.emojirecognition.domain.User;
 
 import java.util.List;
-import java.util.Set;
 
 public interface UserRoleService {
 

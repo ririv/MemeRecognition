@@ -1,7 +1,8 @@
 const baseURL = "http://localhost:8080/";
 const imgSearchURL = baseURL + "api/img/search/";
 const fileDirURL = baseURL + "file/img/";
-const test = "D:\\tests\\video";
+
+
 
 new Vue({
     el:"#app1",
@@ -31,8 +32,8 @@ new Vue({
                 }
             };
 
-            axios
-                .post(baseURL+"api/img/upload", formData, config)
+            abc
+                .post("api/img/upload", formData, config)
                 .then(response => {
                     console.log(response.data);
                     // this.info = response.data;
@@ -43,4 +44,5 @@ new Vue({
             })
         }
     },
-});
+})
+

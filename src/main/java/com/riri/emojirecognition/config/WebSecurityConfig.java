@@ -1,5 +1,6 @@
 package com.riri.emojirecognition.config;
 
+import com.riri.emojirecognition.security.CustomLoginUrlAuthenticationEntryPoint;
 import com.riri.emojirecognition.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
@@ -34,37 +36,42 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                //禁用csrf
+                .csrf().disable()
                 //允许跨域
                 .cors()
                 .and()
                 //页面访问权限需求
                 .authorizeRequests()
-                    //允许所有用户访问"/"和"/home"
-                    .antMatchers("/register","/", "/main","/**").permitAll()
+                    //允许所有用户访问"/"和"/main"
+                    .antMatchers("/register","/", "/main","/api/v1/image/**").permitAll()
                     //仅允许拥有“admin”访问此页面
-                    //.antMatchers("/admin/**").hasRole("ADMIN")
-                    .antMatchers("/user/**").hasRole("USER")
-                // 其他地址的访问均需验证权限
+                    .antMatchers("/admin/**","/api//v1/admin/**").hasRole("ADMIN")
+                    .antMatchers("/user/**","/api/v1/user/**").hasAnyRole("USER","ADMIN")
+                    // 其他地址的访问均需验证权限
                     .anyRequest().authenticated()
                 .and()
+                //.formLogin() 这个方法不可以少，否则会找不到登陆页面，配置后Spring将生成默认的登陆页面，地址/login，原因请参考父类源码
                 .formLogin()
                     //自定义登录页面
+                    // 配置此方法后会重定向至自己的登陆页面
+                    // 如果没有此页面会返回404找不到页面的信息，一旦配置Spring不会再自动生成登陆页面
                     .loginPage("/login")
                    //允许所有人访问该页面
                     .permitAll()
                     //登录成功返回首页
-                    .defaultSuccessUrl("/index")
+                    .defaultSuccessUrl("/")
                     //登录失败返回页面
-                    //.failureUrl("/login?error")
-
+                    .failureUrl("/login?error")
                 .and()
                 .logout()
                     .permitAll()
-                    .logoutSuccessUrl("/index")
+                    .logoutSuccessUrl("/")
                 .and().rememberMe()
-                .and().csrf().disable();
-
+                .and().exceptionHandling().authenticationEntryPoint(new CustomLoginUrlAuthenticationEntryPoint());
     }
+
+
 
     //设置加密方式为BCrypt
     @Bean
@@ -74,7 +81,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     @Bean
-    public UserDetailsServiceImpl userDetailsService(){
+    public UserDetailsService userDetailsService(){
         return  new UserDetailsServiceImpl();
     }
 

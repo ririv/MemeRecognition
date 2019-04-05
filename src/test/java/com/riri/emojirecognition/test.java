@@ -1,10 +1,10 @@
 package com.riri.emojirecognition;
 
+import com.riri.emojirecognition.component.StaticPagePathFinder;
 import com.riri.emojirecognition.domain.Img;
 import com.riri.emojirecognition.domain.User;
 import com.riri.emojirecognition.repository.ImgRepository;
 import com.riri.emojirecognition.service.ImgService;
-import com.riri.emojirecognition.service.RoleService;
 import com.riri.emojirecognition.util.LocalAddressUtil;
 import com.riri.emojirecognition.domain.Role;
 import com.riri.emojirecognition.repository.RoleRepository;
@@ -38,6 +38,9 @@ public class test {
 
     @Autowired
     private ImgRepository imgRepository;
+
+    @Autowired
+    private StaticPagePathFinder staticPagePathFinder;
 
 
     //    @Test
@@ -193,6 +196,17 @@ public class test {
         if(user.getId()==null){
             System.out.println(true);
         }
+    }
+
+    @Test
+    public void test16(){
+
+        for (StaticPagePathFinder.PagePaths pagePaths:staticPagePathFinder.findPath()) {
+            System.out.println(pagePaths.getUrlPath());
+            System.out.println(pagePaths.getViewFilePath()+"\n");
+            
+        }
+
     }
 
 }

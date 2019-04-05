@@ -1,7 +1,5 @@
 package com.riri.emojirecognition.controller.background;
 
-import com.riri.emojirecognition.service.ImgService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

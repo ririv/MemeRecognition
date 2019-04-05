@@ -20,7 +20,6 @@ public interface ImgRepository extends JpaRepository<Img, Long> {
 
     Img findFirstByTagOrderByIdDesc(String tag);
 
-
     @Query(value = "select min(id) from Img")
     Long findMinId();
 
