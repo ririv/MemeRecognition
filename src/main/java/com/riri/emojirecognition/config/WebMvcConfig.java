@@ -9,9 +9,6 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
@@ -23,8 +20,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         this.staticPagePathFinder = staticPagePathFinder;
     }
 
-    @Value("${web.default-path}")
-    private String defaultPath;
+    @Value("${path.img.base-path}")
+    private String imgBasePath;
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
@@ -41,7 +38,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // 必须嘚加入"file:"+ 映射外部资源目录路径
         // "classpath" + 映射的是项目中resources目录
-        registry.addResourceHandler("/file/img/**").addResourceLocations("file:"+ defaultPath);
+        registry.addResourceHandler("file/img/**").addResourceLocations("file:"+ imgBasePath);
         // "classpath" + 映射的是项目中resources目录，这里仅作测试
 //        registry.addResourceHandler("/static/**").addResourceLocations("classpath:"+ "static");
     }

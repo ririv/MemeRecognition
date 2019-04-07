@@ -1,13 +1,4 @@
-const baseURL = "http://localhost:8080/";
-const imgSearchURL = baseURL + "api/v1/img/search/";
-const fileDirURL = baseURL + "file/img/";
-
-
-let myAxios = axios.create({
-    baseURL: window.baseURL,
-    timeout: 1000,
-    headers: {'X-Requested-With': 'XMLHttpRequest'}
-});
+import {myAxios,imgBaseUrl}  from "./my.js";
 
 let vm1 = new Vue({
         el: '#app1',
@@ -20,8 +11,8 @@ let vm1 = new Vue({
 
         mounted() {
             myAxios
-                .get(baseURL + 'api/img/detail/93')
-                .then(response => (this.content = response))
+                .get('api/v1/img/detail/93')
+                .then(response => (this.content = response.data))
                 .catch(error => {
                     console.log(error)
                     this.errored = true
@@ -40,16 +31,15 @@ let vm2 = new Vue({
 
     mounted() {
         myAxios
-            .get(imgSearchURL,{
+            .get("api/v1/img/search",{
                 params:
                     {tag: "狗"}
             })
             .then(response => {
-                this.content = response
+                this.content = response.data
                 console.log(this.content)
                 for (let item of this.content) {
-                    this.imgs.push(fileDirURL + item.subDir + item.name)
-                    // console.log(fileDirURL + item.subDir + item.name)
+                    this.imgs.push(imgBaseUrl + item.subDir + item.sourcename)
                 }
                 // console.log(this.imgs)
             })

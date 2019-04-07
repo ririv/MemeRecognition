@@ -5,8 +5,6 @@ import com.riri.emojirecognition.domain.Img;
 import com.riri.emojirecognition.repository.ImgRepository;
 import com.riri.emojirecognition.util.FileUtil;
 import javafx.util.Pair;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -25,11 +23,14 @@ import org.slf4j.LoggerFactory;
 public class ImgService {
     private static final Logger logger = LoggerFactory.getLogger(ImgService.class);
 
-    @Value("${web.default-path}")
-    private String defaultPath;
+    @Value("${path.img.base-path}")
+    private String imgBasePath;
 
-    @Value("${web.upload-path}")
-    private String uploadPath; // 要上传的目标文件存放路径
+    @Value("${path.img.admin-path}")
+    private String imgAdminPath;
+
+    @Value("${path.img.user-path}")
+    private String imgUserPath; // 要上传的目标文件存放路径
 
     @Value("${classify.proba}")
     private float classifyProba;
@@ -55,6 +56,10 @@ public class ImgService {
         return imgRepository.findById(id).orElse(null);
     }
 
+    public Long findMaxSubIdByTag(String tag){
+        return imgRepository.findMaxSubIdByTag(tag);
+    }
+
     public Page<Img> findAll(int page,int size){
         Pageable pageable = PageRequest.of(page-1, size);
         return imgRepository.findAll(pageable);
@@ -63,6 +68,7 @@ public class ImgService {
     public Page<Img> findAll(Pageable pageable){
         return imgRepository.findAll(pageable);
     }
+
 
     /**
      * 通过文件夹批量插入到数据库
@@ -74,13 +80,13 @@ public class ImgService {
         String path; //保存的路径
         //flag 为0 则为管理员上传，不为0则为用户上传
         if (flag == 0) {
-            path = this.defaultPath;
+            path = imgAdminPath;
             owner = "admin";
         } else {
-            path = this.uploadPath;
+            path = imgUserPath;
         }
 
-        String parentDirectory = path.replace("\\", "/");
+        String parentDirectory = imgBasePath.replace("\\", "/");
         String subdirectory;
         String tag = ""; //初始化为空字符，否则后面第一次将无法赋值给lastTab
         String lastTag; //用lastTab监测tab是否发生了变化
@@ -108,10 +114,11 @@ public class ImgService {
             lastTag = tag;
             //tag获得新值
             tag = subdirArray[subdirArray.length - 1];
+
             //检测到tab发生了变化
-            if (!lastTag.equals(tag)) {
+            if (!tag.equals(lastTag)) {
                 subId = imgRepository.findMaxSubIdByTag(tag);
-                //当subId之前没有任何元素使，会产生null值，为避免空指针异常，进行初始化
+                //当此subId之前没有任何数据时，会产生null值，赋值初始序号为0
                 if (subId == null) {
                     subId = 0L;
                 }
@@ -123,7 +130,7 @@ public class ImgService {
 
             //new Img()不能放置循环外，否则只会不停更新此img实例，不会增加
             Img img = new Img();
-            img.setName(fileInfo.getName());
+            img.setSourcename(fileInfo.getName());
             img.setSubDir(subdirectory);
 //            if(owner!=null){
             img.setOwner(owner);
@@ -131,11 +138,41 @@ public class ImgService {
             img.setTag(tag);
             img.setSubId(subId);
             imgRepository.save(img);
-            System.out.println("文件名：" + img.getName() + "\n" + "子文件夹：" + img.getSubDir()); //测试用
+            System.out.println("文件名：" + img.getSourcename() + "\n" + "子文件夹：" + img.getSubDir()); //测试用
         }
     }
 
     /**
+     * 第一次
+     *
+     * @param lastTag 上次的tag
+     * @param tag 此次的tag
+     * @return subId
+     */
+
+    public Long subIdCounter(String lastTag, String tag){
+
+        Long subId = 0L;
+
+        //检测到tab发生了变化
+        if (!lastTag.equals(tag)) {
+            subId = imgRepository.findMaxSubIdByTag(tag);
+            //当此tag的subId之前没有任何数据时，会产生null值，赋值初始序号为0
+            if (subId == null) {
+                subId = 0L;
+            }
+            //新数据的subId为原数据库中最后条数据的subId+1
+            subId++;
+        } else {
+            subId++;
+        }
+        return subId;
+    }
+
+    /**
+     * 如果出现相同的图片，可能是因为两张图片本身就相同或相似
+     * 或者数据库有两个sourcename（文件名）有相同的值，请删除
+     *
      * 第一种方法，生成随机数，通过subId依次查询
      * 优点，满足要求，且避免了查询为null的空数据
      * 缺点：在subId不连续的情况下会进行多次查询，直到满足数量。单个查询，增加了数据库的压力

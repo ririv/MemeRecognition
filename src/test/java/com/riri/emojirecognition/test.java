@@ -5,7 +5,7 @@ import com.riri.emojirecognition.domain.Img;
 import com.riri.emojirecognition.domain.User;
 import com.riri.emojirecognition.repository.ImgRepository;
 import com.riri.emojirecognition.service.ImgService;
-import com.riri.emojirecognition.util.LocalAddressUtil;
+import com.riri.emojirecognition.component.Localhost;
 import com.riri.emojirecognition.domain.Role;
 import com.riri.emojirecognition.repository.RoleRepository;
 import com.riri.emojirecognition.repository.UserRepository;
@@ -85,7 +85,7 @@ public class test {
     @Test
     public void test01(){
 //        userRepository.save(new User("1", "20", "123@qq.com", Collections.singletonList(roleRepository.findByName("ROLE_USER"))));
-        System.out.println("本机地址:"+ LocalAddressUtil.getLocalAddress());
+        System.out.println("本机地址:"+ Localhost.getLocalAddress());
 
     }
 
@@ -99,7 +99,7 @@ public class test {
     //测试批量插入图片
     @Test
     public void test03(){
-        String path = "D:\\tests\\12345";
+        String path = "D:\\tests\\12345\\猫";
         imgService.batchInsertToDbByDir(path,null,0);
     }
 

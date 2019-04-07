@@ -1,25 +1,24 @@
-const baseURL = "http://localhost:8080/";
-const imgSearchURL = baseURL + "api/img/search/";
-const fileDirURL = baseURL + "file/img/";
-
-
+import {myAxios, imageRootUrl} from "./my.js";
 
 new Vue({
-    el:"#app1",
+    el: "#app1",
     data: {
-        name:'123',
-        file: '',
-        info:null,
-        result:{
-            msg:null,
-            tag:null
+        name: '123',
+        file: null,
+        filename: null,
+        info: null,
+        result: {
+            msg: null,
+            tag: null
         },
-        relatedImgs:[],
+        relatedImgs: [],
+
     },
     methods: {
         getFile(event) {
             this.file = event.target.files[0];
             console.log(this.file);
+            this.filename = this.file.name
         },
         submit(event) {
             event.preventDefault();
@@ -28,20 +27,26 @@ new Vue({
 
             let config = {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'multipart/form-data',
                 }
             };
 
-            abc
-                .post("api/img/upload", formData, config)
+            myAxios
+                .post("api/v1/img/upload", formData, config)
                 .then(response => {
                     console.log(response.data);
                     // this.info = response.data;
-                    this.result = response.data;
-                    for(let item of this.result.relatedImgs) {
-                        this.relatedImgs.push(fileDirURL + item.subDir + item.name)
+                    this.result = response.data
+                    this.relatedImgs = [] //清空上次的结果
+                    for (let item of this.result.relatedImgs) {
+                        this.relatedImgs.push(imgBaseUrl + item.subDir + item.sourcename)
                     }
-            })
+                })
+                .catch(error => {
+                    console.log(error)
+                    this.errored = true
+                })
+                .finally(() => this.loading = false)
         }
     },
 })

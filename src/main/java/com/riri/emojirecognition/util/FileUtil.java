@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 文件工具包
@@ -51,18 +52,11 @@ public class FileUtil {
     /**
      * @param mfile 文件
      * @param path 文件存放路径
-     * @param fileName 源文件名
      * @return
      */
-    public static File upload(MultipartFile mfile, String path, String fileName) {
+    public static File upload(MultipartFile mfile, String path) {
 
-        // 生成新的文件名
-//        String newPath = path + "/" + getUUIDFilename(fileName);
-
-        //使用原文件名
-        String realPath = path + "/" + fileName;
-
-        File dest = new File(realPath);
+        File dest = new File(path);
 
         //判断文件父目录是否存在
         if (!dest.getParentFile().exists()) {
@@ -74,8 +68,8 @@ public class FileUtil {
         try {
             //保存文件
 //            FileUtils.copyInputStreamToFile(mfile.getInputStream(), dest);
-
             mfile.transferTo(dest);
+
         } catch (IllegalStateException | IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -105,11 +99,13 @@ public class FileUtil {
      * @return
      */
     public static String getUUIDFilename(String originalFileName) {
-        return UUIDUtil.getUUID() + getSuffix(originalFileName);
+        //如果要去除-
+        // UUID.randomUUID().toString().replace("-", "");
+        return UUID.randomUUID() + getSuffix(originalFileName);
     }
 
     //生成无后缀的源文件名
-    public static String getSourceName(String originalFileName) {
+    public static String getFilenameWithoutExt(String originalFileName) {
 //        if (originalFileName != null) {
             return originalFileName.substring(0, originalFileName.lastIndexOf("."));
 //        }
