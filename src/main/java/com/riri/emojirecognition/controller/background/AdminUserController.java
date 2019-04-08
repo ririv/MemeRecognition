@@ -1,14 +1,17 @@
 package com.riri.emojirecognition.controller.background;
 
 import com.riri.emojirecognition.domain.User;
-import com.riri.emojirecognition.exception.UserAlreadyExistException;
 import com.riri.emojirecognition.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/admin/user")
@@ -21,20 +24,19 @@ public class AdminUserController {
         this.userService = userService;
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "operate/{id}")
     public User getUser(@PathVariable Long id) {
         return userService.findById(id);
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = "operate/{id}")
     public User updateUser(@PathVariable Long id, @RequestBody User user) {
         return userService.updateUserById(id, user);
     }
 
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity deleteUser(@PathVariable Long id) {
+    @DeleteMapping(value = "operate/{id}")
+    public void deleteUser(@PathVariable Long id) {
         userService.deleteById(id);
-        return ResponseEntity.ok("Deleted successfully");
     }
 
     @PostMapping(value = "create")
@@ -42,8 +44,8 @@ public class AdminUserController {
         return userService.createUser(user);
     }
 
-    @GetMapping(value = "123")
-    public Page findAll(Pageable pageable){
+    @GetMapping(value = "query")
+    public Page findAll(@PageableDefault(value = 20, sort = {"tag"}) Pageable pageable) {
         return userService.findAll(pageable);
     }
 }

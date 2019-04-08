@@ -64,7 +64,7 @@ public class ImgController {
         Optional<String> classifyResult;
         String tag = null;
         List<Img> relatedImgs = null;
-        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> resultMap = new LinkedHashMap<>();
 
 
         if (!mfile.isEmpty()) {

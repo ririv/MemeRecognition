@@ -2,6 +2,7 @@ package com.riri.emojirecognition.service;
 
 import com.riri.emojirecognition.component.deeplearning.ClassifierWithDeepLearning4j;
 import com.riri.emojirecognition.domain.Img;
+import com.riri.emojirecognition.exception.ImgNotFoundException;
 import com.riri.emojirecognition.repository.ImgRepository;
 import com.riri.emojirecognition.util.FileUtil;
 import javafx.util.Pair;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -53,28 +55,63 @@ public class ImgService {
     }
 
     public Img findById(Long id) {
-        return imgRepository.findById(id).orElse(null);
+        Optional<Img> img = imgRepository.findById(id);
+        if (!img.isPresent()) {
+            throw new ImgNotFoundException("The img is not found, " + "img id: " + id);
+        }
+        return img.get();
     }
 
-    public Long findMaxSubIdByTag(String tag){
+    public void deleteById(Long id) {
+        imgRepository.deleteById(id);
+    }
+
+
+    public Long findMaxSubIdByTag(String tag) {
         return imgRepository.findMaxSubIdByTag(tag);
     }
 
-    public Page<Img> findAll(int page,int size){
-        Pageable pageable = PageRequest.of(page-1, size);
+    public Page<Img> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return imgRepository.findAll(pageable);
     }
 
-    public Page<Img> findAll(Pageable pageable){
+    public Page<Img> findAll(int page, int size, Sort sort) {
+        Pageable pageable = PageRequest.of(page, size, sort);
         return imgRepository.findAll(pageable);
     }
 
+    public Page<Img> findAll(int page, int size, Sort.Direction direction, String... properties) {
+        Pageable pageable = PageRequest.of(page, size, direction, properties);
+        return imgRepository.findAll(pageable);
+    }
+
+    public Page<Img> findAll(Pageable pageable) {
+        return imgRepository.findAll(pageable);
+    }
+
+    public Page<Img> findByTag(String tag, Pageable pageable) {
+        return imgRepository.findByTag(tag, pageable);
+    }
+
+    public Img updateImgById(Long id, Img img) {
+        findById(id);//如果id不存在则会报出异常
+        //设置id为所指定的id，防止user中有id信息，而发生更新错位的现象
+        img.setId(id);
+        return imgRepository.save(img);
+    }
+
+    public Img createImg(Img img) {
+        img.setId(null);
+        return imgRepository.save(img);
+    }
 
     /**
      * 通过文件夹批量插入到数据库
+     *
      * @param targetDirPath 目标文件夹路径
-     * @param owner 所有者
-     * @param flag 设置为0，则为管理员上传，非0为用户上传，路径会发生相应的改变
+     * @param owner         所有者
+     * @param flag          设置为0，则为管理员上传，非0为用户上传，路径会发生相应的改变
      */
     public void batchInsertToDbByDir(String targetDirPath, String owner, int flag) {
         String path; //保存的路径
@@ -143,36 +180,9 @@ public class ImgService {
     }
 
     /**
-     * 第一次
-     *
-     * @param lastTag 上次的tag
-     * @param tag 此次的tag
-     * @return subId
-     */
-
-    public Long subIdCounter(String lastTag, String tag){
-
-        Long subId = 0L;
-
-        //检测到tab发生了变化
-        if (!lastTag.equals(tag)) {
-            subId = imgRepository.findMaxSubIdByTag(tag);
-            //当此tag的subId之前没有任何数据时，会产生null值，赋值初始序号为0
-            if (subId == null) {
-                subId = 0L;
-            }
-            //新数据的subId为原数据库中最后条数据的subId+1
-            subId++;
-        } else {
-            subId++;
-        }
-        return subId;
-    }
-
-    /**
      * 如果出现相同的图片，可能是因为两张图片本身就相同或相似
      * 或者数据库有两个sourcename（文件名）有相同的值，请删除
-     *
+     * <p>
      * 第一种方法，生成随机数，通过subId依次查询
      * 优点，满足要求，且避免了查询为null的空数据
      * 缺点：在subId不连续的情况下会进行多次查询，直到满足数量。单个查询，增加了数据库的压力
@@ -199,7 +209,7 @@ public class ImgService {
             randomNum = ThreadLocalRandom.current().nextLong(min, max + 1); //创建Long类型随机数，范围为min~max
             if (!randomNumList.contains(randomNum)) { //当randomNumList中不包含此随机数
                 img = imgRepository.findByTagAndSubId(tag, randomNum); //查询此img
-                if (img!=null) {
+                if (img != null) {
                     imgs.add(img);
                 }
                 randomNumList.add(randomNum); //将此随机数添加至列表，避免重复查询
@@ -209,10 +219,10 @@ public class ImgService {
     }
 
     /**
-     *  第二种方法，生成随机数，通过subId查询
-     *  优点：一次性查询完毕，数据库压力小
-     *  缺点：在subId不连续的情况下，可能会查询到空数据，虽然最终结果里空数据被省去，不会有null值，但是数据的数量要求不满足
-     *  适合subId连续时使用
+     * 第二种方法，生成随机数，通过subId查询
+     * 优点：一次性查询完毕，数据库压力小
+     * 缺点：在subId不连续的情况下，可能会查询到空数据，虽然最终结果里空数据被省去，不会有null值，但是数据的数量要求不满足
+     * 适合subId连续时使用
      */
     public List<Img> findRandomImgsByTagLimitNum2(String tag, int num) {
         Long max = imgRepository.findMaxSubIdByTag(tag);
@@ -230,7 +240,7 @@ public class ImgService {
             randomNumSet.add(randomNum);
         }
         System.out.println((randomNumSet));
-        return imgRepository.findByTagAndSubIdIn(tag,randomNumSet);
+        return imgRepository.findByTagAndSubIdIn(tag, randomNumSet);
     }
 
     /**
@@ -248,7 +258,7 @@ public class ImgService {
         long count = imgRepository.countByTag(tag);
         int randomNum;
 
-        for (Img img: imgs) {
+        for (Img img : imgs) {
             subIds.add(img.getSubId());
         }
 
@@ -262,7 +272,7 @@ public class ImgService {
             randomNum = ThreadLocalRandom.current().nextInt(0, subIds.size());
             randomNumSet.add(randomNum);
         }
-        for (int id:randomNumSet) {
+        for (int id : randomNumSet) {
             results.add(imgs.get(id));
         }
 
@@ -270,10 +280,10 @@ public class ImgService {
     }
 
     public Optional<String> classify(File image) {
-
         Pair<String, Float> labelWithProba;
         String label = null;
         Float proba;
+
         try {
             labelWithProba = classifier.classify(image);
             label = labelWithProba.getKey();

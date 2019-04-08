@@ -1,13 +1,15 @@
-package com.riri.emojirecognition.util;
+package com.riri.emojirecognition.component;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class LocalAddressUtil {
+@Component
+public class GetLocalhost {
 
     //获取主机端口
     @Value("${server.port}")
@@ -16,7 +18,7 @@ public class LocalAddressUtil {
     //获取本机ip
     private static String host;
 
-    private static final Logger logger = LoggerFactory.getLogger(LocalAddressUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(GetLocalhost.class);
 
     //获取本机IP
     public static String getLocalAddress() {
@@ -25,7 +27,6 @@ public class LocalAddressUtil {
         } catch (UnknownHostException e) {
             logger.error("get server host Exception e:", e);
         }
-        //        System.out.println("本机地址:"+LocalAddressUtil.getLocalAddress());
         return host + ":" + post;
     }
 

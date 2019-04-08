@@ -1,6 +1,5 @@
 package com.riri.emojirecognition.controller.background;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.riri.emojirecognition.domain.User;
 import com.riri.emojirecognition.service.UserRoleService;
 import com.riri.emojirecognition.service.UserService;
@@ -8,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/admin/user")
@@ -25,26 +22,25 @@ public class AdminUserRoleController {
         this.userRoleService = userRoleService;
     }
 
-    @PatchMapping(value="/{userId}/role/add/single/rolename")
+    @PatchMapping(value="/{userId}/role/add/one/rolename")
     public User addUserRoleByRoleName(@PathVariable Long userId, String roleName){
         User user = userService.findById(userId);
         return userRoleService.addUserRoleByRoleName(user,roleName);
     }
 
-    @PatchMapping(value="/{userId}/role/add/single/")
+    @PatchMapping(value="/{userId}/role/add/one/")
     public User addUserRoleByRoleName(@PathVariable Long userId, Long roleId){
         User user = userService.findById(userId);
         return userRoleService.addUserRoleByRoleId(user,roleId);
     }
 
-
-    @PatchMapping(value="/{userId}/role/update/single/rolename")
+    @PatchMapping(value="/{userId}/role/update/one/rolename")
     public User updateUserRoleName(@PathVariable Long userId, String roleName){
         User user = userService.findById(userId);
         return userRoleService.updateUserRoleByRoleName(user,roleName);
     }
 
-    @PatchMapping(value="/{userId}/role/update/single")
+    @PatchMapping(value="/{userId}/role/update/one")
     public User updateUserRoleName(@PathVariable Long userId, Long roleId){
         User user = userService.findById(userId);
         return userRoleService.updateUserRoleByRoleId(user,roleId);

@@ -38,4 +38,6 @@ public interface ImgRepository extends JpaRepository<Img, Long> {
     List<Img> findByTagAndSubIdIn(String tag,Collection<?> c);
 
     List<Img> findByTag(String tag);
+
+    Page<Img> findByTag (String tag,Pageable pageable);
 }

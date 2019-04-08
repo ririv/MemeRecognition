@@ -1,5 +1,6 @@
 package com.riri.emojirecognition.service.impl;
 
+import com.riri.emojirecognition.domain.Img;
 import com.riri.emojirecognition.domain.Role;
 import com.riri.emojirecognition.domain.User;
 import com.riri.emojirecognition.exception.UserNotFoundException;
@@ -9,10 +10,13 @@ import com.riri.emojirecognition.service.UserService;
 import com.riri.emojirecognition.exception.UserAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 //业务层实现
@@ -26,7 +30,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(PasswordEncoder passwordEncoder,RoleService roleService,UserRepository userRepository) {
+    public UserServiceImpl(PasswordEncoder passwordEncoder, RoleService roleService, UserRepository userRepository) {
         this.passwordEncoder = passwordEncoder;
         this.roleService = roleService;
         this.userRepository = userRepository;
@@ -37,23 +41,38 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
+    public Page<User> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepository.findAll(pageable);
+    }
+
+    public Page<User> findAll(int page, int size, Sort sort) {
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return userRepository.findAll(pageable);
+    }
+
+    public Page<User> findAll(int page, int size, Sort.Direction direction, String... properties) {
+        Pageable pageable = PageRequest.of(page, size, direction, properties);
+        return userRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
     @Override
     public User findById(Long id) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (!optionalUser.isPresent()){
-            throw new UserNotFoundException();
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent()) {
+            throw new UserNotFoundException("The user is not found, " + "user id: " + id);
         }
-        return optionalUser.get();
+        return user.get();
     }
 
     @Override
-    public User findByUsername(String username){
+    public User findByUsername(String username) {
         return userRepository.findByUsername(username);
-    }
-
-    @Override
-    public Page<User> findAll(Pageable pageable){
-        return userRepository.findAll(pageable);
     }
 
     @Override
@@ -67,7 +86,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(User user){
+    public void delete(User user) {
         userRepository.delete(user);
     }
 
@@ -91,24 +110,32 @@ public class UserServiceImpl implements UserService {
      * 因为这里是通过id来修改用户信息
      * 所以由所指定的id来确定user，而不是直接通过user实例来确定
      * 防止发生id的错乱
-     * @param id 指定的id
+     *
+     * @param id   指定的id
      * @param user 用户信息
      * @return user
      */
     @Override
-    public User updateUserById(Long id,User user){
+    public User updateUserById(Long id, User user) {
 
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (!optionalUser.isPresent()){
-            throw new UserNotFoundException("The User not found:"+id);
+        findById(id);//如果此用户不存在则会抛出异常
+        //设置id为所指定的id，防止user中有id信息，而发生更新错位的现象
+        user.setId(id);
+
+        if (user.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-        else {
-            //设置id为所指定的id，防止user中有id信息，而发生更新错位的现象
-            user.setId(id);
-            user.setPassword(user.getPassword());
-            userRepository.save(user);
-            return user;
-        }
+
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User updatePasswordById(Long id, String password){
+
+        User user =  findById(id);//如果此用户不存在则会抛出异常
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        return userRepository.save(user);
     }
 
     @Override
@@ -117,7 +144,7 @@ public class UserServiceImpl implements UserService {
         if (existsByUsername(user.getUsername())) {
             throw new UserAlreadyExistException("The username already exists: " + user.getUsername());
         }
-        if (user.getEmail()!=null) { //不加此判定，邮箱为空时也会抛出异常
+        if (user.getEmail() != null) { //不加此判定，邮箱为空时也会抛出异常
             if (existsByEmail(user.getEmail())) {
                 throw new UserAlreadyExistException("The email already exists: " + user.getEmail());
             }
