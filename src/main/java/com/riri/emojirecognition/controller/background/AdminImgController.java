@@ -41,7 +41,7 @@ public class AdminImgController {
     }
 
     @GetMapping(value = "query")
-    public Page findAll(@PageableDefault(value = 20, sort={"tag"}) Pageable pageable,@RequestParam(required = false) String tag) {
+    public Page findAll(@PageableDefault(sort={"tag"}) Pageable pageable,@RequestParam(required = false) String tag) {
         if (tag == null) {
             return imgService.findAll(pageable);
         }

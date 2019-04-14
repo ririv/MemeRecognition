@@ -1,0 +1,7 @@
+.page-center{
+    text-align: center;
+}
+
+.tab-table>.active {
+    display: table;
+}

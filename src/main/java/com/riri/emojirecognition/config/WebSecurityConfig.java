@@ -44,7 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //页面访问权限需求
                 .authorizeRequests()
                     //允许所有用户访问"/"和"/main"
-                    .antMatchers("/register","/", "/main","/api/v1/image/**").permitAll()
+                    .antMatchers("/register","/", "/main","/api/v1/image/**","/**").permitAll()
                     //仅允许拥有“admin”访问此页面
                     .antMatchers("/admin/**","/api//v1/admin/**").hasRole("ADMIN")
                     .antMatchers("/user/**","/api/v1/user/**").hasAnyRole("USER","ADMIN")
@@ -159,6 +159,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //解决静态资源css,js等被拦截的问题
         web
                 .ignoring()
-                    .antMatchers("/css/**","/js/**","/image/**","/lib/**","/model/**");
+                    .antMatchers("/css/**","/js/**","/image/**","/lib/**","/vue/**");
     }
 }

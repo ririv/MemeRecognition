@@ -61,6 +61,7 @@ public class ImgController {
     public Map<String, Object> upload(@RequestParam("file") MultipartFile mfile) {
         // 上传成功或者失败的提示
         String msg;
+        boolean isSuceess;
         Optional<String> classifyResult;
         String tag = null;
         List<Img> relatedImgs = null;
@@ -84,8 +85,10 @@ public class ImgController {
                 msg = "识别成功";
                 tag = classifyResult.get();
                 relatedImgs = imgService.findRandomImgsByTagLimitNum3(tag, 10);
+                isSuceess=true;
             } else {
                 msg = "无法识别";
+                isSuceess=false;
             }
 
             //保存到repo
@@ -100,15 +103,21 @@ public class ImgController {
             }
 
             if (tag != null) {
-                img.setSubId(imgService.findMaxSubIdByTag(tag)+1);
+                Long subId = imgService.findMaxSubIdByTag(tag);
+                if(subId==null){
+                    subId = 0L;
+                }
+                img.setSubId(subId+1);
             }
 
             imgService.save(img);
         } else {
             msg = "图片上传失败！";
+            isSuceess=false;
         }
 
         //构建json
+        resultMap.put("isSuccess",isSuceess);
         resultMap.put("msg", msg);
         resultMap.put("tag", tag);
         resultMap.put("relatedImgs", relatedImgs);

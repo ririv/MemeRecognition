@@ -45,7 +45,7 @@ public class AdminUserController {
     }
 
     @GetMapping(value = "query")
-    public Page findAll(@PageableDefault(value = 20, sort = {"tag"}) Pageable pageable) {
+    public Page findAll(Pageable pageable) {
         return userService.findAll(pageable);
     }
 }
