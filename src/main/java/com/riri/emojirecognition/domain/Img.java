@@ -5,8 +5,9 @@ import java.io.Serializable;
 
 @Entity
 @Table(indexes = {
-        @Index(columnList = "subId"),
-        @Index(columnList = "tag")
+//        @Index(columnList = "subId"),
+        @Index(columnList = "tag"),
+        @Index(columnList = "enabled")
         })
 public class Img implements Serializable {
     @Id
@@ -25,12 +26,14 @@ public class Img implements Serializable {
 
     private String owner;
 
-    private String sourcename;
+    private String sourceName;
 
     private String subDir;
 
     //subId为此标签中图片的序号，用于通过标签推荐
     private Long subId;
+
+    private boolean enabled;
 
     public Long getId() {
         return id;
@@ -72,12 +75,12 @@ public class Img implements Serializable {
         this.owner = owner;
     }
 
-    public String getSourcename() {
-        return sourcename;
+    public String getSourceName() {
+        return sourceName;
     }
 
-    public void setSourcename(String sourcename) {
-        this.sourcename = sourcename;
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
     }
 
     public String getSubDir() {
@@ -94,5 +97,13 @@ public class Img implements Serializable {
 
     public void setSubId(Long subId) {
         this.subId = subId;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

@@ -1,7 +1,7 @@
-import {myAxios,imgBaseUrl}  from "./my.js";
+import {myAxios, imgBaseURL, baseURL} from "./my.js";
 
 
- new Vue({
+new Vue({
     el: '#app',
     data: {
         content: null,
@@ -10,7 +10,7 @@ import {myAxios,imgBaseUrl}  from "./my.js";
 
     mounted() {
         myAxios
-            .get("api/v1/img/search",{
+            .get("api/v1/img/search", {
                 params:
                     {tag: "狗"}
             })
@@ -18,7 +18,7 @@ import {myAxios,imgBaseUrl}  from "./my.js";
                 this.content = response.data
                 console.log(this.content)
                 for (let item of this.content) {
-                    this.imgs.push(imgBaseUrl + item.subDir + item.sourcename)
+                    this.imgs.push(baseURL + imgBaseURL + item.subDir + item.sourcename)
                 }
                 // console.log(this.imgs)
             })

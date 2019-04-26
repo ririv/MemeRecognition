@@ -1,6 +1,7 @@
 package com.riri.emojirecognition.service;
 
 import com.riri.emojirecognition.repository.ImgRepository;
+import com.riri.emojirecognition.service.impl.ImgServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +10,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.*;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ImgServiceTest {
+public class ImgServiceImplImplTest {
     @Autowired
-    ImgService imgService;
+    ImgServiceImpl imgServiceImpl;
 
     @Autowired
     ImgRepository imgRepository;
@@ -24,7 +23,7 @@ public class ImgServiceTest {
     public void test01() {
         int a =1;
         int b=10;
-        Page page= imgService.findAll(a,b);
+        Page page= imgServiceImpl.findAll(a,b);
         System.out.println(page);
 
     }

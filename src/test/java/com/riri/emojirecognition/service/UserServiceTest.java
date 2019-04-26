@@ -10,10 +10,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.Arrays;
-
-import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -40,7 +36,7 @@ public class UserServiceTest {
         user.setId(16L);
         user.setPassword("111");
         user.setUsername("111");
-        userService.updateUserById(16L,user);
+        userService.updateById(16L,user);
 //        System.out.println(Arrays.toString(field));
     }
 

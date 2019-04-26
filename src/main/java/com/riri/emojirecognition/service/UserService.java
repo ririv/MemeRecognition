@@ -1,13 +1,11 @@
 package com.riri.emojirecognition.service;
 
-import com.riri.emojirecognition.domain.Role;
 import com.riri.emojirecognition.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
-import java.util.Set;
 
 
 //业务接口层
@@ -39,7 +37,7 @@ public interface UserService {
 
     boolean existsByUsername(String username);
 
-    User updateUserById(Long id,User user);
+    User updateById(Long id, User user);
 
     User updatePasswordById(Long id, String password);
 

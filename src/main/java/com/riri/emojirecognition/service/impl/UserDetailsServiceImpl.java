@@ -26,7 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      * @return Spring UserDetails
      * @throws UsernameNotFoundException Spring 用户名未找到异常
      */
-    @Override
+    
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         //取得用户

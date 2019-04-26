@@ -1,6 +1,5 @@
 package com.riri.emojirecognition.service.impl;
 
-import com.riri.emojirecognition.domain.Img;
 import com.riri.emojirecognition.domain.Role;
 import com.riri.emojirecognition.domain.User;
 import com.riri.emojirecognition.exception.UserNotFoundException;
@@ -16,7 +15,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 //业务层实现
@@ -36,7 +34,7 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
     }
 
-    @Override
+    
     public List<User> findAll() {
         return userRepository.findAll();
     }
@@ -56,12 +54,12 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(pageable);
     }
 
-    @Override
+    
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
-    @Override
+    
     public User findById(Long id) {
         Optional<User> user = userRepository.findById(id);
         if (!user.isPresent()) {
@@ -70,37 +68,37 @@ public class UserServiceImpl implements UserService {
         return user.get();
     }
 
-    @Override
+    
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
-    @Override
+    
     public User save(User user) {
         return userRepository.save(user);
     }
 
-    @Override
+    
     public List<User> saveAll(List<User> users) {
         return userRepository.saveAll(users);
     }
 
-    @Override
+    
     public void delete(User user) {
         userRepository.delete(user);
     }
 
-    @Override
+    
     public void deleteById(Long id) {
         userRepository.deleteById(id);
     }
 
-    @Override
+    
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 
-    @Override
+    
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
@@ -115,8 +113,8 @@ public class UserServiceImpl implements UserService {
      * @param user 用户信息
      * @return user
      */
-    @Override
-    public User updateUserById(Long id, User user) {
+    
+    public User updateById(Long id, User user) {
 
         findById(id);//如果此用户不存在则会抛出异常
         //设置id为所指定的id，防止user中有id信息，而发生更新错位的现象
@@ -129,7 +127,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    @Override
+    
     public User updatePasswordById(Long id, String password){
 
         User user =  findById(id);//如果此用户不存在则会抛出异常
@@ -138,7 +136,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    @Override
+    
     public User createUser(User user) {
 
         if (existsByUsername(user.getUsername())) {

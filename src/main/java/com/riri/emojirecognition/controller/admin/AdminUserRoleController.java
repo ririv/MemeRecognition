@@ -1,4 +1,4 @@
-package com.riri.emojirecognition.controller.background;
+package com.riri.emojirecognition.controller.admin;
 
 import com.riri.emojirecognition.domain.User;
 import com.riri.emojirecognition.service.UserRoleService;

@@ -1,6 +1,7 @@
 package com.riri.emojirecognition.controller;
 
 import com.riri.emojirecognition.domain.Img;
+import com.riri.emojirecognition.service.ClassifyService;
 import com.riri.emojirecognition.service.ImgService;
 import com.riri.emojirecognition.util.FileUtil;
 
@@ -20,11 +21,13 @@ import java.util.*;
 public class ImgController {
 
     private final ImgService imgService;
+    private final ClassifyService classifyService;
     private final ResourceLoader resourceLoader;
 
     @Autowired
-    public ImgController(ImgService imgService, ResourceLoader resourceLoader) {
+    public ImgController(ImgService imgService, ClassifyService classifyService,ResourceLoader resourceLoader) {
         this.imgService = imgService;
+        this.classifyService = classifyService;
         this.resourceLoader = resourceLoader;
     }
 
@@ -34,14 +37,14 @@ public class ImgController {
     @Value("${path.img.base-path}")
     private String imgBasePath;
 
-    @RequestMapping(value = "detail/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "details/{id}", method = RequestMethod.GET)
     public Img findImg(@PathVariable Long id) {
         return imgService.findById(id);
     }
 
     @RequestMapping(value = "search", method = RequestMethod.GET)
-    public List<Img> findImg(@RequestParam("tag") String tag) {
-        return imgService.findRandomImgsByTagLimitNum3(tag, 5);
+    public List<Img> findImg(@RequestParam("tag") String tag, @RequestParam(required = false,defaultValue = "20") int num) {
+        return imgService.findRandomAndEnabledImgsByTagLimitNum3(tag, num);
     }
 
     //显示单张图片
@@ -58,7 +61,7 @@ public class ImgController {
     }
 
     @PostMapping("upload")
-    public Map<String, Object> upload(@RequestParam("file") MultipartFile mfile) {
+    public Map<String, Object> classify(@RequestParam("file") MultipartFile mfile,@RequestParam(required = false,defaultValue = "20") int num) {
         // 上传成功或者失败的提示
         String msg;
         boolean isSuceess;
@@ -78,13 +81,13 @@ public class ImgController {
             //调用上传工具类
             File file = FileUtil.upload(mfile,  imgBasePath + imgUserPath +newFilename);
 
-            classifyResult = imgService.classify(file);
+            classifyResult = classifyService.classify(file);
 
             // 识别成功，给出页面提示
             if (classifyResult.isPresent()) {
                 msg = "识别成功";
                 tag = classifyResult.get();
-                relatedImgs = imgService.findRandomImgsByTagLimitNum3(tag, 10);
+                relatedImgs = imgService.findRandomAndEnabledImgsByTagLimitNum3(tag, num);
                 isSuceess=true;
             } else {
                 msg = "无法识别";
@@ -94,7 +97,7 @@ public class ImgController {
             //保存到repo
             Img img = new Img();
             //保存新的UUID名
-            img.setSourcename(newFilename);
+            img.setSourceName(newFilename);
             img.setSubDir(imgUserPath);
             img.setTag(tag);
 
@@ -109,6 +112,7 @@ public class ImgController {
                 }
                 img.setSubId(subId+1);
             }
+            img.setEnabled(false);
 
             imgService.save(img);
         } else {

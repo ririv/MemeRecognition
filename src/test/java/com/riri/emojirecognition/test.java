@@ -1,10 +1,14 @@
 package com.riri.emojirecognition;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.riri.emojirecognition.component.StaticPagePathFinder;
+import com.riri.emojirecognition.config.PropConfig;
 import com.riri.emojirecognition.domain.Img;
+import com.riri.emojirecognition.domain.Model;
 import com.riri.emojirecognition.domain.User;
 import com.riri.emojirecognition.repository.ImgRepository;
-import com.riri.emojirecognition.service.ImgService;
+import com.riri.emojirecognition.repository.ModelRepository;
+import com.riri.emojirecognition.service.impl.ImgServiceImpl;
 import com.riri.emojirecognition.component.GetLocalhost;
 import com.riri.emojirecognition.domain.Role;
 import com.riri.emojirecognition.repository.RoleRepository;
@@ -14,9 +18,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.junit4.SpringRunner;
 //import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -34,13 +41,22 @@ public class test {
     private RoleRepository roleRepository;
 
     @Autowired
-    private ImgService imgService;
+    private ImgServiceImpl imgServiceImpl;
 
     @Autowired
     private ImgRepository imgRepository;
 
     @Autowired
+    private ModelRepository modelRepository;
+
+    @Autowired
     private StaticPagePathFinder staticPagePathFinder;
+
+    @Autowired
+    private PropConfig propConfig;
+
+//    @Autowired
+//    private ContextRefresher contextRefresher;
 
 
     //    @Test
@@ -100,7 +116,7 @@ public class test {
     @Test
     public void test03(){
         String path = "D:\\tests\\12345\\猫";
-        imgService.batchInsertToDbByDir(path,null,0);
+        imgServiceImpl.batchInsertToDbByDir(path,null,0);
     }
 
     @Test
@@ -132,7 +148,7 @@ public class test {
     public void test07(){
         String tag = "狗";
         List<Img> list;
-        list = imgService.findRandomImgsByTagLimitNum(tag ,10);
+        list = imgServiceImpl.findRandomAndEnabledImgsByTagLimitNum(tag ,10);
 
         System.out.println(list.size());
 
@@ -207,6 +223,28 @@ public class test {
             
         }
 
+    }
+
+    @Test
+    public void test17() throws IOException {
+        String path = new ClassPathResource("model/modelConfi.json").getFile().getPath();
+        File json = new File(path);
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String,Object> dataNode = mapper.readValue(json,Map.class);
+        System.out.println(dataNode);
+    }
+
+    @Test
+    public void test18() throws IOException {
+        Model model = new Model();
+        model.setName("123");
+        model.setHeight(96);
+        model.setWidth(96);
+        model.setEnabled(true);
+        model.setPath("model/emoji.h5");
+        model.setChannels(3);
+        model.setLabels("北方栖姬,天线宝宝,小猪佩奇,小黄鸡,尔康,滑稽,熊猫头,狗,猫,胖虎,蘑菇头");
+        modelRepository.save(model);
     }
 
 }

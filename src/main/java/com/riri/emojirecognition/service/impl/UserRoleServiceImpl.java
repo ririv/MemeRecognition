@@ -32,7 +32,7 @@ public class UserRoleServiceImpl implements UserRoleService {
      * @param role 需要增加的权限
      * @return user
      */
-    @Override
+    
     public User addUserRole(User user, Role role) {
         Set<Role> roles = user.getRoles();
         roles.add(role);
@@ -42,7 +42,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     //增加单个角色
-    @Override
+    
     public User addUserRoleByRoleName(User user, String roleName) {
 //        查询有无此角色，因为修改角色改为选择式，这里不再验证角色是否为null
         Role role = roleService.findByName(roleName);
@@ -56,7 +56,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     //增加单个角色
-    @Override
+    
     public User addUserRoleByRoleId(User user, Long roleId){
         Role role = roleService.findById(roleId);
         Set<Role> roles = user.getRoles();
@@ -66,7 +66,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         return user;
     }
 
-    @Override
+    
     public User addUserRole(User user, List<Role> roles) {
         //获得原始权限
         Set<Role> oldRoles = user.getRoles();
@@ -79,7 +79,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     //增加多个角色
-    @Override
+    
     public User addUserRoleByRoleName(User user, List<String> roleNames) {
         //获得原始权限
         Set<Role> oldRoles = user.getRoles();
@@ -103,7 +103,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     //增加多个角色
-    @Override
+    
     public User addUserRoleByRoleId(User user, List<Long> roleIds) {
 
 
@@ -135,7 +135,7 @@ public class UserRoleServiceImpl implements UserRoleService {
      */
 
     //更新单个角色
-    @Override
+    
     public User updateUserRole(User user, Role role) {
         Set<Role> roles = new HashSet<>();
         roles.add(role);
@@ -146,7 +146,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     //更新单个角色
-    @Override
+    
     public User updateUserRoleByRoleName(User user, String roleName) {
 //        查询有无此角色，因为修改角色改为选择式，这里不再验证角色是否为null
         Role role = roleService.findByName(roleName);
@@ -159,7 +159,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         return user;
     }
 
-    @Override
+    
     public User updateUserRoleByRoleId(User user, Long roleId){
         Role role = roleService.findById(roleId);
         Set<Role> roles = new HashSet<>();
@@ -170,7 +170,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     //更新多个角色
-    @Override
+    
     public User updateUserRole(User user, List<Role> roles) {
         Set<Role> newRoles = new HashSet<>(roles);
         user.setRoles(newRoles);
@@ -178,7 +178,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     //更新多个角色
-    @Override
+    
     public User updateUserRoleByRoleName(User user, List<String> roleNames) {
         Set<Role> newRoles = new HashSet<>();
         for (String roleName : roleNames) {
@@ -193,7 +193,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     //实际业务中可能只用到这个
-    @Override
+    
     public User updateUserRoleByRoleId(User user, List<Long> roleIds) {
         Set<Role> newRoles = new HashSet<>();
         Role role;

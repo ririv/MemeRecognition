@@ -1,4 +1,4 @@
-import { myAxios, imgBaseUrl } from "./my.js";
+import { myAxios, imgBaseURL } from "./my.js";
 
 new Vue({
   el: "#app1",
@@ -38,7 +38,7 @@ new Vue({
           this.result = response.data;
           this.relatedImgs = []; //清空上次的结果
           for (let item of this.result.relatedImgs) {
-            this.relatedImgs.push(imgBaseUrl + item.subDir + item.sourcename);
+            this.relatedImgs.push(imgBaseURL + item.subDir + item.sourcename);
           }
         })
         .catch(error => {

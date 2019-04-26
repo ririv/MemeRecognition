@@ -1,5 +1,7 @@
 package com.riri.emojirecognition.config;
 
+import com.riri.emojirecognition.security.CustomAuthenticationFailureHandler;
+import com.riri.emojirecognition.security.CustomAuthenticationSuccessHandler;
 import com.riri.emojirecognition.security.CustomLoginUrlAuthenticationEntryPoint;
 import com.riri.emojirecognition.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,12 +59,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     // 配置此方法后会重定向至自己的登陆页面
                     // 如果没有此页面会返回404找不到页面的信息，一旦配置Spring不会再自动生成登陆页面
                     .loginPage("/login")
-                   //允许所有人访问该页面
-                    .permitAll()
+                    .permitAll() //允许所有人访问该页面
                     //登录成功返回首页
-                    .defaultSuccessUrl("/")
-                    //登录失败返回页面
-                    .failureUrl("/login?error")
+                    .successHandler(new CustomAuthenticationSuccessHandler()) // 自定义登录成功处理
+                    .failureHandler(new CustomAuthenticationFailureHandler()) // 自定义登录失败处理
+//                    .defaultSuccessUrl("/")
+//                    .failureUrl("/login?error") //登录失败返回页面
                 .and()
                 .logout()
                     .permitAll()
