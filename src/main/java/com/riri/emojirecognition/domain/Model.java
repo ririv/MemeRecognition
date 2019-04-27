@@ -2,7 +2,8 @@ package com.riri.emojirecognition.domain;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames="enabled")})
@@ -13,7 +14,7 @@ public class Model implements Serializable {
 
     private String name;
 
-    private Date updateTime;
+    private Timestamp updateTime;
 
     private String description;
 
@@ -50,7 +51,7 @@ public class Model implements Serializable {
         return updateTime;
     }
 
-    public void setUpdateTime(Date updateTime) {
+    public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
     }
 

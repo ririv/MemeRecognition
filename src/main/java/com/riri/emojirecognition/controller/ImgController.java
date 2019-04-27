@@ -62,7 +62,8 @@ public class ImgController {
     }
 
     @PostMapping("upload")
-    public Map<String, Object> classify(@RequestParam("file") MultipartFile mFile,@RequestParam(required = false,defaultValue = "20") int num,
+    public Map<String, Object> classify(@RequestParam("file") MultipartFile mFile,
+                                        @RequestParam(required = false,defaultValue = "20") int num,
                                         @RequestParam(value = "flag",required = false,defaultValue = "0") int flag,
                                         @RequestParam(value = "model-id",required = false) Long modelId) {
         // 上传成功或者失败的提示

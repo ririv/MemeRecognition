@@ -15,4 +15,6 @@ public interface ClassifyService {
     Optional<Pair<String, Float>> classify(File image,int flag);
 
     void enable(Long id,int flag);
+
+
 }

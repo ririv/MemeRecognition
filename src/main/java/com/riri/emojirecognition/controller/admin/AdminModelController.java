@@ -2,6 +2,7 @@ package com.riri.emojirecognition.controller.admin;
 
 import com.riri.emojirecognition.component.deeplearning.ClassifierWithDeepLearning4j;
 import com.riri.emojirecognition.domain.Model;
+import com.riri.emojirecognition.dto.ModelDTO;
 import com.riri.emojirecognition.service.ClassifyService;
 import com.riri.emojirecognition.service.ModelService;
 import com.riri.emojirecognition.util.FileUtil;
@@ -11,6 +12,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.sql.Timestamp;
+import java.util.Date;
+
 
 @RestController
 @RequestMapping("/api/v1/admin/model")
@@ -55,7 +60,7 @@ public class AdminModelController {
     }
 
     @PostMapping("upload")
-    public void upload(@RequestParam("file") MultipartFile mFile) {
+    public void upload(@RequestPart("file") MultipartFile mFile, @RequestPart("model") ModelDTO modelDTO) {
         if (!mFile.isEmpty()) {
 
             //原始文件名
@@ -72,6 +77,12 @@ public class AdminModelController {
             Model model = new Model();
             model.setName(originalFilename);
             model.setPath(path);
+            model.setWidth(modelDTO.getWidth());
+            model.setHeight(modelDTO.getHeight());
+            model.setChannels(modelDTO.getChannels());
+            model.setLabels(modelDTO.getLabels());
+            model.setDescription(modelDTO.getDescription());
+            model.setUpdateTime(new Timestamp(new Date().getTime())); //获得当前时间
             modelService.save(model);
         }
     }
