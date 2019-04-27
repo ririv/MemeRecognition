@@ -16,12 +16,6 @@ import java.util.UUID;
  */
 public class FileUtil {
 
-    @Value("${server.port}")
-    private String port;
-
-    @Value("${web.upload-path}")
-    private static String uploadPath;
-
     public static class FileInfo{
         private String name;
         private String path;
@@ -50,11 +44,11 @@ public class FileUtil {
 
 
     /**
-     * @param mfile 文件
+     * @param mFile 文件
      * @param path 文件存放路径
      * @return
      */
-    public static File upload(MultipartFile mfile, String path) {
+    public static File upload(MultipartFile mFile, String path) {
 
         File dest = new File(path);
 
@@ -67,8 +61,8 @@ public class FileUtil {
 
         try {
             //保存文件
-//            FileUtils.copyInputStreamToFile(mfile.getInputStream(), dest);
-            mfile.transferTo(dest);
+//            FileUtils.copyInputStreamToFile(mFile.getInputStream(), dest);
+            mFile.transferTo(dest);
 
         } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
@@ -114,9 +108,9 @@ public class FileUtil {
     }
 
     //遍历文件夹，迭代方式
-    public static List<FileInfo> traverseFolder(String path) {
+    public static List<FileInfo> traverseFolder(String dirPath) {
         int fileNum = 0, folderNum = 0;
-        File file = new File(path);
+        File file = new File(dirPath);
         List<FileInfo> fileList = new ArrayList<>();
 
         if (file.exists()) {
@@ -183,9 +177,9 @@ public class FileUtil {
     }
 
 //    //遍历文件夹，递归方式
-    public static List<FileInfo> traverseFolder2(String dirpath){
+    public static List<FileInfo> traverseFolder2(String dirPath){
 
-        File file = new File(dirpath);
+        File file = new File(dirPath);
         List<FileInfo> fileList = new ArrayList<>();
 
         if (file.exists()) {

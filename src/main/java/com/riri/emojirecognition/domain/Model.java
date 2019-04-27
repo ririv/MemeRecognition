@@ -1,13 +1,11 @@
 package com.riri.emojirecognition.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
 
 @Entity
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames="enabled")})
 public class Model implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -30,7 +28,7 @@ public class Model implements Serializable {
 
     private String labels; //使用,隔开
 
-    private boolean enabled;
+    private Boolean enabled; //使用唯一约束，不启用的模型设置为null，启用的则设置为true
 
     public Long getId() {
         return id;
@@ -104,11 +102,11 @@ public class Model implements Serializable {
         this.labels = labels;
     }
 
-    public boolean isEnabled() {
+    public Boolean isEnabled() {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 }

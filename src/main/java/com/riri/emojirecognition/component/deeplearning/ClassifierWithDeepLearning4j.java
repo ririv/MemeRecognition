@@ -1,7 +1,5 @@
 package com.riri.emojirecognition.component.deeplearning;
 
-import com.riri.emojirecognition.domain.Model;
-import com.riri.emojirecognition.service.ModelService;
 import javafx.util.Pair;
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.modelimport.keras.KerasModelImport;
@@ -11,145 +9,182 @@ import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
-import org.nd4j.linalg.io.ClassPathResource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
 
 @Component
-//@PropertySource(value = "classpath:application.properties",encoding = "utf-8")
-//@RefreshScope
 public class ClassifierWithDeepLearning4j {
 
-    private static MultiLayerNetwork model;
+    //flag为0是使用系统应用的模型，为1是使用用户所选择的临时使用的另外的模型
 
-    private static NativeImageLoader loader;
+    private MultiLayerNetwork enabledModel;
 
-    private static DataNormalization scaler;
+    private MultiLayerNetwork selectedModel;
 
-    public static class Model{
+    private NativeImageLoader enabledModelLoader;
 
-        private static String path;
+    private NativeImageLoader selectedModelLoader;
 
-        private static int height;
+    private String[] enabledModelLabels;
 
-        private static int width;
+    private String[] selectedModelLabels;
 
-        private static int channels; //通道
+    private DataNormalization scaler;
 
-        private static String[] labels;
+    public class Model {
 
-        public static String getPath() {
+        private Long id;
+
+        private String path;
+
+        private int height;
+
+        private int width;
+
+        private int channels; //通道
+
+        private String[] labels;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getPath() {
             return path;
         }
 
-        public static void setPath(String path) {
-            Model.path = path;
+        public void setPath(String path) {
+            this.path = path;
         }
 
-        public static int getHeight() {
+        public int getHeight() {
             return height;
         }
 
-        public static void setHeight(int height) {
-            Model.height = height;
+        public void setHeight(int height) {
+            this.height = height;
         }
 
-        public static int getWidth() {
+        public int getWidth() {
             return width;
         }
 
-        public static void setWidth(int width) {
-            Model.width = width;
+        public void setWidth(int width) {
+            this.width = width;
         }
 
-        public static int getChannels() {
+        public int getChannels() {
             return channels;
         }
 
-        public static void setChannels(int channels) {
-            Model.channels = channels;
+        public void setChannels(int channels) {
+            this.channels = channels;
         }
 
-        public static String[] getLabels() {
+        public String[] getLabels() {
             return labels;
         }
 
-        public static void setLabels(String[] labels) {
-            Model.labels = labels;
+        public void setLabels(String[] labels) {
+            this.labels = labels;
         }
     }
 
-//    @Value("${classifier.modelResourcePath}")
-//    private String modelPath;
-//    @Value("${classifier.height}")
-//    private int height;
-//    @Value("${classifier.width}")
-//    private int width;
-//    @Value("${classifier.channels}")
-//    private int channels; //通道
-//    @Value("${classifier.labels}")
-//    private String[] labels;
-
-    // 将初始化工作设为静态方法，在启动程序时就调用并初始化
+    // 将初始化工作设为init()，在启动程序时就调用并初始化
     // 这样可以防止每次预测时都会new一个新的模型实例，重复加载相同模型等其他相关配置，大大提升预测效率
-    public static void init() throws IOException,InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
+    // 需要重新载入新模型配置时也可以调用
+    public void init(Model model, int flag) throws IOException, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
+
         // ClassPath为resources目录，这里相对于此路径
-        final String fullModel = new ClassPathResource(Model.path).getFile().getPath();
+//        final String fullModel = new ClassPathResource(Model.path).getFile().getPath();
+
+        //使用非ClassPath的外部路径
+        System.out.println("Model path is " + model.path);
 
         // Keras Sequential models correspond to DL4J MultiLayerNetworks. We enforce loading the training configuration
         // of the model as well. If you're only interested in inference, you can safely set this to 'false'.
         // 如果模型仅用来测试，不用作训练，参数设置为false
-        model = KerasModelImport.importKerasSequentialModelAndWeights(fullModel, false);
+        if (flag == 0) {
+            enabledModel = KerasModelImport.importKerasSequentialModelAndWeights(model.path, false);
 
-        // 使用NativeImageLoader转换为数值矩阵
-        loader = new NativeImageLoader(Model.height, Model.width, Model.channels); // 加载和缩放
+            // 使用NativeImageLoader转换为数值矩阵
+            enabledModelLoader = new NativeImageLoader(model.height, model.width, model.channels); // 加载和缩放
+
+            enabledModelLabels = model.labels;
+        } else {
+            selectedModel = KerasModelImport.importKerasSequentialModelAndWeights(model.path, false);
+
+            // 使用NativeImageLoader转换为数值矩阵
+            selectedModelLoader = new NativeImageLoader(model.height, model.width, model.channels); // 加载和缩放
+
+            selectedModelLabels = model.labels;
+        }
 
         scaler = new ImagePreProcessingScaler();//预处理 默认缩放至 0-1
     }
 
-    public INDArray predict(File image) throws IOException{
 
-//        NativeImageLoader loader = new NativeImageLoader(Model.height, Model.width, Model.channels);
-        INDArray imageINDArray = loader.asMatrix(image); // 创建INDarray
+    //仅输出预测结果
+    public INDArray predict(File image, int flag) throws IOException {
+        INDArray imageINDArray;
+        if (flag == 0) {
+            imageINDArray = enabledModelLoader.asMatrix(image); // 创建INDarray
 //        System.out.println(Arrays.toString(imageINDArray.shape()));//shape为[1, 3, 96, 96]，数量，深度，高度，宽度
+        } else {
+            imageINDArray = selectedModelLoader.asMatrix(image);
+        }
 
-//        DataNormalization scaler = new ImagePreProcessingScaler();
         scaler.transform(imageINDArray);
 
 //        INDArray output = model.output(imageINDArray);   // 获得模型对图像的预测，得到的是概率值
 //        System.out.println(output.toString());
 //        System.out.println(output.argMax(1));
-
-        return model.output(imageINDArray);
+        if (flag == 0) {
+            return enabledModel.output(imageINDArray);
+        } else {
+            return selectedModel.output(imageINDArray);
+        }
     }
 
-    public INDArray predict(String imagePath) throws IOException, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
+    public INDArray predict(String imagePath, int flag) throws IOException {
         File file = new File(imagePath);
-        return predict(file); //看清参数类型，否则则变成递归
+        return predict(file, flag); //看清参数类型，否则则变成递归
     }
 
+    //分类为具体的标签
     //pair是一个元组，用来传递两个类型不同的值
-    public Pair<String,Float> classify(File image) throws IOException, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
-        INDArray output = predict(image);
+    public Pair<String, Float> classify(File image, int flag) throws IOException {
+        String[] labels;
+
+        if (flag == 0) {
+            labels = enabledModelLabels;
+        } else {
+            labels = selectedModelLabels;
+        }
+
+        INDArray output = predict(image, flag);
 //        System.out.println(output.argMax());
         int index = output.argMax(1).getInt(0);
 //        System.out.println(Arrays.toString(labels)); //打印标签
-        if (Model.labels != null) {
+        if (labels != null) {
 //            String predictLabel = labels[index];
 //            System.out.println(predictLabel);
 //            System.out.println(output.getFloat(index));//打印概率
-            return new Pair<>(Model.labels[index],output.getFloat(index));
+            return new Pair<>(labels[index], output.getFloat(index));
         } else {
             return null;
         }
     }
 
-    public Pair<String,Float> classify(String imagePath) throws IOException, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
+    public Pair<String, Float> classify(String imagePath, int flag) throws IOException {
         File file = new File(imagePath);
-        return classify(file);//看清参数类型，否则则变成递归
+        return classify(file, flag);//看清函数参数类型，否则则变成递归
     }
 
 }

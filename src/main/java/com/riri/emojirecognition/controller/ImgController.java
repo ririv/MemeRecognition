@@ -5,6 +5,7 @@ import com.riri.emojirecognition.service.ClassifyService;
 import com.riri.emojirecognition.service.ImgService;
 import com.riri.emojirecognition.util.FileUtil;
 
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
@@ -25,7 +26,7 @@ public class ImgController {
     private final ResourceLoader resourceLoader;
 
     @Autowired
-    public ImgController(ImgService imgService, ClassifyService classifyService,ResourceLoader resourceLoader) {
+    public ImgController(ImgService imgService, ClassifyService classifyService, ResourceLoader resourceLoader) {
         this.imgService = imgService;
         this.classifyService = classifyService;
         this.resourceLoader = resourceLoader;
@@ -61,37 +62,46 @@ public class ImgController {
     }
 
     @PostMapping("upload")
-    public Map<String, Object> classify(@RequestParam("file") MultipartFile mfile,@RequestParam(required = false,defaultValue = "20") int num) {
+    public Map<String, Object> classify(@RequestParam("file") MultipartFile mFile,@RequestParam(required = false,defaultValue = "20") int num,
+                                        @RequestParam(value = "flag",required = false,defaultValue = "0") int flag,
+                                        @RequestParam(value = "model-id",required = false) Long modelId) {
         // 上传成功或者失败的提示
         String msg;
-        boolean isSuceess;
-        Optional<String> classifyResult;
+        boolean isSuccess;
+        Optional<Pair<String, Float>>  classifyResult;
         String tag = null;
+        Float proba = null;
         List<Img> relatedImgs = null;
         Map<String, Object> resultMap = new LinkedHashMap<>();
 
 
-        if (!mfile.isEmpty()) {
+        if (!mFile.isEmpty()) {
             //原始文件名
-            String originalFilename = mfile.getOriginalFilename();
+            String originalFilename = mFile.getOriginalFilename();
 
             //给图片新的uuid名
-            String newFilename = FileUtil.getUUIDFilename(mfile.getOriginalFilename());
+            String newFilename = FileUtil.getUUIDFilename(mFile.getOriginalFilename());
 
             //调用上传工具类
-            File file = FileUtil.upload(mfile,  imgBasePath + imgUserPath +newFilename);
+            File file = FileUtil.upload(mFile,  imgBasePath + imgUserPath +newFilename);
 
-            classifyResult = classifyService.classify(file);
+            if(flag != 0){
+                classifyService.enable(modelId,flag);
+            }
+
+            classifyResult = classifyService.classify(file,flag);
 
             // 识别成功，给出页面提示
             if (classifyResult.isPresent()) {
                 msg = "识别成功";
-                tag = classifyResult.get();
+                tag = classifyResult.get().getKey();
+                proba = classifyResult.get().getValue();
+
                 relatedImgs = imgService.findRandomAndEnabledImgsByTagLimitNum3(tag, num);
-                isSuceess=true;
+                isSuccess=true;
             } else {
                 msg = "无法识别";
-                isSuceess=false;
+                isSuccess=false;
             }
 
             //保存到repo
@@ -117,13 +127,14 @@ public class ImgController {
             imgService.save(img);
         } else {
             msg = "图片上传失败！";
-            isSuceess=false;
+            isSuccess=false;
         }
 
         //构建json
-        resultMap.put("isSuccess",isSuceess);
+        resultMap.put("isSuccess",isSuccess);
         resultMap.put("msg", msg);
         resultMap.put("tag", tag);
+        resultMap.put("proba", proba);
         resultMap.put("relatedImgs", relatedImgs);
 
         return resultMap;

@@ -1,7 +1,7 @@
 package com.riri.emojirecognition;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.riri.emojirecognition.component.StaticPagePathFinder;
+import com.riri.emojirecognition.component.deeplearning.ClassifierWithDeepLearning4j;
 import com.riri.emojirecognition.config.PropConfig;
 import com.riri.emojirecognition.domain.Img;
 import com.riri.emojirecognition.domain.Model;
@@ -18,12 +18,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.junit4.SpringRunner;
 //import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -226,16 +223,12 @@ public class test {
     }
 
     @Test
-    public void test17() throws IOException {
-        String path = new ClassPathResource("model/modelConfi.json").getFile().getPath();
-        File json = new File(path);
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String,Object> dataNode = mapper.readValue(json,Map.class);
-        System.out.println(dataNode);
+    public void test17() {
+//        System.out.println(ClassifierWithDeepLearning4j.Model.getId());
     }
 
     @Test
-    public void test18() throws IOException {
+    public void test18() {
         Model model = new Model();
         model.setName("123");
         model.setHeight(96);
