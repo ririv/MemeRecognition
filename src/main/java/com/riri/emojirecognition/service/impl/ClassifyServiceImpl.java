@@ -56,7 +56,6 @@ public class ClassifyServiceImpl implements ClassifyService {
     public void init(Model model, int flag) {
         ClassifierWithDeepLearning4j.Model classifierModel = new ClassifierWithDeepLearning4j().new Model();
         if (model != null) {
-
             classifierModel.setId(model.getId());
             classifierModel.setPath(model.getPath());
             classifierModel.setHeight(model.getHeight());
@@ -89,8 +88,8 @@ public class ClassifyServiceImpl implements ClassifyService {
         logger.info("模型初始化成功");
     }
 
-    public void init(Long id, int flag) { //通过模型id初始化模型
-        init(modelService.findById(id), flag);
+    public void init(Long modelId, int flag) { //通过模型id初始化模型
+        init(modelService.findById(modelId), flag);
     }
 
     public Optional<Pair<String, Float>> classify(File image, int flag) {
@@ -113,19 +112,39 @@ public class ClassifyServiceImpl implements ClassifyService {
         return Optional.ofNullable(labelWithProba);
     }
 
-    public void enable(Long id, int flag) {
-        Model oldModel = modelService.findByEnabled(true);
-        if (oldModel != null) {
-            oldModel.setEnabled(null); //不要设置为false，因为设置了唯一限制
-            modelService.save(oldModel);
-        }
+    public void enable(Long modelId, int flag) {
+        if (flag == 0) {
+            Model oldModel = modelService.findByEnabled(true);
+            Model newModel;
 
-        Model model = modelService.findById(id);
-        if (flag == 0) { //flag为1时临时使用所选择的模型，不必启用
-            model.setEnabled(true); //标记启用此模型
-        }
-        modelService.save(model);
+            if (oldModel != null) {
+                if (!oldModel.getId().equals(modelId)) {//当新旧id相同时。则无需再修改数据库和初始化模型，否则在后续操作还会改回来
+                    oldModel.setEnabled(null); //不要设置为false，因为设置了唯一限制
+                    modelService.save(oldModel);
 
-        init(id, flag); //初始化此模型
+                    newModel = modelService.findById(modelId);
+                    newModel.setEnabled(true); //标记启用此模型
+                    modelService.save(newModel);
+
+                    init(modelId, flag); //初始化此模型
+                }
+            } else { //数据库无启用的模型时，则仅需对新启用的模型操作
+                newModel = modelService.findById(modelId);
+                newModel.setEnabled(true); //标记启用此模型
+                modelService.save(newModel);
+
+                init(modelId, flag);
+            }
+
+        } else {//flag不为0时为临时使用模型，不需要对数据库操作
+            if(classifier.getSelectedModelId()!=null) {
+                if (!classifier.getSelectedModelId().equals(modelId)) { //当新旧id相同时，则不进行初始化操作，防止重复加载模型
+                    init(modelId, flag);
+                }
+            }
+            else {
+                init(modelId,flag);
+            }
+        }
     }
 }

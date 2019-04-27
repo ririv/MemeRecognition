@@ -33,6 +33,18 @@ public class ClassifierWithDeepLearning4j {
 
     private DataNormalization scaler;
 
+    private Long enabledModelId; //记录模型id
+
+    private Long selectedModelId; //记录模型id
+
+    public Long getEnabledModelId() {
+        return enabledModelId;
+    }
+
+    public Long getSelectedModelId() {
+        return selectedModelId;
+    }
+
     public class Model {
 
         private Long id;
@@ -117,6 +129,9 @@ public class ClassifierWithDeepLearning4j {
             enabledModelLoader = new NativeImageLoader(model.height, model.width, model.channels); // 加载和缩放
 
             enabledModelLabels = model.labels;
+
+            enabledModelId = model.id;
+
         } else {
             selectedModel = KerasModelImport.importKerasSequentialModelAndWeights(model.path, false);
 
@@ -124,6 +139,8 @@ public class ClassifierWithDeepLearning4j {
             selectedModelLoader = new NativeImageLoader(model.height, model.width, model.channels); // 加载和缩放
 
             selectedModelLabels = model.labels;
+
+            selectedModelId = model.id;
         }
 
         scaler = new ImagePreProcessingScaler();//预处理 默认缩放至 0-1
