@@ -38,7 +38,7 @@ new Vue({
           this.result = response.data;
           this.relatedImgs = []; //清空上次的结果
           for (let item of this.result.relatedImgs) {
-            this.relatedImgs.push(imgBaseURL + item.subDir + item.sourcename);
+            this.relatedImgs.push(imgBaseURL + item.subDir + item.sourceName);
           }
         })
         .catch(error => {

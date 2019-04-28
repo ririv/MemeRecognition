@@ -19,7 +19,7 @@ public class StaticPagePathFinder {
         this.resourcePatternResolver = resourcePatternResolver;
     }
 
-    public static class PagePaths {
+    public class PagePaths {
         private String urlPath;
         private String viewFilePath;
 

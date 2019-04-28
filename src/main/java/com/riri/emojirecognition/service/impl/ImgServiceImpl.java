@@ -25,14 +25,8 @@ import org.slf4j.LoggerFactory;
 @Service
 public class ImgServiceImpl implements ImgService {
 
-    @Value("${path.img.base-path}")
+    @Value("${path.base.img}")
     private String imgBasePath;
-
-    @Value("${path.img.admin-path}")
-    private String imgAdminPath;
-
-    @Value("${path.img.user-path}")
-    private String imgUserPath; // 要上传的目标文件存放路径
 
     private final ImgRepository imgRepository;
 
@@ -41,17 +35,17 @@ public class ImgServiceImpl implements ImgService {
         this.imgRepository = imgRepository;
     }
 
-    
+
     public Img save(Img img) {
         return imgRepository.save(img);
     }
 
-    
+
     public List<Img> saveAll(List<Img> imgs) {
         return imgRepository.saveAll(imgs);
     }
 
-    
+
     public Img findById(Long id) {
         Optional<Img> img = imgRepository.findById(id);
         if (!img.isPresent()) {
@@ -60,45 +54,45 @@ public class ImgServiceImpl implements ImgService {
         return img.get();
     }
 
-    
+
     public void deleteById(Long id) {
         imgRepository.deleteById(id);
     }
 
-    
+
     public Long findMaxSubIdByTag(String tag) {
         return imgRepository.findMaxSubIdByTag(tag);
     }
 
-    
+
     public Page<Img> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return imgRepository.findAll(pageable);
     }
 
-    
+
     public Page<Img> findAll(int page, int size, Sort sort) {
         Pageable pageable = PageRequest.of(page, size, sort);
         return imgRepository.findAll(pageable);
     }
 
-    
+
     public Page<Img> findAll(int page, int size, Sort.Direction direction, String... properties) {
         Pageable pageable = PageRequest.of(page, size, direction, properties);
         return imgRepository.findAll(pageable);
     }
 
-    
+
     public Page<Img> findAll(Pageable pageable) {
         return imgRepository.findAll(pageable);
     }
 
-    
+
     public Page<Img> findByTag(String tag, Pageable pageable) {
         return imgRepository.findByTag(tag, pageable);
     }
 
-    
+
     public Img updateById(Long id, Img img) {
         findById(id);//如果id不存在则会报出异常
         //设置id为所指定的id，防止user中有id信息，而发生更新错位的现象
@@ -106,7 +100,7 @@ public class ImgServiceImpl implements ImgService {
         return imgRepository.save(img);
     }
 
-    
+
     public Img createImg(Img img) {
         img.setId(null);
         return imgRepository.save(img);
@@ -114,21 +108,13 @@ public class ImgServiceImpl implements ImgService {
 
     /**
      * 通过文件夹批量插入到数据库
+     * 管理员初始化数据库时使用
+     * 默认拥有者为admin，且图片设为启用enabled=true
      *
      * @param targetDirPath 目标文件夹路径
-     * @param owner         所有者
-     * @param flag          设置为0，则为管理员上传，非0为用户上传，路径会发生相应的改变
      */
-    
-    public void batchInsertToDbByDir(String targetDirPath, String owner, int flag) {
-        String path; //保存的路径
-        //flag 为0 则为管理员上传，不为0则为用户上传
-        if (flag == 0) {
-            path = imgAdminPath;
-            owner = "admin";
-        } else {
-            path = imgUserPath;
-        }
+    public void batchInsertToDbByDir(String targetDirPath) {
+        String owner = "admin";
 
         String parentDirectory = imgBasePath.replace("\\", "/");
         String subdirectory;
@@ -152,12 +138,12 @@ public class ImgServiceImpl implements ImgService {
 //                        .substring(subdirectory.lastIndexOf("/")+1);
 
             //通过"/"切割字符串获得最后一个元素即为最后的子文件夹名做为tag
-            String[] subdirArray = subdirectory.split("/");
-//                for (String s: subdirArray){System.out.println(s);}//测试用
+            String[] subDirArray = subdirectory.split("/");
+//                for (String s: subDirArray){System.out.println(s);}//测试用
             //将上一次的tag赋值给lastTag
             lastTag = tag;
             //tag获得新值
-            tag = subdirArray[subdirArray.length - 1];
+            tag = subDirArray[subDirArray.length - 1];
 
             //检测到tab发生了变化
             if (!tag.equals(lastTag)) {
@@ -196,7 +182,7 @@ public class ImgServiceImpl implements ImgService {
      * 缺点：在subId不连续的情况下会进行多次查询，直到满足数量。单个查询，增加了数据库的压力
      * 适合一定要满足数量要求时使用
      */
-    
+
     public List<Img> findRandomAndEnabledImgsByTagLimitNum(String tag, int num) {
         Img img;
 
@@ -233,7 +219,7 @@ public class ImgServiceImpl implements ImgService {
      * 缺点：在subId不连续的情况下，可能会查询到空数据，虽然最终结果里空数据被省去，不会有null值，但是数据的数量要求不满足
      * 适合subId连续时使用
      */
-    
+
     public List<Img> findRandomAndEnabledImgsByTagLimitNum2(String tag, int num) {
         Long max = imgRepository.findMaxSubIdByTag(tag);
         Long min = imgRepository.findMinSubIdByTag(tag);
@@ -259,7 +245,7 @@ public class ImgServiceImpl implements ImgService {
      * 缺点，数据量太大时，list在内存中存储的数据太大
      * 适合数据量不是异常大时使用
      */
-    
+
     public List<Img> findRandomAndEnabledImgsByTagLimitNum3(String tag, int num) {
         List<Img> imgs = imgRepository.findByTagAndEnabled(tag, true);
 

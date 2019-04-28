@@ -34,7 +34,7 @@ public interface ImgService {
 
      Img createImg(Img img);
     
-     void batchInsertToDbByDir(String targetDirPath, String owner, int flag);
+     void batchInsertToDbByDir(String targetDirPath);
 
      List<Img> findRandomAndEnabledImgsByTagLimitNum(String tag, int num);
 

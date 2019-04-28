@@ -109,12 +109,6 @@ public class test {
 //        roleRepository.save(new Role(3L,"ROLE_GUEST"));
     }
 
-    //测试批量插入图片
-    @Test
-    public void test03(){
-        String path = "D:\\tests\\12345\\猫";
-        imgServiceImpl.batchInsertToDbByDir(path,null,0);
-    }
 
     @Test
 //    @Transactional

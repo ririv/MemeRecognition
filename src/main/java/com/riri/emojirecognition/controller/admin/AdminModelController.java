@@ -21,7 +21,7 @@ import java.util.Date;
 @RequestMapping("/api/v1/admin/model")
 public class AdminModelController {
 
-    @Value("${path.model.base-path}")
+    @Value("${path.base.model}")
     private String modelBasePath;
 
     private final ModelService modelService;
@@ -40,8 +40,8 @@ public class AdminModelController {
     }
 
     @PutMapping(value = "operate/{id}")
-    public Model update(@PathVariable Long id, @RequestBody Model user) {
-        return modelService.updateById(id, user);
+    public Model update(@PathVariable Long id, @RequestBody Model model) {
+        return modelService.updateById(id, model);
     }
 
     @DeleteMapping(value = "operate/{id}")
@@ -50,8 +50,8 @@ public class AdminModelController {
     }
 
     @PostMapping(value = "create")
-    public Model create(@RequestBody Model user) {
-        return modelService.createModel(user);
+    public Model create(@RequestBody Model model) {
+        return modelService.createModel(model);
     }
 
     @GetMapping(value = "query")

@@ -20,7 +20,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         this.staticPagePathFinder = staticPagePathFinder;
     }
 
-    @Value("${path.img.base-path}")
+    @Value("${path.base.img}")
     private String imgBasePath;
 
     @Override
