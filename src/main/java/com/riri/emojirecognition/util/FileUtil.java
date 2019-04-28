@@ -134,8 +134,8 @@ public class FileUtil {
 
                         //获得文件信息并保存至数组
                         FileInfo fileInfo = new FileInfo(f.getName(), f.getParent()+"\\");
-                        System.out.println("文件名: "+f.getName());
-                        System.out.println("父路径: "+ f.getParent()+"\\");
+//                        System.out.println("文件名: "+f.getName());
+//                        System.out.println("父路径: "+ f.getParent()+"\\");
                         fileList.add(fileInfo);
                     }
                 }
@@ -162,8 +162,8 @@ public class FileUtil {
 
                                 //获得文件信息并保存至数组
                                 FileInfo fileInfo = new FileInfo(f.getName(), f.getParent() + "\\");
-                                System.out.println("文件名: " + f.getName());
-                                System.out.println("父路径: " + f.getParent() + "\\");
+//                                System.out.println("文件名: " + f.getName());
+//                                System.out.println("父路径: " + f.getParent() + "\\");
                                 fileList.add(fileInfo);
                             }
                         }
@@ -198,8 +198,8 @@ public class FileUtil {
 
                         //获得文件信息并保存至数组
                         FileInfo fileInfo = new FileInfo(f.getName(), f.getParent()+"\\");
-                        System.out.println("文件名: "+f.getName());
-                        System.out.println("父路径: "+ f.getParent()+"\\");
+//                        System.out.println("文件名: "+f.getName());
+//                        System.out.println("父路径: "+ f.getParent()+"\\");
                         fileList.add(fileInfo);
                         }
                     }

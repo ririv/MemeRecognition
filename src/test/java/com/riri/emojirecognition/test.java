@@ -8,6 +8,7 @@ import com.riri.emojirecognition.domain.Model;
 import com.riri.emojirecognition.domain.User;
 import com.riri.emojirecognition.repository.ImgRepository;
 import com.riri.emojirecognition.repository.ModelRepository;
+import com.riri.emojirecognition.service.ImgService;
 import com.riri.emojirecognition.service.impl.ImgServiceImpl;
 import com.riri.emojirecognition.component.GetLocalhost;
 import com.riri.emojirecognition.domain.Role;
@@ -38,7 +39,7 @@ public class test {
     private RoleRepository roleRepository;
 
     @Autowired
-    private ImgServiceImpl imgServiceImpl;
+    private ImgService imgService;
 
     @Autowired
     private ImgRepository imgRepository;
@@ -139,7 +140,7 @@ public class test {
     public void test07(){
         String tag = "狗";
         List<Img> list;
-        list = imgServiceImpl.findRandomAndEnabledImgsByTagLimitNum(tag ,10);
+        list = imgService.findRandomAndEnabledImgsByTagLimitNum(tag ,10);
 
         System.out.println(list.size());
 

@@ -40,14 +40,16 @@ public class ImgServiceTest {
         System.out.println(page.getContent());
     }
 
-    //测试批量插入图片
     @Test
     public void test03(){
-        imgService.batchInsertToDbByDir("D:/test/img/admin");
-    }
-
-    @Test
-    public void test04(){
         System.out.println(imgBasePath+adminImgSubPath);
     }
+
+//    //测试批量插入图片
+//    @Test
+//    public void test04(){
+//        imgService.batchInsertToDbByDir("D:/test/img/admin");
+//    }
+
+
 }

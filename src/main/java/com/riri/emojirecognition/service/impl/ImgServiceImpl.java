@@ -169,7 +169,7 @@ public class ImgServiceImpl implements ImgService {
             img.setSubId(subId);
             img.setEnabled(true);
             imgRepository.save(img);
-            System.out.println("文件名：" + img.getSourceName() + "\n" + "子文件夹：" + img.getSubDir()); //测试用
+//            System.out.println("文件名：" + img.getSourceName() + "\n" + "子文件夹：" + img.getSubDir()); //测试用
         }
     }
 
