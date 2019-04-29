@@ -99,7 +99,7 @@ public class Model implements Serializable {
     }
 
     public String[] getLabels() {
-        return labels.split(",");
+        return this.labels.split(",");
     }
 
     public void setLabels(String labels) {
