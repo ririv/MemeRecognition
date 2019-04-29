@@ -228,11 +228,13 @@ public class test {
         model.setName("123");
         model.setHeight(96);
         model.setWidth(96);
-        model.setEnabled(true);
+//        model.setEnabled(true);
         model.setPath("model/emoji.h5");
         model.setChannels(3);
-        model.setLabels("北方栖姬,天线宝宝,小猪佩奇,小黄鸡,尔康,滑稽,熊猫头,狗,猫,胖虎,蘑菇头");
-        modelRepository.save(model);
+        String[] labels = {"北方栖姬","天线宝宝"};
+        model.setLabels(labels);
+//        modelRepository.save(model);
+        System.out.println(Arrays.toString(model.getLabels()));
     }
 
 }

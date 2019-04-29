@@ -54,7 +54,7 @@ public class ClassifyServiceImpl implements ClassifyService {
     }
 
     public void init(Model model, int flag) {
-        ClassifierWithDeepLearning4j.Model classifierModel = new ClassifierWithDeepLearning4j().new Model();
+        ClassifierWithDeepLearning4j.Model classifierModel = classifier.new Model();
         if (model != null) {
             classifierModel.setId(model.getId());
             classifierModel.setPath(model.getPath());
@@ -62,7 +62,7 @@ public class ClassifyServiceImpl implements ClassifyService {
             classifierModel.setWidth(model.getWidth());
             classifierModel.setChannels(model.getChannels());
 
-            String[] labels = model.getLabels().split(",");
+            String[] labels = model.getLabels();
             classifierModel.setLabels(labels);
         } else { //采用存放在resource/model下默认的模型
             logger.warn("找不到模型，回退到默认模型");

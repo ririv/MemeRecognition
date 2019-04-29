@@ -1,6 +1,9 @@
 package com.riri.emojirecognition.domain;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -95,12 +98,16 @@ public class Model implements Serializable {
         this.channels = channels;
     }
 
-    public String getLabels() {
-        return labels;
+    public String[] getLabels() {
+        return labels.split(",");
     }
 
     public void setLabels(String labels) {
         this.labels = labels;
+    }
+
+    public void setLabels(String[] labels) {
+        this.labels = StringUtils.join(labels,",");
     }
 
     public Boolean isEnabled() {
