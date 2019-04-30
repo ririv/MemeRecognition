@@ -29,10 +29,11 @@ public class UserRoleServiceTest {
 //    @Transactional
     public void test05(){
         List<String> roleNames = new ArrayList<>();
+//        roleNames.add("ROLE_ROOT");
         roleNames.add("ROLE_ADMIN");
-        roleNames.add("ROLE_GUEST");
         roleNames.add("ROLE_USER");
-        User user = userRoleService.addUserRoleByRoleName(userService.findById(70L), roleNames);
+//        roleNames.add("ROLE_GUEST");
+        User user = userRoleService.addUserRoleByRoleName(userService.findById(16L), roleNames);
         System.out.println(user.getId());
     }
 
@@ -41,15 +42,15 @@ public class UserRoleServiceTest {
 //    @Transactional
     public void test08(){
         List<Role> allRoles = roleService.findAll();
-        List<String> namesOfAllRoles = new ArrayList<>();
+//        List<String> namesOfAllRoles = new ArrayList<>();
         int i = 0;
         for (Role role: allRoles){
-            namesOfAllRoles.add(role.getName());
+//            namesOfAllRoles.add(role.getName());
             System.out.println(i + "\t" + role.getName());
             i++;
         }
         Role role = allRoles.get(1);
-        User user = userService.findById(70L);
+        User user = userService.findById(16L);
         userRoleService.addUserRole(user,role);
 
     }
@@ -67,7 +68,7 @@ public class UserRoleServiceTest {
             i++;
         }
 
-        User user = userService.findById(70L);
+        User user = userService.findById(16L);
         userRoleService.updateUserRole(user,allRoles);
     }
 
@@ -79,7 +80,7 @@ public class UserRoleServiceTest {
         roleNames.add("ROLE_ADMIN");
         roleNames.add("ROLE_GUEST");
 //        roleNames.add("ROLE_USER");
-        User user = userRoleService.updateUserRoleByRoleName(userService.findById(70L), roleNames);
+        User user = userRoleService.updateUserRoleByRoleName(userService.findById(16L), roleNames);
         System.out.println(user.getId());
     }
 
@@ -90,7 +91,7 @@ public class UserRoleServiceTest {
         List<Long> roleIds = new ArrayList<>();
         roleIds.add(1L);
         roleIds.add(2L);
-        User user = userRoleService.updateUserRoleByRoleId(userService.findById(70L), roleIds);
+        User user = userRoleService.updateUserRoleByRoleId(userService.findById(16L), roleIds);
         System.out.println(user.getId());
     }
 }
