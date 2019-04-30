@@ -43,8 +43,8 @@ public class ImgController {
         return imgService.findById(id);
     }
 
-    @RequestMapping(value = "search", method = RequestMethod.GET)
-    public List<Img> findImg(@RequestParam("tag") String tag, @RequestParam(required = false, defaultValue = "20") int num) {
+    @RequestMapping(value = "related-query", method = RequestMethod.GET)
+    public List<Img> findRelatedImg(@RequestParam("tag") String tag, @RequestParam(required = false, defaultValue = "20") int num) {
         return imgService.findRandomAndEnabledImgsByTagLimitNum3(tag, num);
     }
 
