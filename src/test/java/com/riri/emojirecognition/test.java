@@ -1,7 +1,6 @@
 package com.riri.emojirecognition;
 
 import com.riri.emojirecognition.component.StaticPagePathFinder;
-import com.riri.emojirecognition.component.deeplearning.ClassifierWithDeepLearning4j;
 import com.riri.emojirecognition.config.PropConfig;
 import com.riri.emojirecognition.domain.Img;
 import com.riri.emojirecognition.domain.Model;
@@ -9,8 +8,7 @@ import com.riri.emojirecognition.domain.User;
 import com.riri.emojirecognition.repository.ImgRepository;
 import com.riri.emojirecognition.repository.ModelRepository;
 import com.riri.emojirecognition.service.ImgService;
-import com.riri.emojirecognition.service.impl.ImgServiceImpl;
-import com.riri.emojirecognition.component.GetLocalhost;
+import com.riri.emojirecognition.component.LocalhostLoader;
 import com.riri.emojirecognition.domain.Role;
 import com.riri.emojirecognition.repository.RoleRepository;
 import com.riri.emojirecognition.repository.UserRepository;
@@ -52,6 +50,9 @@ public class test {
 
     @Autowired
     private PropConfig propConfig;
+
+    @Autowired
+    private LocalhostLoader localhostLoader;
 
 //    @Autowired
 //    private ContextRefresher contextRefresher;
@@ -98,8 +99,7 @@ public class test {
 
     @Test
     public void test01(){
-//        userRepository.save(new User("1", "20", "123@qq.com", Collections.singletonList(roleRepository.findByName("ROLE_USER"))));
-        System.out.println("本机地址:"+ GetLocalhost.getLocalAddress());
+        System.out.println("本机地址:"+ localhostLoader.getLocalAddress());
 
     }
 
@@ -114,6 +114,7 @@ public class test {
     @Test
 //    @Transactional
     public void test04(){
+//        userRepository.save(new User("1", "20", "123@qq.com", Collections.singletonList(roleRepository.findByName("ROLE_USER"))));
         User user = new User();
         user.setUsername("09813");
         user.setPassword("098");

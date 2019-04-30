@@ -9,19 +9,19 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 @Component
-public class GetLocalhost {
+public class LocalhostLoader {
 
     //获取主机端口
     @Value("${server.port}")
-    private static String post;
+    private String post;
 
     //获取本机ip
-    private static String host;
+    private String host;
 
-    private static final Logger logger = LoggerFactory.getLogger(GetLocalhost.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocalhostLoader.class);
 
     //获取本机IP
-    public static String getLocalAddress() {
+    public String getLocalAddress() {
         try {
             host = InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
