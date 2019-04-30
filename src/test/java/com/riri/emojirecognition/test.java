@@ -235,7 +235,7 @@ public class test {
         String[] labels = {"北方栖姬","天线宝宝"};
         model.setLabels(labels);
 //        modelRepository.save(model);
-        System.out.println(Arrays.toString(model.getLabels()));
+        System.out.println(model.getLabels());
     }
 
 }

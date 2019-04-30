@@ -99,8 +99,12 @@ public class Model implements Serializable {
         this.channels = channels;
     }
 
-    public String[] getLabels() {
-        return this.labels.split(",");
+    public String getLabels() {
+        return labels;
+    }
+
+    public String[] getLabelsArray() {
+        return labels.split(",");
     }
 
     public void setLabels(String labels) {
