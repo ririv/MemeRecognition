@@ -35,15 +35,15 @@ public class ImgServiceTest {
         System.out.println(page);
     }
 
-    @Test
-    public void test02() {
-        Page page = imgRepository.findByTag("猫", Pageable.unpaged());
-        System.out.println(page.getContent());
-        System.out.println(page.getTotalElements());
-        System.out.println(page.getNumber());
-        System.out.println(page.getNumberOfElements());
-        System.out.println(page.getSize());
-    }
+//    @Test
+//    public void test02() {
+//        Page page = imgRepository.findByTag("猫", Pageable.unpaged());
+//        System.out.println(page.getContent());
+//        System.out.println(page.getTotalElements());
+//        System.out.println(page.getNumber());
+//        System.out.println(page.getNumberOfElements());
+//        System.out.println(page.getSize());
+//    }
 
     @Test
     public void test03(){
