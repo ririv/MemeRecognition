@@ -77,9 +77,10 @@ public class UserRoleServiceTest {
 //    @Transactional
     public void test10(){
         List<String> roleNames = new ArrayList<>();
+//        roleNames.add("ROLE_ROOT");
         roleNames.add("ROLE_ADMIN");
-        roleNames.add("ROLE_GUEST");
-//        roleNames.add("ROLE_USER");
+        roleNames.add("ROLE_USER");
+//        roleNames.add("ROLE_GUEST");
         User user = userRoleService.updateUserRoleByRoleName(userService.findById(16L), roleNames);
         System.out.println(user.getId());
     }
