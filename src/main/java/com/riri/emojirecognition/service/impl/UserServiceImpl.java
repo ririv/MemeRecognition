@@ -7,11 +7,9 @@ import com.riri.emojirecognition.repository.UserRepository;
 import com.riri.emojirecognition.service.RoleService;
 import com.riri.emojirecognition.service.UserService;
 import com.riri.emojirecognition.exception.UserAlreadyExistException;
+import com.riri.emojirecognition.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,32 +32,38 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
     }
 
-    
-    public List<User> findAll() {
-        return userRepository.findAll();
+
+    public List<UserVO> findAll() {
+        List<User> userList = userRepository.findAll();
+        List<UserVO> userVOList = new ArrayList<>();
+        userList.forEach(user -> userVOList.add(new UserVO(user)));
+        return userVOList;
     }
 
-    public Page<User> findAll(int page, int size) {
+    public Page<UserVO> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return userRepository.findAll(pageable);
+        Page<User> users = userRepository.findAll(pageable);
+        return users.map(UserVO::new);
     }
 
-    public Page<User> findAll(int page, int size, Sort sort) {
+    public Page<UserVO> findAll(int page, int size, Sort sort) {
         Pageable pageable = PageRequest.of(page, size, sort);
-        return userRepository.findAll(pageable);
+        Page<User> users = userRepository.findAll(pageable);
+        return users.map(UserVO::new);
     }
 
-    public Page<User> findAll(int page, int size, Sort.Direction direction, String... properties) {
+    public Page<UserVO> findAll(int page, int size, Sort.Direction direction, String... properties) {
         Pageable pageable = PageRequest.of(page, size, direction, properties);
-        return userRepository.findAll(pageable);
+        Page<User> users = userRepository.findAll(pageable);
+        return users.map(UserVO::new);
     }
 
-    
-    public Page<User> findAll(Pageable pageable) {
-        return userRepository.findAll(pageable);
+    public Page<UserVO> findAll(Pageable pageable) {
+        Page<User> users = userRepository.findAll(pageable);
+//        return users.map(user -> new UserVO(user));
+        return users.map(UserVO::new); //简化后的表达式，类型从Page<User>转换为Page<UserVO>
     }
 
-    
     public User findById(Long id) {
         Optional<User> user = userRepository.findById(id);
         if (!user.isPresent()) {
@@ -68,37 +72,30 @@ public class UserServiceImpl implements UserService {
         return user.get();
     }
 
-    
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
-    
     public User save(User user) {
         return userRepository.save(user);
     }
 
-    
     public List<User> saveAll(List<User> users) {
         return userRepository.saveAll(users);
     }
 
-    
     public void delete(User user) {
         userRepository.delete(user);
     }
 
-    
     public void deleteById(Long id) {
         userRepository.deleteById(id);
     }
 
-    
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 
-    
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
@@ -113,7 +110,6 @@ public class UserServiceImpl implements UserService {
      * @param user 用户信息
      * @return user
      */
-    
     public User updateById(Long id, User user) {
 
         findById(id);//如果此用户不存在则会抛出异常
@@ -127,16 +123,22 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    
-    public User updatePasswordById(Long id, String password){
+    public User updatePassword(Long id, String password) {
 
-        User user =  findById(id);//如果此用户不存在则会抛出异常
+        User user = findById(id);//如果此用户不存在则会抛出异常
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userRepository.save(user);
     }
 
-    
+    public User updatePassword(String username, String password) {
+
+        User user = findByUsername(username);//如果此用户不存在则会抛出异常
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        return userRepository.save(user);
+    }
+
     public User createUser(User transferUser) {
 
         if (existsByUsername(transferUser.getUsername())) {

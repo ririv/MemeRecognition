@@ -5,11 +5,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -68,6 +70,16 @@ public class UserServiceTest {
 
             }
         }
+    }
+
+    @Test
+    public void test02(){
+        System.out.println(userService.findAll(Pageable.unpaged()).getContent().get(0).getRoleNames());
+    }
+
+    @Test
+    public void test03(){
+        System.out.println(userService.findAll().get(0).getRoleNames());
     }
 
 }

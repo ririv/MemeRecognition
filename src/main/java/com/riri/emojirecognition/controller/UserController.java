@@ -36,8 +36,8 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public User register(User transferUser) {
-         return userService.createUser(transferUser);
+    public void register(User transferUser) {
+         userService.createUser(transferUser);
     }
 
 //    @RequestMapping(value="/logout", method = RequestMethod.GET)
@@ -48,4 +48,9 @@ public class UserController {
 //        }
 //        return ResponseEntity.ok("logout successfully");
 //    }
+
+    @PutMapping("update/password")
+    public void updatePassword(String username,String password){
+        userService.updatePassword(username,password);
+    }
 }

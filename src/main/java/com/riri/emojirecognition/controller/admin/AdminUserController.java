@@ -42,4 +42,9 @@ public class AdminUserController {
     public Page findAll(Pageable pageable) {
         return userService.findAll(pageable);
     }
+
+    @GetMapping(value = "search")
+    public User find(@RequestParam String username) {
+        return userService.findByUsername(username);
+    }
 }
