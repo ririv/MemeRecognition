@@ -154,7 +154,6 @@ public class UserServiceImpl implements UserService {
         Set<Role> roles = new HashSet<>();
         roles.add(roleService.findByName("ROLE_USER"));
 //        roles.add(roleService.findByName("ROLE_ADMIN"));
-//        roles.add(roleService.findByName("ROLE_ADMIN"));
 //        for (Role role: roles){
 //        System.out.println(role.hashCode());}
         User newUser = new User();
@@ -166,7 +165,7 @@ public class UserServiceImpl implements UserService {
 //                    Collections.singletonList(roleService.findByName("ROLE_USER"))
 //                    Arrays.asList(roleRepository.findByName("ROLE_USER"),roleRepository.findByName("ROLE_ADMIN")) //此方法可添加多个权限
 
-        return userRepository.save(transferUser);
+        return userRepository.save(newUser);
     }
 
 }
