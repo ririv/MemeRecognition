@@ -1,8 +1,6 @@
 package com.riri.emojirecognition.controller.admin;
 
-import com.riri.emojirecognition.component.deeplearning.ClassifierWithDeepLearning4j;
 import com.riri.emojirecognition.domain.Model;
-import com.riri.emojirecognition.dto.ModelDTO;
 import com.riri.emojirecognition.service.ClassifyService;
 import com.riri.emojirecognition.service.ModelService;
 import com.riri.emojirecognition.util.FileUtil;
@@ -60,7 +58,7 @@ public class AdminModelController {
     }
 
     @PostMapping("upload")
-    public void upload(@RequestPart("file") MultipartFile mFile, @RequestPart("model") ModelDTO modelDTO) {
+    public void upload(@RequestPart("file") MultipartFile mFile, @RequestPart("model") Model transferModel) {
         if (!mFile.isEmpty()) {
 
             //原始文件名
@@ -74,16 +72,16 @@ public class AdminModelController {
             //调用上传工具类
             FileUtil.upload(mFile, path);
 
-            Model model = new Model();
-            model.setName(originalFilename);
-            model.setPath(path);
-            model.setWidth(modelDTO.getWidth());
-            model.setHeight(modelDTO.getHeight());
-            model.setChannels(modelDTO.getChannels());
-            model.setLabels(modelDTO.getLabels());
-            model.setDescription(modelDTO.getDescription());
-            model.setUpdateTime(new Timestamp(new Date().getTime())); //获得当前时间
-            modelService.save(model);
+            Model newModel = new Model();
+            newModel.setName(originalFilename);
+            newModel.setPath(path);
+            newModel.setWidth(transferModel.getWidth());
+            newModel.setHeight(transferModel.getHeight());
+            newModel.setChannels(transferModel.getChannels());
+            newModel.setLabels(transferModel.getLabels());
+            newModel.setDescription(transferModel.getDescription());
+            newModel.setUpdateTime(new Timestamp(new Date().getTime())); //获得当前时间
+            modelService.save(newModel);
         }
     }
 

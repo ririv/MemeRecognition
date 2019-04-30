@@ -137,14 +137,14 @@ public class UserServiceImpl implements UserService {
     }
 
     
-    public User createUser(User user) {
+    public User createUser(User transferUser) {
 
-        if (existsByUsername(user.getUsername())) {
-            throw new UserAlreadyExistException("The username already exists: " + user.getUsername());
+        if (existsByUsername(transferUser.getUsername())) {
+            throw new UserAlreadyExistException("The username already exists: " + transferUser.getUsername());
         }
-        if (user.getEmail() != null) { //不加此判定，邮箱为空时也会抛出异常
-            if (existsByEmail(user.getEmail())) {
-                throw new UserAlreadyExistException("The email already exists: " + user.getEmail());
+        if (transferUser.getEmail() != null) { //不加此判定，邮箱为空时也会抛出异常
+            if (existsByEmail(transferUser.getEmail())) {
+                throw new UserAlreadyExistException("The email already exists: " + transferUser.getEmail());
             }
         }
 
@@ -155,13 +155,16 @@ public class UserServiceImpl implements UserService {
 //        roles.add(roleService.findByName("ROLE_ADMIN"));
 //        for (Role role: roles){
 //        System.out.println(role.hashCode());}
-
-        user.setRoles(roles);
+        User newUser = new User();
+        //因为时新建user，所以不设置id，id将自增
+        newUser.setUsername(transferUser.getUsername());
+        newUser.setPassword(passwordEncoder.encode(transferUser.getPassword())); //加密密码
+        newUser.setEmail(transferUser.getEmail());
+        newUser.setRoles(roles);
 //                    Collections.singletonList(roleService.findByName("ROLE_USER"))
 //                    Arrays.asList(roleRepository.findByName("ROLE_USER"),roleRepository.findByName("ROLE_ADMIN")) //此方法可添加多个权限
-        user.setPassword(passwordEncoder.encode(user.getPassword())); //加密密码
-        user.setId(null); //将id设置为空，id将自增，防止通过id修改信息
-        return userRepository.save(user);
+
+        return userRepository.save(transferUser);
     }
 
 }

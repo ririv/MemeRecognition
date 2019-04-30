@@ -34,8 +34,8 @@ public class AdminUserController {
     }
 
     @PostMapping(value = "create")
-    public User create(@RequestBody User user) {
-        return userService.createUser(user);
+    public User create(@RequestBody User transferUser) {
+        return userService.createUser(transferUser);
     }
 
     @GetMapping(value = "query")
