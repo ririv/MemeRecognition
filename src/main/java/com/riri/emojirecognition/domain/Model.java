@@ -30,6 +30,7 @@ public class Model implements Serializable {
 
     private int channels; //通道
 
+    @NotNull
     private String labels; //使用,隔开
 
     private Boolean enabled; //使用唯一约束，不启用的模型设置为null，启用的则设置为true

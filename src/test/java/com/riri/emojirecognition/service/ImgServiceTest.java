@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -38,6 +39,10 @@ public class ImgServiceTest {
     public void test02() {
         Page page = imgRepository.findByTag("猫", Pageable.unpaged());
         System.out.println(page.getContent());
+        System.out.println(page.getTotalElements());
+        System.out.println(page.getNumber());
+        System.out.println(page.getNumberOfElements());
+        System.out.println(page.getSize());
     }
 
     @Test
