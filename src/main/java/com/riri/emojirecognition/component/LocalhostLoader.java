@@ -25,7 +25,7 @@ public class LocalhostLoader {
         try {
             host = InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
-            logger.error("get server host Exception e:", e);
+            logger.error("get server host Exception:", e);
         }
         return host + ":" + post;
     }
