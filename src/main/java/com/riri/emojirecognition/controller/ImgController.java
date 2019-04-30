@@ -9,6 +9,9 @@ import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,14 +41,24 @@ public class ImgController {
     @Value("${path.base.img}")
     private String imgBasePath;
 
-    @RequestMapping(value = "details/{id}", method = RequestMethod.GET)
+    @GetMapping(value = "details/{id}")
     public Img findImg(@PathVariable Long id) {
         return imgService.findById(id);
     }
 
-    @RequestMapping(value = "related-query", method = RequestMethod.GET)
+    @GetMapping(value = "related-query")
     public List<Img> findRelatedImg(@RequestParam("tag") String tag, @RequestParam(required = false, defaultValue = "20") int num) {
         return imgService.findRandomAndEnabledImgsByTagLimitNum3(tag, num);
+    }
+
+    @GetMapping(value = "query")
+    public Page findAll(@PageableDefault(sort={"tag"}) Pageable pageable, @RequestParam(required = false) String tag) {
+        if (tag == null) {
+            return imgService.findAll(pageable);
+        }
+        else{
+            return imgService.findByTag(tag,pageable);
+        }
     }
 
     //映射本地图片到网址
