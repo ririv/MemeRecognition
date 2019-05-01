@@ -106,6 +106,10 @@ public class ClassifierWithDeepLearning4j {
         public void setLabels(String[] labels) {
             this.labels = labels;
         }
+
+        public void setLabels(String labels) {
+            this.labels = labels.split(",");
+        }
     }
 
     // 将初始化工作设为init()，在启动程序时就调用并初始化

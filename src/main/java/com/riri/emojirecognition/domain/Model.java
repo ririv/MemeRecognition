@@ -103,10 +103,6 @@ public class Model implements Serializable {
         return labels;
     }
 
-    public String[] getLabelsArray() {
-        return labels.split(",");
-    }
-
     public void setLabels(String labels) {
         this.labels = labels;
     }

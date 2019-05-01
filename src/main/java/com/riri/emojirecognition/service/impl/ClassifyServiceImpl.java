@@ -46,10 +46,12 @@ public class ClassifyServiceImpl implements ClassifyService {
         this.modelService = modelService;
     }
 
+    /**
+     * 使用@PostConstruct在程序启动时从数据库中寻找启用的模型，并载入此模型的相关配置
+     * 此时使用的是启用的模型，flag为0
+     */
     @PostConstruct
     private void init() {
-        //在程序启动时从数据库中寻找启用的模型，并载入此模型的相关配置
-        //此时使用的是启用的模型，的flag为0
         init(modelService.findByEnabled(true), 0);
     }
 
@@ -61,9 +63,7 @@ public class ClassifyServiceImpl implements ClassifyService {
             classifierModel.setHeight(model.getHeight());
             classifierModel.setWidth(model.getWidth());
             classifierModel.setChannels(model.getChannels());
-
-            String[] labels = model.getLabelsArray();
-            classifierModel.setLabels(labels);
+            classifierModel.setLabels(model.getLabels());
         } else { //采用存放在resource/model下默认的模型
             logger.warn("找不到模型，回退到默认模型");
             try {
