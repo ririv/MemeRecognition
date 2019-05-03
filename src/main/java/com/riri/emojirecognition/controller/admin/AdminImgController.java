@@ -24,13 +24,18 @@ public class AdminImgController {
     }
 
     @PutMapping(value = "operate/{id}")
-    public Img update(@PathVariable Long id, @RequestBody Img img) {
+    public Img update(@PathVariable Long id, @RequestBody Img img){
         return imgService.updateById(id, img);
     }
 
     @DeleteMapping(value = "operate/{id}")
     public void delete(@PathVariable Long id) {
         imgService.deleteById(id);
+    }
+
+    @PutMapping(value = "enable/{id}")
+    public void enableImg(@PathVariable Long id) {
+        imgService.enableImgById(id);
     }
 
     @PostMapping(value = "create")

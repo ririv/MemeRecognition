@@ -6,6 +6,7 @@ import com.riri.emojirecognition.service.ImgService;
 import com.riri.emojirecognition.util.FileUtil;
 
 import javafx.util.Pair;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 
@@ -52,12 +54,11 @@ public class ImgController {
     }
 
     @GetMapping(value = "query")
-    public Page findAll(@PageableDefault(sort={"tag"}) Pageable pageable, @RequestParam(required = false) String tag) {
+    public Page findAll(@PageableDefault(sort = {"tag"}) Pageable pageable, @RequestParam(required = false) String tag) {
         if (tag == null) {
             return imgService.findAll(pageable);
-        }
-        else{
-            return imgService.findByTag(tag,pageable);
+        } else {
+            return imgService.findByTag(tag, pageable);
         }
     }
 
@@ -78,15 +79,15 @@ public class ImgController {
     @PostMapping("upload")
     public Map<String, Object> classify(@RequestParam("file") MultipartFile mFile,
                                         @RequestParam(required = false, defaultValue = "20") int num,
-                                        @RequestParam(value = "flag", required = false, defaultValue = "0") int flag,
-                                        @RequestParam(value = "model-id", required = false) Long modelId) {
+                                        @RequestParam(required = false, defaultValue = "0") int flag,
+                                        @RequestParam(value = "model-id", required = false) Long modelId,
+                                        @RequestParam(required = false, defaultValue = "false") boolean save) {
         // 上传成功或者失败的提示
         String msg;
-        boolean isSuccess;
-        Optional<Pair<String, Float>> classifyResult;
+        boolean isSuccessful;
+        Optional<Pair<String, Float>> classifyResult = Optional.empty();
         String tag = null;
         Float proba = null;
-        List<Img> relatedImgs = null;
         Map<String, Object> resultMap = new LinkedHashMap<>();
 
 
@@ -97,60 +98,61 @@ public class ImgController {
             //给图片新的uuid名
             String newFilename = FileUtil.getUUIDFilename(mFile.getOriginalFilename());
 
-            //调用上传工具类
-            File file = FileUtil.upload(mFile, imgBasePath + userImgSubPath + newFilename);
-
             if (flag != 0) {
-                classifyService.enable(modelId, flag);
+                classifyService.enableModelById(modelId, flag);
             }
 
-            classifyResult = classifyService.classify(file, flag);
+            try {
+                File tempFile = File.createTempFile("classifyImage", "tmp");
+                FileUtils.copyInputStreamToFile(mFile.getInputStream(), tempFile);
+                classifyResult = classifyService.classify(tempFile, flag);
+                tempFile.delete();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             // 识别成功，给出页面提示
             if (classifyResult.isPresent()) {
                 msg = "识别成功";
                 tag = classifyResult.get().getKey();
                 proba = classifyResult.get().getValue();
-
-                relatedImgs = imgService.findRandomAndEnabledImgsByTagLimitNum3(tag, num);
-                isSuccess = true;
+                isSuccessful = true;
             } else {
                 msg = "无法识别";
-                isSuccess = false;
+                isSuccessful = false;
             }
 
-            //保存到repo
-            Img img = new Img();
-            //保存新的UUID名
-            img.setSourceName(newFilename);
-            img.setSubDir(userImgSubPath);
-            img.setTag(tag);
+            if (save){
+                //调用上传工具类
+                FileUtil.upload(mFile, imgBasePath + userImgSubPath + newFilename);
 
-            if (originalFilename != null) {
-                img.setName(FileUtil.getFilenameWithoutExt(originalFilename));
-            }
+                //保存
+                Img img = new Img();
+                //保存新的UUID名
+                img.setSourceName(newFilename);
+                img.setSubDir(userImgSubPath);
+                img.setTag(tag);
 
-            if (tag != null) {
-                Long subId = imgService.findMaxSubIdByTag(tag);
-                if (subId == null) {
-                    subId = 0L;
+                if (originalFilename != null) {
+                    img.setName(FileUtil.getFilenameWithoutExt(originalFilename));
                 }
-                img.setSubId(subId + 1);
-            }
-            img.setEnabled(false);
 
-            imgService.save(img);
+                img.setEnabled(false);
+
+                imgService.save(img);
+            }
+
+
         } else {
             msg = "图片上传失败！";
-            isSuccess = false;
+            isSuccessful = false;
         }
 
         //构建json
-        resultMap.put("isSuccess", isSuccess);
+        resultMap.put("isSuccessful", isSuccessful);
         resultMap.put("msg", msg);
         resultMap.put("tag", tag);
         resultMap.put("proba", proba);
-        resultMap.put("relatedImgs", relatedImgs);
 
         return resultMap;
     }

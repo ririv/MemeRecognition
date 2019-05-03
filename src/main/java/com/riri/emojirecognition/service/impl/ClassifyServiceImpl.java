@@ -112,7 +112,7 @@ public class ClassifyServiceImpl implements ClassifyService {
         return Optional.ofNullable(labelWithProba);
     }
 
-    public void enable(Long modelId, int flag) {
+    public void enableModelById(Long modelId, int flag) {
         if (flag == 0) {
             Model oldModel = modelService.findByEnabled(true);
             Model newModel;

@@ -33,7 +33,13 @@ public interface ImgService {
      Img updateById(Long id, Img img) ;
 
      Img createImg(Img img);
-    
+
+     void enableImgById(Long id);
+
+     void enableImg(Img img);
+
+     long generateSubId(String tag);
+
      void batchInsertToDbByDir(String targetDirPath);
 
      List<Img> findRandomAndEnabledImgsByTagLimitNum(String tag, int num);

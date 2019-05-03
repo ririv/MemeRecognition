@@ -1,7 +1,6 @@
 package com.riri.emojirecognition.util;
 
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -18,33 +17,33 @@ public class FileUtil {
 
     public static class FileInfo{
         private String name;
-        private String path;
+        private String parentPath;
 
-       private FileInfo(String name, String path) {
+       private FileInfo(String name, String parentPath) {
             this.name = name;
-            this.path = path;
+            this.parentPath = parentPath;
         }
 
         public String getName() {
             return name;
         }
-
         public void setName(String name) {
             this.name = name;
         }
 
-        public String getPath() {
-            return path;
+        public String getParentPath() {
+            return parentPath;
         }
 
-        public void setPath(String path) {
-            this.path = path;
+        public void setParentPath(String parentPath) {
+            this.parentPath = parentPath;
         }
     }
 
 
     /**
      * @param mFile 文件
+
      * @param path 文件存放路径
      * @return
      */
@@ -61,8 +60,8 @@ public class FileUtil {
 
         try {
             //保存文件
-//            FileUtils.copyInputStreamToFile(mFile.getInputStream(), dest);
-            mFile.transferTo(dest);
+            FileUtils.copyInputStreamToFile(mFile.getInputStream(), dest);
+//            mFile.transferTo(dest);
 
         } catch (IllegalStateException | IOException e) {
             e.printStackTrace();

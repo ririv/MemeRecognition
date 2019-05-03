@@ -87,7 +87,7 @@ public class AdminModelController {
 
     @RequestMapping("enable")
     public void enable(@RequestParam("id") Long id, @RequestParam(value = "flag",required = false,defaultValue = "0") int flag) {
-        classifyService.enable(id,flag);
+        classifyService.enableModelById(id,flag);
     }
 
 }

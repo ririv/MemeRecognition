@@ -1,12 +1,10 @@
 package com.riri.emojirecognition.service.impl;
 
-import com.riri.emojirecognition.component.deeplearning.ClassifierWithDeepLearning4j;
 import com.riri.emojirecognition.domain.Img;
 import com.riri.emojirecognition.exception.ImgNotFoundException;
 import com.riri.emojirecognition.repository.ImgRepository;
 import com.riri.emojirecognition.service.ImgService;
 import com.riri.emojirecognition.util.FileUtil;
-import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -15,12 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 public class ImgServiceImpl implements ImgService {
@@ -97,6 +91,7 @@ public class ImgServiceImpl implements ImgService {
         findById(id);//如果id不存在则会报出异常
         //设置id为所指定的id，防止user中有id信息，而发生更新错位的现象
         img.setId(id);
+
         return imgRepository.save(img);
     }
 
@@ -105,6 +100,32 @@ public class ImgServiceImpl implements ImgService {
         img.setId(null);
         return imgRepository.save(img);
     }
+
+    public void enableImgById(Long id) {
+        Img img = findById(id);//如果id不存在则会报出异常
+        enableImg(img);
+    }
+
+    public void enableImg(Img img) {
+        if(img.getTag()!=null) {
+            img.setSubId(generateSubId(img.getTag()));
+            imgRepository.save(img);
+        }
+        else throw new RuntimeException("Tag is null");
+    }
+
+    public long generateSubId(String tag) {
+        Long subId = imgRepository.findMaxSubIdByTag(tag);
+
+        if (subId == null) {
+            subId = 0L;
+        }
+        //新数据的subId为原数据库中最后条数据的subId+1
+        //subId从1开始，而不是0
+
+        return subId + 1;
+    }
+
 
     /**
      * 通过文件夹批量插入到数据库
@@ -120,13 +141,13 @@ public class ImgServiceImpl implements ImgService {
         String subdirectory;
         String tag = ""; //初始化为空字符，否则后面第一次将无法赋值给lastTab
         String lastTag; //用lastTab监测tab是否发生了变化
-        Long subId = 0L;
+        long subId = 0L;
 
         List<FileUtil.FileInfo> imgList = FileUtil.traverseFolder(targetDirPath);
 
         for (FileUtil.FileInfo fileInfo : imgList) {
             //将所有\改为/，使路径格式统一，方便删除父路径
-            subdirectory = fileInfo.getPath().replace("\\", "/");
+            subdirectory = fileInfo.getParentPath().replace("\\", "/");
             //去掉父路径，得到子路径
             subdirectory = subdirectory.replaceAll(parentDirectory, "");
 
@@ -147,15 +168,9 @@ public class ImgServiceImpl implements ImgService {
 
             //检测到tab发生了变化
             if (!tag.equals(lastTag)) {
-                subId = imgRepository.findMaxSubIdByTag(tag);
-                //当此subId之前没有任何数据时，会产生null值，赋值初始序号为0
-                if (subId == null) {
-                    subId = 0L;
-                }
-                //新数据的subId为原数据库中最后条数据的subId+1
+                subId = generateSubId(tag);
+            } else { //如果两次tag一样，并不需要重新生成id，直接加1即可
                 subId += 1;
-            } else {
-                subId++;
             }
 
             //new Img()不能放置循环外，否则只会不停更新此img实例，不会增加
