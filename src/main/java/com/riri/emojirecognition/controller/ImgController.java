@@ -43,17 +43,17 @@ public class ImgController {
     @Value("${path.base.img}")
     private String imgBasePath;
 
-    @GetMapping(value = "details/{id}")
+    @GetMapping("details/{id}")
     public Img findImg(@PathVariable Long id) {
         return imgService.findById(id);
     }
 
-    @GetMapping(value = "related-query")
+    @GetMapping("related-query")
     public List<Img> findRelatedImg(@RequestParam("tag") String tag, @RequestParam(required = false, defaultValue = "20") int num) {
         return imgService.findRandomAndEnabledImgsByTagLimitNum3(tag, num);
     }
 
-    @GetMapping(value = "query")
+    @GetMapping("query")
     public Page findAll(@PageableDefault(sort = {"tag"}) Pageable pageable, @RequestParam(required = false) String tag) {
         if (tag == null) {
             return imgService.findAll(pageable);

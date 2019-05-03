@@ -30,7 +30,7 @@ public class UserController {
 //        return SecurityContextHolder.getContext().getAuthentication().getPrincipal();//获取spring security封装的当前用户信息对象
 //    }
 
-    @RequestMapping(value = "details/{id}", method = RequestMethod.GET)
+    @GetMapping("details/{id}")
     public User findImg(@PathVariable Long id) {
         return userService.findById(id);
     }

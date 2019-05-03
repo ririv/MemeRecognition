@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -57,4 +58,5 @@ public class ModelServiceImpl implements ModelService {
         return modelRepository.findAll(pageable);
     }
 
+    public List<Model> findAll(){return modelRepository.findAll();}
 }
