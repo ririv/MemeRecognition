@@ -3,6 +3,7 @@ package com.riri.emojirecognition.config;
 import com.riri.emojirecognition.security.CustomAuthenticationFailureHandler;
 import com.riri.emojirecognition.security.CustomAuthenticationSuccessHandler;
 import com.riri.emojirecognition.security.CustomLoginUrlAuthenticationEntryPoint;
+import com.riri.emojirecognition.security.CustomLogoutSuccessHandler;
 import com.riri.emojirecognition.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
@@ -69,6 +71,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                     .permitAll()
                     .logoutSuccessUrl("/")
+                    .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
                 .and().rememberMe()
                 .and().exceptionHandling().authenticationEntryPoint(new CustomLoginUrlAuthenticationEntryPoint());
     }

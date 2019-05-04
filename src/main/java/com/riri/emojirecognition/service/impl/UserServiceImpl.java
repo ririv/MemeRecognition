@@ -2,7 +2,7 @@ package com.riri.emojirecognition.service.impl;
 
 import com.riri.emojirecognition.domain.Role;
 import com.riri.emojirecognition.domain.User;
-import com.riri.emojirecognition.exception.UserNotFoundException;
+import com.riri.emojirecognition.exception.notfound.UserNotFoundException;
 import com.riri.emojirecognition.repository.UserRepository;
 import com.riri.emojirecognition.service.RoleService;
 import com.riri.emojirecognition.service.UserService;
@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
     public User findById(Long id) {
         Optional<User> user = userRepository.findById(id);
         if (!user.isPresent()) {
-            throw new UserNotFoundException("The user is not found, " + "user id: " + id);
+            throw new UserNotFoundException("The user is not found, user id: " + id);
         }
         return user.get();
     }

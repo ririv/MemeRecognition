@@ -47,15 +47,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry){
         registry
-//                .addMapping("/**")
-                .addMapping("/api/**")
+                .addMapping("/**")
+//                .addMapping("/api/**")
                 .allowedMethods("*")
-                //允许所有的请求域名访问我们的跨域资源，也可以设置单条或者多条内容
-//                .allowedOrigins("*")
+                //设置允许的域名，*为全部
                 .allowedOrigins("*")
                 .allowCredentials (true)
                 .allowedHeaders("*")
                 //准备响应前的缓存持续的最大时间（以秒为单位）
                 .maxAge(3600);
+
     }
 }

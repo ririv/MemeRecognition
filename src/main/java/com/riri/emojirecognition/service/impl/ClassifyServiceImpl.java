@@ -2,6 +2,7 @@ package com.riri.emojirecognition.service.impl;
 
 import com.riri.emojirecognition.component.deeplearning.ClassifierWithDeepLearning4j;
 import com.riri.emojirecognition.domain.Model;
+import com.riri.emojirecognition.exception.ModelImportException;
 import com.riri.emojirecognition.service.ClassifyService;
 import com.riri.emojirecognition.service.ModelService;
 import javafx.util.Pair;
@@ -55,8 +56,9 @@ public class ClassifyServiceImpl implements ClassifyService {
         init(modelService.findByEnabled(true), 0);
     }
 
-    public void init(Model model, int flag) {
+    public void init(Model model, int flag){
         ClassifierWithDeepLearning4j.Model classifierModel = classifier.new Model();
+
         if (model != null) {
             classifierModel.setId(model.getId());
             classifierModel.setPath(model.getPath());
@@ -69,6 +71,7 @@ public class ClassifyServiceImpl implements ClassifyService {
             try {
                 classifierModel.setPath(new ClassPathResource(modelDefaultPath).getFile().getPath());
             } catch (IOException e) {
+                logger.warn("默认模型回退失败，无效的资源路径");
                 e.printStackTrace();
             }
 
@@ -82,14 +85,20 @@ public class ClassifyServiceImpl implements ClassifyService {
         //调用classifier.init()来初始化模型
         try {
             classifier.init(classifierModel, flag);
+            logger.info("模型初始化成功");
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.warn("模型初始化失败");
+            throw new ModelImportException();
         }
-        logger.info("模型初始化成功");
     }
 
     public void init(Long modelId, int flag) { //通过模型id初始化模型
-        init(modelService.findById(modelId), flag);
+        try {
+            init(modelService.findById(modelId), flag);
+        }
+        catch (ModelImportException e){
+            throw new ModelImportException(modelId);
+        }
     }
 
     public Optional<Pair<String, Float>> classify(File image, int flag) {

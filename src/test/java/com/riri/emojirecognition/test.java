@@ -1,10 +1,10 @@
 package com.riri.emojirecognition;
 
 import com.riri.emojirecognition.component.StaticPagePathFinder;
-import com.riri.emojirecognition.config.PropConfig;
 import com.riri.emojirecognition.domain.Img;
 import com.riri.emojirecognition.domain.Model;
 import com.riri.emojirecognition.domain.User;
+import com.riri.emojirecognition.exception.notfound.UserNotFoundException;
 import com.riri.emojirecognition.repository.ImgRepository;
 import com.riri.emojirecognition.repository.ModelRepository;
 import com.riri.emojirecognition.service.ImgService;
@@ -48,8 +48,6 @@ public class test {
     @Autowired
     private StaticPagePathFinder staticPagePathFinder;
 
-    @Autowired
-    private PropConfig propConfig;
 
     @Autowired
     private LocalhostLoader localhostLoader;
@@ -236,6 +234,11 @@ public class test {
         model.setLabels(labels);
 //        modelRepository.save(model);
         System.out.println(model.getLabels());
+    }
+
+    @Test
+    public void test19(){
+        throw new UserNotFoundException(11L);
     }
 
 }

@@ -1,7 +1,7 @@
 package com.riri.emojirecognition.service.impl;
 
 import com.riri.emojirecognition.domain.Img;
-import com.riri.emojirecognition.exception.ImgNotFoundException;
+import com.riri.emojirecognition.exception.notfound.ImgNotFoundException;
 import com.riri.emojirecognition.repository.ImgRepository;
 import com.riri.emojirecognition.service.ImgService;
 import com.riri.emojirecognition.util.FileUtil;
@@ -43,7 +43,7 @@ public class ImgServiceImpl implements ImgService {
     public Img findById(Long id) {
         Optional<Img> img = imgRepository.findById(id);
         if (!img.isPresent()) {
-            throw new ImgNotFoundException("The img is not found, " + "img id: " + id);
+            throw new ImgNotFoundException("The img is not found, img id: " + id);
         }
         return img.get();
     }

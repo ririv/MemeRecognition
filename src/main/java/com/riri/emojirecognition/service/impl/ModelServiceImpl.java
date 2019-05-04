@@ -1,7 +1,7 @@
 package com.riri.emojirecognition.service.impl;
 
 import com.riri.emojirecognition.domain.Model;
-import com.riri.emojirecognition.exception.ModelNotFoundException;
+import com.riri.emojirecognition.exception.notfound.ModelNotFoundException;
 import com.riri.emojirecognition.repository.ModelRepository;
 import com.riri.emojirecognition.service.ModelService;
 import org.springframework.beans.factory.annotation.Autowired;

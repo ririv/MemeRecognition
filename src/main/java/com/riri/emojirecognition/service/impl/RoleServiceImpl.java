@@ -1,7 +1,7 @@
 package com.riri.emojirecognition.service.impl;
 
 import com.riri.emojirecognition.domain.Role;
-import com.riri.emojirecognition.exception.RoleIsNotPresentException;
+import com.riri.emojirecognition.exception.notfound.RoleIsNotPresentException;
 import com.riri.emojirecognition.repository.RoleRepository;
 import com.riri.emojirecognition.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
