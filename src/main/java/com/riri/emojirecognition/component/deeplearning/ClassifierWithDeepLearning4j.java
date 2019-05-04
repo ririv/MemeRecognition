@@ -37,6 +37,14 @@ public class ClassifierWithDeepLearning4j {
 
     private Long selectedModelId; //记录模型id
 
+    public String[] getEnabledModelLabels() {
+        return enabledModelLabels;
+    }
+
+    public String[] getSelectedModelLabels() {
+        return selectedModelLabels;
+    }
+
     public Long getEnabledModelId() {
         return enabledModelId;
     }

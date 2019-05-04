@@ -137,13 +137,12 @@ public class ClassifyServiceImpl implements ClassifyService {
             }
 
         } else {//flag不为0时为临时使用模型，不需要对数据库操作
-            if(classifier.getSelectedModelId()!=null) {
+            if (classifier.getSelectedModelId() != null) {
                 if (!classifier.getSelectedModelId().equals(modelId)) { //当新旧id相同时，则不进行初始化操作，防止重复加载模型
                     init(modelId, flag);
                 }
-            }
-            else {
-                init(modelId,flag);
+            } else {
+                init(modelId, flag);
             }
         }
     }

@@ -80,7 +80,7 @@ public class ImgController {
     public Map<String, Object> classify(@RequestParam("file") MultipartFile mFile,
                                         @RequestParam(required = false, defaultValue = "20") int num,
                                         @RequestParam(required = false, defaultValue = "0") int flag,
-                                        @RequestParam(value = "model-id", required = false) Long modelId,
+                                        @RequestParam(required = false) Long modelId,
                                         @RequestParam(required = false, defaultValue = "false") boolean save) {
         // 上传成功或者失败的提示
         String msg;
