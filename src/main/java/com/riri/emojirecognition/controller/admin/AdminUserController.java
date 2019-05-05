@@ -33,7 +33,7 @@ public class AdminUserController {
         userService.deleteById(id);
     }
 
-    @PostMapping(value = "create")
+    @PostMapping(value = "operate")
     public User create(@RequestBody User transferUser) {
         return userService.createUser(transferUser);
     }

@@ -39,6 +39,9 @@ public class AdminModelController {
 
     @PutMapping(value = "operate/{id}")
     public Model update(@PathVariable Long id, @RequestBody Model model) {
+        if (model.isEnabled()){
+            classifyService.enableModelById(model.getId(),0);
+        }
         return modelService.updateById(id, model);
     }
 
@@ -47,8 +50,11 @@ public class AdminModelController {
         modelService.deleteById(id);
     }
 
-    @PostMapping(value = "create")
+    @PostMapping(value = "operate")
     public Model create(@RequestBody Model model) {
+        if (model.isEnabled()){
+            classifyService.enableModelById(model.getId(),0);
+        }
         return modelService.createModel(model);
     }
 

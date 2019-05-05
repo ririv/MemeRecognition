@@ -38,7 +38,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // 必须嘚加入"file:"+ 映射外部资源目录路径
         // "classpath" + 映射的是项目中resources目录
-        registry.addResourceHandler("file/img/**").addResourceLocations("file:"+ imgBasePath);
+        registry.addResourceHandler("api/v1/" + "file/img/**").addResourceLocations("file:"+ imgBasePath);
         // "classpath" + 映射的是项目中resources目录，这里仅作测试
 //        registry.addResourceHandler("/static/**").addResourceLocations("classpath:"+ "static");
     }

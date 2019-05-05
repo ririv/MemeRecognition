@@ -33,14 +33,14 @@ public class AdminImgController {
         imgService.deleteById(id);
     }
 
+    @PostMapping(value = "operate")
+    public Img create(@RequestBody Img img) {
+        return imgService.createImg(img);
+    }
+
     @PutMapping(value = "enable/{id}")
     public void enableImg(@PathVariable Long id) {
         imgService.enableImgById(id);
-    }
-
-    @PostMapping(value = "create")
-    public Img create(@RequestBody Img img) {
-        return imgService.createImg(img);
     }
 
     @GetMapping(value = "query")
