@@ -77,7 +77,8 @@ public class AdminModelAndClassifierController {
     }
 
     @PostMapping("create")
-    public void createWithUpload(@RequestPart("file") MultipartFile mFile, @RequestPart("model") Model transferModel) {
+    public Model createWithUpload(@RequestPart("file") MultipartFile mFile, @RequestPart("model") Model transferModel) {
+        Model model = null;
         if (!mFile.isEmpty()) {
 
             //原始文件名
@@ -99,13 +100,14 @@ public class AdminModelAndClassifierController {
             newModel.setDescription(transferModel.getDescription());
             newModel.setUpdateTime(new Timestamp(new Date().getTime())); //获得当前时间
             newModel.setEnabled(transferModel.isEnabled());
-            Model model = modelService.addModel(newModel);
+            model = modelService.addModel(newModel);
 
             if (model.isEnabled() != null && model.isEnabled()) { //如果是启用的，则立马启用它
                 classifyService.enableModel(model, 0);
             }
 
         }
+        return model;
     }
 
     @RequestMapping("enable")
