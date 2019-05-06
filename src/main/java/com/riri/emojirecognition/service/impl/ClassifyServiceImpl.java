@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -172,6 +174,18 @@ public class ClassifyServiceImpl implements ClassifyService {
                 init(targetModel, flag);
             }
         }
+    }
+
+    public Map<String,Object> getCurrentModelsInfoOfClassifier(){
+        Map<String,Object> infoMap = new LinkedHashMap<>();
+
+        infoMap.put("enabledModelId",classifier.getEnabledModelId());
+        infoMap.put("enabledModelLabels",classifier.getEnabledModelLabels());
+
+        infoMap.put("selectedModelId",classifier.getSelectedModelId());
+        infoMap.put("SelectedModelLabels",classifier.getSelectedModelLabels());
+
+        return infoMap;
     }
 
 }

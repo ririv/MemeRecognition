@@ -4,6 +4,7 @@ import com.riri.emojirecognition.domain.Model;
 import javafx.util.Pair;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Optional;
 
 public interface ClassifyService {
@@ -17,6 +18,8 @@ public interface ClassifyService {
     void enableModelById(Long targetModelId, int flag);
 
     void enableModel(Model targetModel, int flag);
+
+    Map<String,Object> getCurrentModelsInfoOfClassifier();
 
 
 }

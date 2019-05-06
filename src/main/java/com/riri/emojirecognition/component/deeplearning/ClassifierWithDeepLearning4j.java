@@ -28,26 +28,26 @@ public class ClassifierWithDeepLearning4j {
 
     private NativeImageLoader selectedModelLoader;
 
-    private String[] enabledModelLabels;
-
-    private String[] selectedModelLabels;
-
     private DataNormalization scaler;
 
     private Long enabledModelId; //记录模型id
 
+    private String[] enabledModelLabels;
+
     private Long selectedModelId; //记录模型id
+
+    private String[] selectedModelLabels;
 
     public String[] getEnabledModelLabels() {
         return enabledModelLabels;
     }
 
-    public String[] getSelectedModelLabels() {
-        return selectedModelLabels;
-    }
-
     public Long getEnabledModelId() {
         return enabledModelId;
+    }
+
+    public String[] getSelectedModelLabels() {
+        return selectedModelLabels;
     }
 
     public Long getSelectedModelId() {

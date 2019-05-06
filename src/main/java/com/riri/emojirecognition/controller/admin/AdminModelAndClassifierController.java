@@ -13,11 +13,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Map;
 
 
 @RestController
 @RequestMapping("/api/v1/admin/model")
-public class AdminModelController {
+public class AdminModelAndClassifierController {
 
     @Value("${path.base.model}")
     private String modelBasePath;
@@ -27,9 +28,14 @@ public class AdminModelController {
     private final ClassifyService classifyService;
 
     @Autowired
-    public AdminModelController(ModelService modelService, ClassifyService classifyService) {
+    public AdminModelAndClassifierController(ModelService modelService, ClassifyService classifyService) {
         this.modelService = modelService;
         this.classifyService = classifyService;
+    }
+
+    @GetMapping(value = "current-classifier")
+    public Map current() {
+        return classifyService.getCurrentModelsInfoOfClassifier();
     }
 
     @GetMapping(value = "operate/{id}")
