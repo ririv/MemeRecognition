@@ -40,7 +40,7 @@ public class AdminModelController {
     @PutMapping(value = "operate/{id}")
     public Model update(@PathVariable Long id, @RequestBody Model model) {
         if (model.isEnabled()){
-            classifyService.enableModelById(model.getId(),0);
+            classifyService.enableModel(model,0);
         }
         return modelService.updateById(id, model);
     }
@@ -51,11 +51,15 @@ public class AdminModelController {
     }
 
     @PostMapping(value = "operate")
-    public Model create(@RequestBody Model model) {
-        if (model.isEnabled()){
-            classifyService.enableModelById(model.getId(),0);
+    public Model add(@RequestBody Model transferModel) {
+
+        Model model = modelService.addModel(transferModel); //先保存数据库，再启用
+        if (transferModel.isEnabled()){
+            //一定不可以直接对用户提交的model操作，而要到数据库中返回的Model操作
+            // 否则因为id异常问题可能引发错误
+            classifyService.enableModel(model,0);
         }
-        return modelService.createModel(model);
+        return model;
     }
 
     @GetMapping(value = "query")
@@ -63,16 +67,14 @@ public class AdminModelController {
         return modelService.findAll(pageable);
     }
 
-    @PostMapping("upload")
-    public void upload(@RequestPart("file") MultipartFile mFile, @RequestPart("model") Model transferModel) {
+    @PostMapping("create")
+    public void createWithUpload(@RequestPart("file") MultipartFile mFile, @RequestPart("model") Model transferModel) {
         if (!mFile.isEmpty()) {
 
             //原始文件名
             String originalFilename = mFile.getOriginalFilename();
-
             //给图片新的uuid名
             String newFilename = FileUtil.getUUIDFilename(mFile.getOriginalFilename());
-
             String path = modelBasePath + newFilename;
 
             //调用上传工具类
@@ -87,7 +89,13 @@ public class AdminModelController {
             newModel.setLabels(transferModel.getLabels());
             newModel.setDescription(transferModel.getDescription());
             newModel.setUpdateTime(new Timestamp(new Date().getTime())); //获得当前时间
-            modelService.save(newModel);
+            newModel.setEnabled(transferModel.isEnabled());
+            Model model = modelService.addModel(newModel);
+
+            if (transferModel.isEnabled()){ //如果是启用的，则立马启用它
+                classifyService.enableModel(model,0);
+            }
+
         }
     }
 

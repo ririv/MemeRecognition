@@ -44,7 +44,7 @@ public interface UserService {
 
     User updatePassword(String username, String password);
 
-    User createUser(User user);
+    User addUser(User user);
 
 
 }

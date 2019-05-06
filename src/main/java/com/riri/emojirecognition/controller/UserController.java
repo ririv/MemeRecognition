@@ -37,7 +37,7 @@ public class UserController {
 
     @PostMapping("/create")
     public User register(User transferUser) {
-         return userService.createUser(transferUser);
+         return userService.addUser(transferUser);
     }
 
 //    @RequestMapping(value="/logout", method = RequestMethod.GET)

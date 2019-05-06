@@ -96,7 +96,7 @@ public class ImgServiceImpl implements ImgService {
     }
 
 
-    public Img createImg(Img img) {
+    public Img addImg(Img img) {
         img.setId(null);
         return imgRepository.save(img);
     }

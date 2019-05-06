@@ -53,10 +53,14 @@ public class ClassifyServiceImpl implements ClassifyService {
      */
     @PostConstruct
     private void init() {
-        init(modelService.findByEnabled(true), 0);
+        try {
+            init(modelService.findByEnabled(true), 0);
+        } catch (ModelImportException e) {
+            throw new ModelImportException("初始化数据库中启用的模型失败，清检查该模型");
+        }
     }
 
-    public void init(Model model, int flag){
+    public void init(Model model, int flag) {
         ClassifierWithDeepLearning4j.Model classifierModel = classifier.new Model();
 
         if (model != null) {
@@ -88,15 +92,18 @@ public class ClassifyServiceImpl implements ClassifyService {
             logger.info("模型初始化成功");
         } catch (Exception e) {
             logger.warn("模型初始化失败");
-            throw new ModelImportException();
+            if (model != null)
+                throw new ModelImportException(model.getId());
+            else {
+                throw new ModelImportException();
+            }
         }
     }
 
     public void init(Long modelId, int flag) { //通过模型id初始化模型
         try {
             init(modelService.findById(modelId), flag);
-        }
-        catch (ModelImportException e){
+        } catch (ModelImportException e) {
             throw new ModelImportException(modelId);
         }
     }
@@ -121,38 +128,50 @@ public class ClassifyServiceImpl implements ClassifyService {
         return Optional.ofNullable(labelWithProba);
     }
 
-    public void enableModelById(Long modelId, int flag) {
+    public void enableModelById(Long targetModelId, int flag) {
+        Model targetModel = modelService.findById(targetModelId);
+        enableModel(targetModel, flag);
+    }
+
+    /**
+     * @param targetModel 需要启用的目标模型
+     * @param flag        为1时为对被应用的主要模型enabledModel操作，记录至数据库
+     *                    为2时对被选择的备用模型selectedModel操作，临时使用，不记录至数据库
+     */
+    public void enableModel(Model targetModel, int flag) {
         if (flag == 0) {
-            Model oldModel = modelService.findByEnabled(true);
-            Model newModel;
+            Model oldModel = modelService.findByEnabled(true); //找到数据库中原先被启用的旧模型
 
-            if (oldModel != null) {
-                if (!oldModel.getId().equals(modelId)) {//当新旧id相同时。则无需再修改数据库和初始化模型，否则在后续操作还会改回来
-                    oldModel.setEnabled(null); //不要设置为false，因为设置了唯一限制
-                    modelService.save(oldModel);
-
-                    newModel = modelService.findById(modelId);
-                    newModel.setEnabled(true); //标记启用此模型
-                    modelService.save(newModel);
-
-                    init(modelId, flag); //初始化此模型
+            if (oldModel != null) { //数据库中有启用的模型时
+                //当旧模型id与目标模型id相同时。则不操作，因为是同一个模型，且此模型是已启用的模型
+                //这里为两id不同的情况，需要保存并初始化
+                if (!oldModel.getId().equals(targetModel.getId())) {
+                    oldModel.setEnabled(null); //旧模型设为非启用，不要设置为false，因为设置了唯一限制
+                    modelService.save(oldModel); //保存目标模型为启用到数据库并初始化它
+                    init(targetModel, flag);
                 }
-            } else { //数据库无启用的模型时，则仅需对新启用的模型操作
-                newModel = modelService.findById(modelId);
-                newModel.setEnabled(true); //标记启用此模型
-                modelService.save(newModel);
-
-                init(modelId, flag);
+            } else { //无启用模型时
+                init(targetModel, flag);
             }
 
-        } else {//flag不为0时为临时使用模型，不需要对数据库操作
-            if (classifier.getSelectedModelId() != null) {
-                if (!classifier.getSelectedModelId().equals(modelId)) { //当新旧id相同时，则不进行初始化操作，防止重复加载模型
-                    init(modelId, flag);
+            //如果目标模型是非启用状态，则修改此值保存至数据库
+            //也有可能目标模型是启用的状态，比如创建新模型立马启用它或者是启用数据库中已启用的模型，此时就无需再保存一次到数据库
+//            if(!targetModel.isEnabled()) {
+            if (!targetModel.isEnabled() && oldModel != null && !oldModel.getId().equals(targetModel.getId())) { //模型已启用状态且与数据库中已启用的模型不同
+                targetModel.setEnabled(true); //标记启用此模型
+                modelService.save(targetModel); //保存目标模型为启用到数据库并初始化它
+            }
+
+
+        } else {//flag不为0时为临时使用模型SelectedModel，不需要对数据库操作
+            if (classifier.getSelectedModelId() != null) { //SelectedModel里有启用模型时
+                if (!classifier.getSelectedModelId().equals(targetModel.getId())) { //与上文中对应的if语句意义相同
+                    init(targetModel, flag);
                 }
             } else {
-                init(modelId, flag);
+                init(targetModel, flag);
             }
         }
     }
+
 }

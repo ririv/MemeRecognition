@@ -14,7 +14,9 @@ public interface ClassifyService {
 
     Optional<Pair<String, Float>> classify(File image,int flag);
 
-    void enableModelById(Long id, int flag);
+    void enableModelById(Long targetModelId, int flag);
+
+    void enableModel(Model targetModel, int flag);
 
 
 }

@@ -49,7 +49,7 @@ public class ModelServiceImpl implements ModelService {
         return modelRepository.save(model);
     }
 
-    public Model createModel(Model model) {
+    public Model addModel(Model model) {
         model.setId(null);
         return modelRepository.save(model);
     }

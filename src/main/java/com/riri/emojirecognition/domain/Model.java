@@ -21,8 +21,8 @@ public class Model implements Serializable {
 
     private String description;
 
-    //此路径以classpath为根路径
-    private String path;
+    @NotNull
+    private String path;    //此路径以classpath为根路径
 
     private int height;
 

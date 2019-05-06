@@ -18,7 +18,7 @@ public interface ModelService {
 
      Model updateById(Long id, Model model);
 
-     Model createModel(Model model);
+     Model addModel(Model model);
 
      Page<Model> findAll(Pageable pageable);
 

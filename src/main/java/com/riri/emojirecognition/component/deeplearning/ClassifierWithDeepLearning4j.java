@@ -11,6 +11,7 @@ import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
 
@@ -19,9 +20,9 @@ public class ClassifierWithDeepLearning4j {
 
     //flag为0是使用系统应用的模型，为1是使用用户所选择的临时使用的另外的模型
 
-    private MultiLayerNetwork enabledModel;
+    private MultiLayerNetwork enabledModel;//被应用的主要模型，记录至数据库
 
-    private MultiLayerNetwork selectedModel;
+    private MultiLayerNetwork selectedModel;//被选择的备用模型，临时使用，不记录至数据库
 
     private NativeImageLoader enabledModelLoader;
 
@@ -57,6 +58,7 @@ public class ClassifierWithDeepLearning4j {
 
         private Long id;
 
+        @NotNull
         private String path;
 
         private int height;
@@ -65,6 +67,7 @@ public class ClassifierWithDeepLearning4j {
 
         private int channels; //通道
 
+        @NotNull
         private String[] labels;
 
         public Long getId() {

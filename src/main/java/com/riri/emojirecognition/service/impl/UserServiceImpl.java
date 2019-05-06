@@ -139,7 +139,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    public User createUser(User transferUser) {
+    public User addUser(User transferUser) {
 
         if (existsByUsername(transferUser.getUsername())) {
             throw new UserAlreadyExistException("The username already exists: " + transferUser.getUsername());

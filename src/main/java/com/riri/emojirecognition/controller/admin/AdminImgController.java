@@ -34,8 +34,8 @@ public class AdminImgController {
     }
 
     @PostMapping(value = "operate")
-    public Img create(@RequestBody Img img) {
-        return imgService.createImg(img);
+    public Img add(@RequestBody Img img) {
+        return imgService.addImg(img);
     }
 
     @PutMapping(value = "enable/{id}")

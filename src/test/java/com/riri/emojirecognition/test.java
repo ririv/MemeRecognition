@@ -4,6 +4,7 @@ import com.riri.emojirecognition.component.StaticPagePathFinder;
 import com.riri.emojirecognition.domain.Img;
 import com.riri.emojirecognition.domain.Model;
 import com.riri.emojirecognition.domain.User;
+import com.riri.emojirecognition.exception.notfound.ModelNotFoundException;
 import com.riri.emojirecognition.exception.notfound.UserNotFoundException;
 import com.riri.emojirecognition.repository.ImgRepository;
 import com.riri.emojirecognition.repository.ModelRepository;
@@ -116,7 +117,7 @@ public class test {
         User user = new User();
         user.setUsername("09813");
         user.setPassword("098");
-        userService.createUser(user);
+        userService.addUser(user);
     }
 
 
@@ -239,6 +240,12 @@ public class test {
     @Test
     public void test19(){
         throw new UserNotFoundException(11L);
+    }
+
+    @Test
+    public void test20(){
+        Model model = new Model();
+        throw new ModelNotFoundException(model.getId());
     }
 
 }
