@@ -13,7 +13,7 @@ public class UserVO {
 
     private String username;
 
-    private String password;
+//    private String password;
 
     private String email;
 
@@ -22,13 +22,15 @@ public class UserVO {
     public UserVO(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
-        this.password = user.getPassword();
+//        this.password = user.getPassword();
         this.email = user.getEmail();
         List<String> roleNamesList = new ArrayList<>();
-        for (Role role: user.getRoles()){
-            roleNamesList.add(role.getName().replace("ROLE_","").toLowerCase());
+        if (user.getRoles() != null) {
+            for (Role role : user.getRoles()) {
+                roleNamesList.add(role.getName().replace("ROLE_", "").toLowerCase());
+            }
+            this.roleNames = StringUtils.join(roleNamesList, ",");
         }
-        this.roleNames = StringUtils.join(roleNamesList,",");
     }
 
     public Long getId() {
@@ -39,9 +41,9 @@ public class UserVO {
         return username;
     }
 
-    public String getPassword() {
-        return password;
-    }
+//    public String getPassword() {
+//        return password;
+//    }
 
     public String getEmail() {
         return email;
