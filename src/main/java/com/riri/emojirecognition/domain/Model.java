@@ -9,7 +9,10 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames="enabled")})
+@Table(
+        uniqueConstraints = {@UniqueConstraint(columnNames = "enabled"),},
+        indexes = {@Index(columnList = "enabled")}
+        )
 public class Model implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -108,7 +111,7 @@ public class Model implements Serializable {
     }
 
     public void setLabels(String[] labels) {
-        this.labels = StringUtils.join(labels,",");
+        this.labels = StringUtils.join(labels, ",");
     }
 
     public Boolean isEnabled() {
