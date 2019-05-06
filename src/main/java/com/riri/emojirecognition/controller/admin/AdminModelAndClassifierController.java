@@ -76,6 +76,21 @@ public class AdminModelAndClassifierController {
         return modelService.findAll(pageable);
     }
 
+    @PostMapping("upload")
+    public void Upload(@RequestParam("file") MultipartFile mFile) {
+        if (!mFile.isEmpty()) {
+
+            //原始文件名
+            String originalFilename = mFile.getOriginalFilename();
+            //给图片新的uuid名
+            String newFilename = FileUtil.getUUIDFilename(mFile.getOriginalFilename());
+            String path = modelBasePath + newFilename;
+
+            //调用上传工具类
+            FileUtil.upload(mFile, path);
+        }
+    }
+
     @PostMapping("create")
     public Model createWithUpload(@RequestPart("file") MultipartFile mFile, @RequestPart("model") Model transferModel) {
         Model model = null;
@@ -109,6 +124,7 @@ public class AdminModelAndClassifierController {
         }
         return model;
     }
+
 
     @RequestMapping("enable")
     public void enable(@RequestParam("id") Long id, @RequestParam(value = "flag", required = false, defaultValue = "0") int flag) {
