@@ -13,6 +13,8 @@ public class UserVO {
 
     private String username;
 
+    private String password;
+
     private String email;
 
     private String roleNames;
@@ -20,6 +22,7 @@ public class UserVO {
     public UserVO(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
+        this.password = user.getPassword();
         this.email = user.getEmail();
         List<String> roleNamesList = new ArrayList<>();
         for (Role role: user.getRoles()){
@@ -34,6 +37,10 @@ public class UserVO {
 
     public String getUsername() {
         return username;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public String getEmail() {

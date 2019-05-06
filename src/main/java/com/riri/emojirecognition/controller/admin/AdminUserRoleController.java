@@ -3,6 +3,7 @@ package com.riri.emojirecognition.controller.admin;
 import com.riri.emojirecognition.domain.User;
 import com.riri.emojirecognition.service.UserRoleService;
 import com.riri.emojirecognition.service.UserService;
+import com.riri.emojirecognition.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,51 +24,51 @@ public class AdminUserRoleController {
     }
 
     @PatchMapping(value="/{userId}/role/add/one/rolename")
-    public User addUserRoleByRoleName(@PathVariable Long userId, String roleName){
+    public UserVO addUserVORoleByRoleName(@PathVariable Long userId, String roleName){
         User user = userService.findById(userId);
-        return userRoleService.addUserRoleByRoleName(user,roleName);
+        return new UserVO(userRoleService.addUserRoleByRoleName(user,roleName));
     }
 
     @PatchMapping(value="/{userId}/role/add/one/")
-    public User addUserRoleByRoleName(@PathVariable Long userId, Long roleId){
+    public UserVO addUserVORoleByRoleName(@PathVariable Long userId, Long roleId){
         User user = userService.findById(userId);
-        return userRoleService.addUserRoleByRoleId(user,roleId);
+        return new UserVO(userRoleService.addUserRoleByRoleId(user,roleId));
     }
 
     @PatchMapping(value="/{userId}/role/update/one/rolename")
-    public User updateUserRoleName(@PathVariable Long userId, String roleName){
+    public UserVO updateUserVORoleName(@PathVariable Long userId, String roleName){
         User user = userService.findById(userId);
-        return userRoleService.updateUserRoleByRoleName(user,roleName);
+        return new UserVO(userRoleService.updateUserRoleByRoleName(user,roleName));
     }
 
     @PatchMapping(value="/{userId}/role/update/one")
-    public User updateUserRoleName(@PathVariable Long userId, Long roleId){
+    public UserVO updateUserVORoleName(@PathVariable Long userId, Long roleId){
         User user = userService.findById(userId);
-        return userRoleService.updateUserRoleByRoleId(user,roleId);
+        return new UserVO(userRoleService.updateUserRoleByRoleId(user,roleId));
     }
 
     @PatchMapping(value="/{userId}/role/add")
-    public User addUserRoleByRoleId(@PathVariable Long userId, @RequestBody List<Long> roleIds){
+    public UserVO addUserVORoleByRoleId(@PathVariable Long userId, @RequestBody List<Long> roleIds){
         User user = userService.findById(userId);
-        return userRoleService.addUserRoleByRoleId(user,roleIds);
+        return new UserVO(userRoleService.addUserRoleByRoleId(user,roleIds));
     }
 
     @PatchMapping(value="/{userId}/role/add/rolename")
-    public User addUserRoleByRoleName(@PathVariable Long userId, @RequestBody List<String> roleNames){
+    public UserVO addUserVORoleByRoleName(@PathVariable Long userId, @RequestBody List<String> roleNames){
         User user = userService.findById(userId);
-        return userRoleService.addUserRoleByRoleName(user,roleNames);
+        return new UserVO(userRoleService.addUserRoleByRoleName(user,roleNames));
     }
 
     @PatchMapping(value="/{userId}/role/update")
-    public User updateUserRoleByRoleId(@PathVariable Long userId, @RequestBody List<Long> roleIds){
+    public UserVO updateUserVORoleByRoleId(@PathVariable Long userId, @RequestBody List<Long> roleIds){
         User user = userService.findById(userId);
-        return userRoleService.updateUserRoleByRoleId(user,roleIds);
+        return new UserVO(userRoleService.updateUserRoleByRoleId(user,roleIds));
     }
 
     @PatchMapping(value="/{userId}/role/update/rolename")
-    public User updateUserRoleByRoleName(@PathVariable Long userId, @RequestBody List<String> roleNames){
+    public UserVO updateUserVORoleByRoleName(@PathVariable Long userId, @RequestBody List<String> roleNames){
         User user = userService.findById(userId);
-        return userRoleService.updateUserRoleByRoleName(user,roleNames);
+        return new UserVO(userRoleService.updateUserRoleByRoleName(user,roleNames));
     }
 
 }

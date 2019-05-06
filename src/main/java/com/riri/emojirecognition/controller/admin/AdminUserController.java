@@ -2,6 +2,7 @@ package com.riri.emojirecognition.controller.admin;
 
 import com.riri.emojirecognition.domain.User;
 import com.riri.emojirecognition.service.UserService;
+import com.riri.emojirecognition.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,13 +20,13 @@ public class AdminUserController {
     }
 
     @GetMapping(value = "operate/{id}")
-    public User get(@PathVariable Long id) {
-        return userService.findById(id);
+    public UserVO get(@PathVariable Long id) {
+        return new UserVO(userService.findById(id));
     }
 
     @PutMapping(value = "operate/{id}")
-    public User update(@PathVariable Long id, @RequestBody User user) {
-        return userService.updateById(id, user);
+    public UserVO update(@PathVariable Long id, @RequestBody User user) {
+        return new UserVO(userService.updateById(id, user));
     }
 
     @DeleteMapping(value = "operate/{id}")
@@ -34,8 +35,8 @@ public class AdminUserController {
     }
 
     @PostMapping(value = "operate")
-    public User add(@RequestBody User transferUser) {
-        return userService.addUser(transferUser);
+    public UserVO add(@RequestBody User transferUser) {
+        return new UserVO(userService.addUser(transferUser));
     }
 
     @GetMapping(value = "query")
@@ -44,7 +45,7 @@ public class AdminUserController {
     }
 
     @GetMapping(value = "search")
-    public User find(@RequestParam String username) {
-        return userService.findByUsername(username);
+    public UserVO find(@RequestParam String username) {
+        return new UserVO(userService.findByUsername(username));
     }
 }

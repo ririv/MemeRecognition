@@ -3,6 +3,7 @@ package com.riri.emojirecognition.controller;
 
 import com.riri.emojirecognition.domain.User;
 import com.riri.emojirecognition.service.UserService;
+import com.riri.emojirecognition.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -31,13 +32,13 @@ public class UserController {
 //    }
 
     @GetMapping("details/{id}")
-    public User findImg(@PathVariable Long id) {
-        return userService.findById(id);
+    public UserVO find(@PathVariable Long id) {
+        return new UserVO(userService.findById(id));
     }
 
     @PostMapping("/create")
-    public User register(User transferUser) {
-         return userService.addUser(transferUser);
+    public UserVO register(User transferUser) {
+         return new UserVO(userService.addUser(transferUser));
     }
 
 //    @RequestMapping(value="/logout", method = RequestMethod.GET)

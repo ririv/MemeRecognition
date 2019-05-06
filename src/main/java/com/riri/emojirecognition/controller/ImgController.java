@@ -44,7 +44,7 @@ public class ImgController {
     private String imgBasePath;
 
     @GetMapping("details/{id}")
-    public Img findImg(@PathVariable Long id) {
+    public Img find(@PathVariable Long id) {
         return imgService.findById(id);
     }
 
