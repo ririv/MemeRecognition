@@ -44,11 +44,14 @@ public class AdminModelAndClassifierController {
     }
 
     @PutMapping(value = "operate/{id}")
-    public Model update(@PathVariable Long id, @RequestBody Model model) {
-        if (model.isEnabled()){
-            classifyService.enableModel(model,0);
+    public Model update(@PathVariable Long id, @RequestBody Model transferModel) {
+        Model model = modelService.updateById(id,transferModel);
+
+        if (model.isEnabled() != null && model.isEnabled()) {
+            classifyService.enableModel(model, 0);
         }
-        return modelService.updateById(id, model);
+
+        return model;
     }
 
     @DeleteMapping(value = "operate/{id}")
@@ -60,10 +63,10 @@ public class AdminModelAndClassifierController {
     public Model add(@RequestBody Model transferModel) {
 
         Model model = modelService.addModel(transferModel); //先保存数据库，再启用
-        if (transferModel.isEnabled()){
+        if (model.isEnabled() != null && model.isEnabled()){
             //一定不可以直接对用户提交的model操作，而要到数据库中返回的Model操作
             // 否则因为id异常问题可能引发错误
-            classifyService.enableModel(model,0);
+            classifyService.enableModel(model, 0);
         }
         return model;
     }
@@ -98,16 +101,16 @@ public class AdminModelAndClassifierController {
             newModel.setEnabled(transferModel.isEnabled());
             Model model = modelService.addModel(newModel);
 
-            if (transferModel.isEnabled()){ //如果是启用的，则立马启用它
-                classifyService.enableModel(model,0);
+            if (model.isEnabled() != null && model.isEnabled()) { //如果是启用的，则立马启用它
+                classifyService.enableModel(model, 0);
             }
 
         }
     }
 
     @RequestMapping("enable")
-    public void enable(@RequestParam("id") Long id, @RequestParam(value = "flag",required = false,defaultValue = "0") int flag) {
-        classifyService.enableModelById(id,flag);
+    public void enable(@RequestParam("id") Long id, @RequestParam(value = "flag", required = false, defaultValue = "0") int flag) {
+        classifyService.enableModelById(id, flag);
     }
 
 }

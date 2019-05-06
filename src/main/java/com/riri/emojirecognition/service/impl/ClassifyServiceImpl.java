@@ -159,7 +159,7 @@ public class ClassifyServiceImpl implements ClassifyService {
             //如果目标模型是非启用状态，则修改此值保存至数据库
             //也有可能目标模型是启用的状态，比如创建新模型立马启用它或者是启用数据库中已启用的模型，此时就无需再保存一次到数据库
 //            if(!targetModel.isEnabled()) {
-            if (!targetModel.isEnabled() && oldModel != null && !oldModel.getId().equals(targetModel.getId())) { //模型已启用状态且与数据库中已启用的模型不同
+            if (targetModel.isEnabled() != null && oldModel != null && !oldModel.getId().equals(targetModel.getId())) { //模型已启用状态且与数据库中已启用的模型不同
                 targetModel.setEnabled(true); //标记启用此模型
                 modelService.save(targetModel); //保存目标模型为启用到数据库并初始化它
             }
@@ -176,14 +176,14 @@ public class ClassifyServiceImpl implements ClassifyService {
         }
     }
 
-    public Map<String,Object> getCurrentModelsInfoOfClassifier(){
-        Map<String,Object> infoMap = new LinkedHashMap<>();
+    public Map<String, Object> getCurrentModelsInfoOfClassifier() {
+        Map<String, Object> infoMap = new LinkedHashMap<>();
 
-        infoMap.put("enabledModelId",classifier.getEnabledModelId());
-        infoMap.put("enabledModelLabels",classifier.getEnabledModelLabels());
+        infoMap.put("enabledModelId", classifier.getEnabledModelId());
+        infoMap.put("enabledModelLabels", classifier.getEnabledModelLabels());
 
-        infoMap.put("selectedModelId",classifier.getSelectedModelId());
-        infoMap.put("SelectedModelLabels",classifier.getSelectedModelLabels());
+        infoMap.put("selectedModelId", classifier.getSelectedModelId());
+        infoMap.put("SelectedModelLabels", classifier.getSelectedModelLabels());
 
         return infoMap;
     }
