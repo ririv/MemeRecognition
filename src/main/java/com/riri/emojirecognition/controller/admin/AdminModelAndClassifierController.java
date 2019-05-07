@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,13 +50,11 @@ public class AdminModelAndClassifierController {
 
     @PutMapping(value = "operate/{id}")
     public Model update(@PathVariable Long id, @RequestBody Model model) {
-        Model model2 = modelService.updateById(id, model);
-
-        if (model2.isEnabled()) {
-            classifyService.enableModel(model2, 0);
+        if (model.isEnabled()) {
+            classifyService.enableModel(model, 0);
         }
 
-        return model2;
+        return modelService.updateById(id, model);
     }
 
     @DeleteMapping(value = "operate/{id}")
@@ -69,7 +68,7 @@ public class AdminModelAndClassifierController {
     }
 
     @GetMapping(value = "query")
-    public Page findAll(Pageable pageable) {
+    public Page findAll(@PageableDefault Pageable pageable) {
         return modelService.findAll(pageable);
     }
 
@@ -126,7 +125,17 @@ public class AdminModelAndClassifierController {
 
             transferModel.setUpdateTime(new Timestamp(new Date().getTime()));
 
-            model = modelService.addModel(transferModel); //先保存数据库，再启用
+            //如果模型是启用的，必须先将数据库中已启用的model设为非启用
+            //否则数据库将存在两个启用的模型
+            if(transferModel.isEnabled()){
+                Model oldModel = modelService.findByEnabled(true);
+                oldModel.setEnabled(false);
+                modelService.save(oldModel);
+            }
+
+            //先保存数据库，再启用，否则enableModel方法将将会保存模，因为id为空的原因，将会重复保存一次
+            model = modelService.addModel(transferModel);
+
             if (model.isEnabled()) {
                 //一定不可以直接对用户提交的model操作，而要到数据库中返回的Model操作
                 // 否则因为id异常问题可能引发错误

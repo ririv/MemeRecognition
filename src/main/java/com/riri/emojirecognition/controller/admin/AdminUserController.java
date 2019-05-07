@@ -6,6 +6,7 @@ import com.riri.emojirecognition.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,7 +41,7 @@ public class AdminUserController {
     }
 
     @GetMapping(value = "query")
-    public Page findAll(Pageable pageable) {
+    public Page findAll(@PageableDefault Pageable pageable) {
         return userService.findAll(pageable);
     }
 

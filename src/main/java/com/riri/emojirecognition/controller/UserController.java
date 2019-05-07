@@ -37,8 +37,8 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public UserVO create(User transferUser) {
-         return new UserVO(userService.createUser(transferUser));
+    public UserVO create(@RequestBody User transferUser) {
+        return new UserVO(userService.createUser(transferUser));
     }
 
 //    @RequestMapping(value="/logout", method = RequestMethod.GET)
