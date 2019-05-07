@@ -62,7 +62,7 @@ public class AdminModelAndClassifierController {
         modelService.deleteById(id);
     }
 
-    @PostMapping
+    @PostMapping(value = "operate")
     public Model add(@RequestBody Model model) {
         return modelService.addModel(model);
     }
