@@ -10,7 +10,6 @@ import java.util.Date;
 
 @Entity
 @Table(
-        uniqueConstraints = {@UniqueConstraint(columnNames = "enabled"),},
         indexes = {@Index(columnList = "enabled")}
         )
 public class Model implements Serializable {
@@ -36,7 +35,7 @@ public class Model implements Serializable {
     @NotNull
     private String labels; //使用,隔开
 
-    private Boolean enabled; //使用唯一约束，不启用的模型设置为null，启用的则设置为true
+    private boolean enabled;
 
     public Long getId() {
         return id;
@@ -114,7 +113,7 @@ public class Model implements Serializable {
         this.labels = StringUtils.join(labels, ",");
     }
 
-    public Boolean isEnabled() {
+    public boolean isEnabled() {
         return enabled;
     }
 

@@ -27,6 +27,10 @@ public class AdminModelAndClassifierController {
 
     private final ClassifyService classifyService;
 
+    private String uploadModelName;
+
+    private String uploadModelPath;
+
     @Autowired
     public AdminModelAndClassifierController(ModelService modelService, ClassifyService classifyService) {
         this.modelService = modelService;
@@ -44,14 +48,14 @@ public class AdminModelAndClassifierController {
     }
 
     @PutMapping(value = "operate/{id}")
-    public Model update(@PathVariable Long id, @RequestBody Model transferModel) {
-        Model model = modelService.updateById(id,transferModel);
+    public Model update(@PathVariable Long id, @RequestBody Model model) {
+        Model model2 = modelService.updateById(id, model);
 
-        if (model.isEnabled() != null && model.isEnabled()) {
-            classifyService.enableModel(model, 0);
+        if (model2.isEnabled()) {
+            classifyService.enableModel(model2, 0);
         }
 
-        return model;
+        return model2;
     }
 
     @DeleteMapping(value = "operate/{id}")
@@ -59,16 +63,9 @@ public class AdminModelAndClassifierController {
         modelService.deleteById(id);
     }
 
-    @PostMapping(value = "operate")
-    public Model add(@RequestBody Model transferModel) {
-
-        Model model = modelService.addModel(transferModel); //先保存数据库，再启用
-        if (model.isEnabled() != null && model.isEnabled()){
-            //一定不可以直接对用户提交的model操作，而要到数据库中返回的Model操作
-            // 否则因为id异常问题可能引发错误
-            classifyService.enableModel(model, 0);
-        }
-        return model;
+    @PostMapping
+    public Model add(@RequestBody Model model) {
+        return modelService.addModel(model);
     }
 
     @GetMapping(value = "query")
@@ -76,21 +73,81 @@ public class AdminModelAndClassifierController {
         return modelService.findAll(pageable);
     }
 
-    @PostMapping("upload")
-    public void Upload(@RequestParam("file") MultipartFile mFile) {
+    /**
+     * 我们可以采用线程等待与唤醒的方式完成文件的上传，与文件信息插入至数据库
+     * 待上传完成后，upload方法最后会notify
+     *
+     * @param mFile 上传的model文件
+     */
+    @PostMapping("create/upload")
+    public void upload(@RequestParam("file") MultipartFile mFile) {
         if (!mFile.isEmpty()) {
 
-            //原始文件名
-            String originalFilename = mFile.getOriginalFilename();
             //给图片新的uuid名
             String newFilename = FileUtil.getUUIDFilename(mFile.getOriginalFilename());
             String path = modelBasePath + newFilename;
 
+            uploadModelPath = path;
+            uploadModelName = mFile.getOriginalFilename();
+
             //调用上传工具类
             FileUtil.upload(mFile, path);
         }
+
+        synchronized (this) {
+            uploadModelName = mFile.getOriginalFilename();
+            this.notify();
+        }
     }
 
+    /**
+     * 此方法是与upload方法配合使用的，线程进入wait，等待上传完成被notify
+     * 再执行插入数据库和启用模型的操作
+     *
+     * @param transferModel model json数据
+     * @return repo返回的model对象
+     */
+    @PostMapping(value = "create/add")
+    public Model addForUpload(@RequestBody Model transferModel) {
+        Model model;
+        synchronized (this) {
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (transferModel.getName() == null) {
+                transferModel.setName(uploadModelName);
+                System.out.println(transferModel.getName());
+            }
+            System.out.println("上传文件名：" + uploadModelName);
+            transferModel.setPath(uploadModelPath);
+            System.out.println("上传路径：" + uploadModelPath);
+
+            transferModel.setUpdateTime(new Timestamp(new Date().getTime()));
+
+            model = modelService.addModel(transferModel); //先保存数据库，再启用
+            if (model.isEnabled()) {
+                //一定不可以直接对用户提交的model操作，而要到数据库中返回的Model操作
+                // 否则因为id异常问题可能引发错误
+                classifyService.enableModel(model, 0);
+            }
+            uploadModelPath = null;
+        }
+
+        return model;
+    }
+
+    /**
+     * 这里采用可以同时上传文件及其json数据的方式
+     * 上传采用form-data，但需要对两个参数设置不同的content-type
+     * file为multipart/form-data，model为application/json
+     * 因为设置不同的参数的content-type是一件很麻烦的是，所以此API不建议使用
+     *
+     * @param mFile         model文件
+     * @param transferModel model的json数据
+     * @return repo返回的model对象
+     */
     @PostMapping("create")
     public Model createWithUpload(@RequestPart("file") MultipartFile mFile, @RequestPart("model") Model transferModel) {
         Model model = null;
@@ -117,7 +174,7 @@ public class AdminModelAndClassifierController {
             newModel.setEnabled(transferModel.isEnabled());
             model = modelService.addModel(newModel);
 
-            if (model.isEnabled() != null && model.isEnabled()) { //如果是启用的，则立马启用它
+            if (model.isEnabled()) { //如果是启用的，则立马启用它
                 classifyService.enableModel(model, 0);
             }
 

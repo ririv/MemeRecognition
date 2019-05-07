@@ -148,7 +148,7 @@ public class ClassifyServiceImpl implements ClassifyService {
                 //当旧模型id与目标模型id相同时。则不操作，因为是同一个模型，且此模型是已启用的模型
                 //这里为两id不同的情况，需要保存并初始化
                 if (!oldModel.getId().equals(targetModel.getId())) {
-                    oldModel.setEnabled(null); //旧模型设为非启用，不要设置为false，因为设置了唯一限制
+                    oldModel.setEnabled(false); //旧模型设为非启用，不要设置为false，因为设置了唯一限制
                     modelService.save(oldModel); //保存目标模型为启用到数据库并初始化它
                     init(targetModel, flag);
                 }
@@ -159,7 +159,7 @@ public class ClassifyServiceImpl implements ClassifyService {
             //如果目标模型是非启用状态，则修改此值保存至数据库
             //也有可能目标模型是启用的状态，比如创建新模型立马启用它或者是启用数据库中已启用的模型，此时就无需再保存一次到数据库
 //            if(!targetModel.isEnabled()) {
-            if (targetModel.isEnabled() != null && oldModel != null && !oldModel.getId().equals(targetModel.getId())) { //模型已启用状态且与数据库中已启用的模型不同
+            if (targetModel.isEnabled() && oldModel != null && !oldModel.getId().equals(targetModel.getId())) { //模型已启用状态且与数据库中已启用的模型不同
                 targetModel.setEnabled(true); //标记启用此模型
                 modelService.save(targetModel); //保存目标模型为启用到数据库并初始化它
             }

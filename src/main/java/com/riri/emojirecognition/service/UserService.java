@@ -40,11 +40,11 @@ public interface UserService {
 
     User updateById(Long id, User user);
 
-    User updatePassword(Long id, String password);
+    User add(User user);
 
-    User updatePassword(String username, String password);
+    User createUser(User transferUser);
 
-    User addUser(User user);
+    User changePassword(Long id, String password);
 
-
+    User changePassword(String username, String password);
 }

@@ -116,30 +116,15 @@ public class UserServiceImpl implements UserService {
         //设置id为所指定的id，防止user中有id信息，而发生更新错位的现象
         user.setId(id);
 
-        if (user.getPassword() != null) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-        }
-
         return userRepository.save(user);
     }
 
-    public User updatePassword(Long id, String password) {
-
-        User user = findById(id);//如果此用户不存在则会抛出异常
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
+    public User add(User user){
+        user.setId(null);
         return userRepository.save(user);
     }
 
-    public User updatePassword(String username, String password) {
-
-        User user = findByUsername(username);//如果此用户不存在则会抛出异常
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        return userRepository.save(user);
-    }
-
-    public User addUser(User transferUser) {
+    public User createUser(User transferUser) {
 
         if (existsByUsername(transferUser.getUsername())) {
             throw new UserAlreadyExistException("The username already exists: " + transferUser.getUsername());
@@ -166,6 +151,22 @@ public class UserServiceImpl implements UserService {
 //                    Arrays.asList(roleRepository.findByName("ROLE_USER"),roleRepository.findByName("ROLE_ADMIN")) //此方法可添加多个权限
 
         return userRepository.save(newUser);
+    }
+
+    public User changePassword(Long id, String password) {
+
+        User user = findById(id);//如果此用户不存在则会抛出异常
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        return userRepository.save(user);
+    }
+
+    public User changePassword(String username, String password) {
+
+        User user = findByUsername(username);//如果此用户不存在则会抛出异常
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        return userRepository.save(user);
     }
 
 }

@@ -96,7 +96,7 @@ public class ImgServiceImpl implements ImgService {
     }
 
 
-    public Img addImg(Img img) {
+    public Img add(Img img) {
         img.setId(null);
         return imgRepository.save(img);
     }
@@ -107,11 +107,10 @@ public class ImgServiceImpl implements ImgService {
     }
 
     public void enableImg(Img img) {
-        if(img.getTag()!=null) {
+        if (img.getTag() != null) {
             img.setSubId(generateSubId(img.getTag()));
             imgRepository.save(img);
-        }
-        else throw new RuntimeException("Tag is null");
+        } else throw new RuntimeException("Tag is null");
     }
 
     public long generateSubId(String tag) {

@@ -37,8 +37,8 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public UserVO register(User transferUser) {
-         return new UserVO(userService.addUser(transferUser));
+    public UserVO create(User transferUser) {
+         return new UserVO(userService.createUser(transferUser));
     }
 
 //    @RequestMapping(value="/logout", method = RequestMethod.GET)
@@ -50,8 +50,8 @@ public class UserController {
 //        return ResponseEntity.ok("logout successfully");
 //    }
 
-    @PutMapping("update/password")
+    @PutMapping("change-password")
     public void updatePassword(String username,String password){
-        userService.updatePassword(username,password);
+        userService.changePassword(username,password);
     }
 }

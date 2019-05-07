@@ -117,7 +117,7 @@ public class test {
         User user = new User();
         user.setUsername("09813");
         user.setPassword("098");
-        userService.addUser(user);
+        userService.createUser(user);
     }
 
 

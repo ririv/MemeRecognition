@@ -32,7 +32,7 @@ public interface ImgService {
 
      Img updateById(Long id, Img img) ;
 
-     Img addImg(Img img);
+     Img add(Img img);
 
      void enableImgById(Long id);
 

@@ -35,13 +35,18 @@ public class AdminUserController {
     }
 
     @PostMapping(value = "operate")
-    public UserVO add(@RequestBody User transferUser) {
-        return new UserVO(userService.addUser(transferUser));
+    public UserVO add(@RequestBody User user) {
+        return new UserVO(userService.add(user));
     }
 
     @GetMapping(value = "query")
     public Page findAll(Pageable pageable) {
         return userService.findAll(pageable);
+    }
+
+    @PostMapping(value = "create")
+    public UserVO create(@RequestBody User transferUser) {
+        return new UserVO(userService.createUser(transferUser));
     }
 
     @GetMapping(value = "search")
