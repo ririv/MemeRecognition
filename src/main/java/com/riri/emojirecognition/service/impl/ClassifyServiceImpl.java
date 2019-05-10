@@ -73,7 +73,7 @@ public class ClassifyServiceImpl implements ClassifyService {
             classifierModel.setChannels(model.getChannels());
             classifierModel.setLabels(model.getLabels());
         } else { //采用存放在resource/model下默认的模型
-            logger.warn("找不到模型，回退到默认模型");
+            logger.warn("数据库中找不到已启用的模型，回退到默认模型");
             try {
                 classifierModel.setPath(new ClassPathResource(modelDefaultPath).getFile().getPath());
             } catch (IOException e) {
