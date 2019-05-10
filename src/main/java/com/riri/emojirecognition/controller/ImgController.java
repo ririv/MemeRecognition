@@ -76,9 +76,8 @@ public class ImgController {
         }
     }
 
-    @PostMapping("upload")
+    @PostMapping("classify")
     public Map<String, Object> classify(@RequestParam("file") MultipartFile mFile,
-                                        @RequestParam(required = false, defaultValue = "20") int num,
                                         @RequestParam(required = false, defaultValue = "0") int flag,
                                         @RequestParam(required = false) Long modelId,
                                         @RequestParam(required = false, defaultValue = "false") boolean save) {

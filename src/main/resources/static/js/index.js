@@ -31,7 +31,7 @@ new Vue({
             };
 
             myAxios
-                .post("api/v1/img/upload", formData, config)
+                .post("api/v1/img/classify", formData, config)
                 .then(response => {
                     console.log(response.data);
                     // this.info = response.data;
