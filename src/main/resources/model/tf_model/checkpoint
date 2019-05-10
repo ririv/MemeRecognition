@@ -1,0 +1,2 @@
+model_checkpoint_path: "D:\\Workspaces\\Pycharm\\deeplearning-image\\saved_model"
+all_model_checkpoint_paths: "D:\\Workspaces\\Pycharm\\deeplearning-image\\saved_model"

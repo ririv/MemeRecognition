@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EmojiRecognition</title>
+    <link href="css/index.css" rel="stylesheet">
+    <link href="lib/css/bootstrap-3.3.7/bootstrap.css" rel="stylesheet">
+    <link href="lib/css/bootstrap-3.3.7/bootstrap-theme.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body style="padding: 10px">
+<div id="app1">
+    <div>
+        <form>
+        <span class="btn btn-success fileinput-button">
+            <span>选择图片</span>
+            <input type="file" accept="image/*" name="file" @change="getFile($event)">
+        </span>
+            <input type="submit" value="上传" @click="submit($event)">
+            <span>{{ filename }}</span>
+        </form>
+    </div>
+
+    <div>
+        <span>{{ result.msg }}</span>
+        <span>{{ result.tag }}</span>
+    </div>
+
+    <div>
+        <div v-for="value in relatedImgs">
+            <a :href="value"><img alt="图片" :src="value" style="width: 200px;height: 180px"/> </a>
+        </div>
+    </div>
+</div>
+<script type="module" src="js/index.js"></script>
+</body>
+</html>
