@@ -56,7 +56,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 
     // 取得用户的权限
-
     private Collection<? extends GrantedAuthority> authorities(Collection<Role> roles) {
         //通过角色名获得权限
         List<GrantedAuthority> auths = new ArrayList<>();

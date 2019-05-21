@@ -174,7 +174,7 @@ public class ClassifierWithDeepLearning4j {
 
         scaler.transform(imageINDArray);
 
-//        INDArray output = model.output(imageINDArray);   // 获得模型对图像的预测，得到的是概率值
+//        INDArray output = model.output(imageINDArray);   // 输出模型对图像的预测，得到的是概率值
 //        System.out.println(output.toString());
 //        System.out.println(output.argMax(1));
         if (flag == 0) {
@@ -189,7 +189,7 @@ public class ClassifierWithDeepLearning4j {
         return predict(file, flag); //看清参数类型，否则则变成递归
     }
 
-    //分类为具体的标签
+    //输出具体的标签和概率
     //pair是一个元组，用来传递两个类型不同的值
     public Pair<String, Float> classify(File image, int flag) throws IOException {
         String[] labels;

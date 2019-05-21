@@ -53,7 +53,7 @@ public class ImgServiceTest {
 //    //测试批量插入图片
 //    @Test
 //    public void test04(){
-//        imgService.batchInsertToDbByDir("D:/test/img/admin");
+//        imgService.batchInsertToDbByDir("F:\\test\\img\\猫");
 //    }
 
 
